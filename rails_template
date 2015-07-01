@@ -1,0 +1,24 @@
+remove_file 'README.doc'
+create_file 'README.md'
+
+gem_group :test do
+  gem 'rspec-rails'
+end
+
+gem_group :development do
+  gem 'pry-rails'
+  gem 'hookup'
+end
+
+gem 'haml-rails'
+gem 'zurb-foundation' if yes? "zurb?"
+
+generate 'rspec:install'
+
+run 'hookup install'
+run 'bundle install'
+
+unless no? "git?"
+  git :init
+  git add: '--all', commit: '-m "FIRE IT UP" '
+end

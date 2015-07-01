@@ -1,0 +1,39 @@
+set number
+set relativenumber
+
+nnoremap ; :
+
+noremap <up> <c-y>
+noremap <s-up> <c-b>
+noremap <down> <c-e>
+noremap <s-down> <c-f>
+
+inoremap jf <esc>
+inoremap fj <esc>
+inoremap jj <c-o>o
+inoremap uu <c-o>O
+inoremap kk <Esc>A
+
+let mapleader=","
+
+noremap <leader>f ^
+noremap <leader>o o<esc>
+noremap <leader>O O<esc>
+noremap <leader>rei ggVG=<c-o>
+
+map <leader>c :xccmd commentAndUncommentCurrentLines<CR>
+
+" Navigation
+nmap <space>f :xcmenucmd Open Quickly...<CR>
+" nmap <space>n :nissue<CR>
+" nmap <space>p :pissue<CR>
+
+" Show
+" nmap <space>F :xccmd showInFinder<CR>
+nmap <space>D :xccmd showDeveloperDocumentation<CR>
+nmap <space>d :xcmenucmd Quick Help for Selected Item<CR>
+
+" Toggle Toolbars
+nmap <space>h :xccmd toggleNavigatorsVisibility<CR>
+nmap <space>j :xccmd toggleDebuggerVisibility<CR>
+nmap <space>l :xccmd toggleUtilitiesVisibility<CR>

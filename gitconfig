@@ -1,0 +1,19 @@
+[alias]
+	last = log -1 HEAD
+	unstage = reset HEAD --
+	co = checkout
+	br = branch
+[user]
+	name = ambirdsall
+	email = ambirdsall@gmail.com
+[credential]
+	helper = osxkeychain
+[color]
+	ui = true
+[init]
+	templatedir = ~/.git_template
+[push]
+	default = simple
+[core]
+	ignore = dirty
+	excludesfile = /Users/ambirdsall/.gitignore_global
