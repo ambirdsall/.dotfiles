@@ -52,6 +52,9 @@ export PATH=$PATH:/Users/ambirdsall/code/clinteresting
 # alias hub as git
 eval "$(hub alias -s)"
 
+# irc settings
+export IRCSERVER="irc.freenode.net"
+
 #==============================#
 # HERE THERE BE CUSTOM ALIASES #
 #==============================#
@@ -128,6 +131,10 @@ letter () {
 # # use instead of less
 = () {
     /usr/share/vim/vim73/macros/less.sh "$*"
+}
+
+coffeefy () {
+    js2coffee $1 | coffee -sc > $2
 }
 
 ### Added by the Heroku Toolbelt
