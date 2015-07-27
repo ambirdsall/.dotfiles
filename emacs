@@ -9,12 +9,21 @@
 ;; WE DON'T NEED NO SPLASH SCREEN LET THE MOTHER *ee-ur* BURN
 ;; s/t/0 to re-enable
 (setq inhibit-splash-screen t)
+(tool-bar-mode -1)
 
 (transient-mark-mode 1)
 
 ;;;;org-mode configuration
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(setq org-src-fontify-natively 1)
+(setq org-todo-keyword-faces
+		'(("TODO" . org-warning)
+		  ("STARTED" . "#cccc00")
+		  ("DONE" . "#009933")))
+(setq org-hide-leading-stars 1)
+; In documentation this is how to prevent splitting lines with M-RET; C-S-RET is a better bet generally for me, but still. But it don't work.
+;(setq org-M-RET-may-split-line 0)
 
 (require 'package)
 
@@ -25,8 +34,21 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
+(unless (boundp 'user-emacs-directory)
+  (defvar user-emacs-directory "~/.emacs.d/"
+    "Directory beneath which additional per-user Emacs-specific
+files are placed.
+  Various programs in Emacs store information in this directory.
+  Note that this should end with a directory separator.
+  See also `locate-user-emacs-file'."))
+
+(add-to-list 'load-path (concat user-emacs-directory
+  (convert-standard-filename "github/powerline")))
+
+;; Make it look nice
+(require 'powerline)
+(powerline-evil-theme)
 (load-theme 'railscasts t)
-;;(load-theme 'solarized t)
 
 ;; because numbers.
 (require 'linum-relative)
@@ -34,21 +56,50 @@
   (setq linum-relative-current-symbol ""))
 (global-linum-mode 1)
 
+(helm-mode t)
+;;TODO: set up yasnippet, iedit, flycheck, projectile, magit
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;                EVIL                ;
+(require 'key-chord)
+(key-chord-mode 1)
 (require 'evil-leader)
-(require 'evil-surround)
-(require 'evil)
 (global-evil-leader-mode 1)
+(require 'evil-surround)
 (global-evil-surround-mode 1)
+;(require 'evil-numbers)
+(require 'evil)
 (evil-mode t)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;     TAKE ME TO YOUR LEADER       ;
+  ;             MAPPINGS             ;
+(define-key evil-normal-state-map ";" 'evil-ex)
+(define-key evil-normal-state-map ":" 'evil-repeat-find-char)
+
+(define-key evil-motion-state-map (kbd "<down>") 'evil-scroll-line-down)
+(define-key evil-motion-state-map (kbd "<up>") 'evil-scroll-line-up)
+
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "jf" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "fj" 'evil-normal-state)
+
+(key-chord-define evil-insert-state-map "kk" 'evil-append-line)
+
+(key-chord-define evil-insert-state-map "jj" 'evil-open-below)
+(key-chord-define evil-insert-state-map "uu" 'evil-open-above)
+
+	 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	 ;     TAKE ME TO YOUR LEADER     ;
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
- "w" 'write
+ "w" 'evil-write
+ "f" 'evil-first-non-blank
+ "lb" 'evil-buffer
+ "af" 'auto-fill-mode
+ "sw" 'whitespace-cleanup
  )
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -87,16 +138,14 @@ Return a list of installed packages or nil for every skipped package."
  ;; If there is more than one, they won't work right.
  )
 
+(color-theme-approximate-on)
+
 ;; Make sure to have downloaded archive description.
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
 
 ;; Activate installed packages
 (package-initialize)
-
-;; Custom Evil Mode keymaps
-(define-key evil-normal-state-map ";" 'evil-ex)
-(define-key evil-normal-state-map ":" 'evil-repeat-find-char)
 
 (ensure-package-installed 'evil
 								  'iedit
