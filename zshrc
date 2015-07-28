@@ -1,5 +1,7 @@
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 source ~/code/zsh_business/iterm_dirs.sh
+brew update
+source ./secrets.sh
 
 #=====================#
 # VIMIFY THE TERMINAL #
