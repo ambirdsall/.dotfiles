@@ -154,3 +154,8 @@ Return a list of installed packages or nil for every skipped package."
 								  'projectile
 								  'yasnippet
 								  'magit)
+
+;; open in org-mode
+(switch-to-buffer (get-buffer-create (generate-new-buffer-name "*scratch-org*")))
+(insert "Scratch buffer with org-mode.\n\n")
+(org-mode)
