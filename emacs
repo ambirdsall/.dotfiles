@@ -70,14 +70,13 @@ files are placed.
 ;(require 'evil-numbers)
 (require 'evil)
 (evil-mode t)
-
+(evil-set-initial-state 'snake-mode 'emacs)
+(evil-set-initial-state 'pong-mode 'emacs)
+(evil-set-initial-state 'tetris-mode 'emacs)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;             MAPPINGS             ;
-(define-key evil-normal-state-map ";" 'evil-ex)
-(define-key evil-normal-state-map ":" 'evil-repeat-find-char)
-
-(define-key evil-motion-state-map (kbd "<down>") 'evil-scroll-line-down)
-(define-key evil-motion-state-map (kbd "<up>") 'evil-scroll-line-up)
+(define-key evil-motion-state-map ";" 'evil-ex)
+(define-key evil-motion-state-map ":" 'evil-repeat-find-char)
 
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
@@ -94,10 +93,12 @@ files are placed.
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
  "w" 'evil-write
+ "n" 'make-frame
  "f" 'evil-first-non-blank
  "lb" 'evil-buffer
  "af" 'auto-fill-mode
  "sw" 'whitespace-cleanup
+ "org" 'org-mode
  )
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
