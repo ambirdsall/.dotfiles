@@ -13,10 +13,19 @@
 [init]
 	templatedir = ~/.git_template
 [push]
-	default = simple
+	default = tracking
 [core]
 	ignore = dirty
 	excludesfile = /Users/ambirdsall/.gitignore_global
+	whitespace = trailing-space,space-before-tab
 
 [url "git@github.com:"]
     insteadOf = "https://github.com/"
+[diff]
+	mnemonicprefix = true
+[branch]
+	autosetupmerge = true
+[rerere]
+	enabled = true
+[commit]
+ 	template = ~/.gitmessage
