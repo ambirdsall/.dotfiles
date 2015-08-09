@@ -85,6 +85,7 @@ alias bes="bundle exec rails server"
 alias lkj="bundle exec rails console"
 alias kjh="bundle exec rails console --sandbox"
 
+alias g="git"
 alias p="git add -p"
 alias c="git commit"
 alias a="git commit --amend"
