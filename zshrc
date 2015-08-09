@@ -1,7 +1,6 @@
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 source ~/code/zsh_business/iterm_dirs.sh
 brew update
-source ./secrets.sh
 
 #=====================#
 # VIMIFY THE TERMINAL #
@@ -88,6 +87,7 @@ alias kjh="bundle exec rails console --sandbox"
 
 alias p="git add -p"
 alias c="git commit"
+alias a="git commit --amend"
 alias s="git status"
 alias d="git diff"
 alias l="git branch --list"
