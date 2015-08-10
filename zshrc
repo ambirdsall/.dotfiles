@@ -114,7 +114,7 @@ mcd () {
 
 cdd () {
 	cd $1
-	ls -A
+	ls
 }
 
 gc () {
