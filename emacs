@@ -24,6 +24,12 @@
 (setq org-hide-leading-stars 1)
 ; In documentation this is how to prevent splitting lines with M-RET; C-S-RET is a better bet generally for me, but still. But it don't work.
 ;(setq org-M-RET-may-split-line 0)
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/org-mode")
+;; Set to the name of the file where new notes will be stored
+(setq org-mobile-inbox-for-pull "~/org-mode/flagged.org")
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 
 (require 'package)
 
@@ -78,8 +84,11 @@ files are placed.
 (define-key evil-motion-state-map ";" 'evil-ex)
 (define-key evil-motion-state-map ":" 'evil-repeat-find-char)
 
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+(defun evil-normal-state-and-forward-char (interactive)
+  ((evil-normal-state)
+  (evil-forward-char)))
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state-and-forward-char)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state-and-forward-char)
 (key-chord-define evil-insert-state-map "jf" 'evil-normal-state)
 (key-chord-define evil-insert-state-map "fj" 'evil-normal-state)
 
