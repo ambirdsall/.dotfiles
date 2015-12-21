@@ -52,7 +52,8 @@ alias wut="ping -c 5 -q 127.0.0.1 && echo '' && ping -c 100 -q www.google.com"
 alias phone="ssh -t root@192.168.0.101 'echo \"photos live at /private/var/mobile/Media/DCIM/\"; exec zsh;'"
 alias ftphone="sftp root@192.168.0.101"
 
-alias emacs='/usr/local/bin/emacs'
+# shell script to boot up Emacs.app with given arguments
+alias emacs='~/code/clinteresting/emacs'
 alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
 
