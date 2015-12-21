@@ -1,4 +1,4 @@
-set background=light
+set background=dark
 colorscheme solarized
 set guifont=Meslo\ LG\ L\ DZ\ for\ Powerline
 
