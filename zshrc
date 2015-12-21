@@ -56,6 +56,7 @@ alias ftphone="sftp root@192.168.0.101"
 alias emacs='~/code/clinteresting/emacs'
 alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
+alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
 
 alias swift=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift
 alias swiftc=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
@@ -82,6 +83,8 @@ alias s="git status"
 alias d="git diff"
 alias l="git branch --list"
 alias co="git co"
+alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin master'
+alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push -f origin master'
 
 alias cpu="top -o cpu"
 
