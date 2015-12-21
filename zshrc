@@ -118,25 +118,12 @@ gc () {
        cd $repo_dir
 }
 
-letter () {
-	rm temp/Alex_Birdsall_cover_letter.txt
-	cp $1 temp/Alex_Birdsall_cover_letter.txt
-}
-
 # syntax highlighting pager
 # # use instead of less
 = () {
     /usr/share/vim/vim73/macros/less.sh "$*"
 }
 
-coffeefy () {
-    js2coffee $1 | coffee -sc > $2
-}
-
-### Added by the Heroku Toolbelt
-export PATH="$PATH:/usr/local/heroku/bin"
-
-export PATH="$HOME/.bin:$PATH"
 eval "$(rbenv init - zsh --no-rehash)"
 # The following lines were added by compinstall
 
