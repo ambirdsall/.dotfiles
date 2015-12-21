@@ -79,10 +79,11 @@ alias g="git"
 alias p="git add -p"
 alias c="git commit"
 alias a="git commit --amend"
-alias s="git status"
+alias s="git status -s"
 alias d="git diff"
 alias l="git branch --list"
 alias co="git co"
+alias stash="git stash -u"
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin master'
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push -f origin master'
 
