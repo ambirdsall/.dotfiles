@@ -25,32 +25,19 @@ zle -N zle-line-init
 zle -N zle-keymap-select
 
 #=====================#
+#       GIT LIT	      #
 #=====================#
+
+current_commit() {
+    git rev-parse --short HEAD 2> /dev/null
+}
 
 # totally sweet prompt
 GIT_PROMPT_EXECUTABLE="haskell"
 source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
-export PS1='%F{cyan}%~%b%f$(git_super_status) %F{cyan}%#%f '
+export PS1='%F{cyan}%~%b%f$(git_super_status) %F{yellow}$(current_commit) %F{cyan}%#%f '
 
-export EDITOR="/usr/local/bin/vim"
-
-# adds Go to $PATH
-export GOPATH="/Users/ambirdsall/code/go"
-export PATH=$PATH:$GOPATH/bin
-
-# sets up global installs for npm
-NPM_PACKAGES="${HOME}/.npm-packages"
-NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
-PATH="$NPM_PACKAGES/bin:$PATH"
-unset MANPATH
-MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
-
-export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
-
-# syntax highlighting in less
-#export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"; export LESS=" -R"
-
-export PATH=$PATH:/Users/ambirdsall/code/clinteresting
+# $PATH config in .zshprofile
 
 # alias hub as git
 eval "$(hub alias -s)"
