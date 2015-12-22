@@ -3,6 +3,7 @@
 	unstage = reset HEAD --
 	co = checkout
 	br = branch
+	uncommit = reset --soft HEAD^
 [user]
 	name = ambirdsall
 	email = ambirdsall@gmail.com
