@@ -82,6 +82,7 @@ alias a="git commit --amend"
 alias s="git status -s"
 alias d="git diff"
 alias l="git log --oneline --decorate --graph --all"
+alias b="git blame"
 alias co="git co"
 alias stash="git stash -u"
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
