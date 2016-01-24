@@ -1,10 +1,34 @@
+# If applied, this commit will...                |
+
+# Why was this change made?                                            |
+
+# Add references, like: Pivotal Task URLs, tickets,  Github Issue URL  |
 
 
-#Why:
 
-
-#This change addresses the need by:
-
-# 50-character subject line
+# First word must be one of these 5 "types:"
 #
-# 72-character wrapped longer description.
+# 5 allowed "types:" #=> (feat/hotfix/bug/refact/tidy)
+#
+# feat: (feature change)
+# hotfix: (quick fix of bug on production, minimal change)
+# bug: (permanent fix of bug)
+# refact: (Refactoring - changing current code)
+# tidy: (formatting only, spelling, grammar, etc; no code change)
+#
+#
+# Examples:
+# --- Title/Summary 50 Char Limit -------------- |
+# feat: Hide first 6 chars of SSN
+# feat: Add flash after user register to get demo
+# hotfix: Change csv FSA upload election field
+# hotfix: Change reply_to task notification email
+# bug: Set new task email reply_to on manager
+# bug: Save csv FSA election to correct attribute
+# refact: Remove unused methods from User
+# refact: Remove leftover 'binding.pry'
+# tidy: Fix spelling on broker landing page
+# tidy: Changes tabs into spaces on Sass Files
+#
+# Body/Comments to 72 Char Limit ------------------------------------- |
+#
