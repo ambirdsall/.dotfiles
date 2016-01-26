@@ -24,10 +24,11 @@ alias tt="tmux attach -t"
 alias tda="tmux detach -a"
 
 alias vi=vim
+alias ci=vim
 
 alias prc="vim ~/.pryrc"
 
-# alias zrc="vi ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
+alias zrc="vi ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
 alias rc="source ~/.zshrc"
 
 alias bundle="bundle _1.10.6_"
@@ -37,11 +38,14 @@ alias lkj="bundle exec rails console"
 alias kjh="bundle exec rails console --sandbox"
 
 alias g=git
+alias gg="git grep"
 alias p="git add -p"
 alias c="git commit"
 alias a="git commit --amend"
 alias arh="git commit --amend --reuse-message=HEAD"
 alias f="git fetch"
+alias gr="git rebase"
+alias gpr="git pull --rebase"
 alias s="git status -s"
 alias ss="git status"
 alias d="git diff"
