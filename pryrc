@@ -4,6 +4,11 @@ Pry.prompt = [
 ]
 Pry.config.hooks.add_hook(:after_session, :say_goodbye) { puts "Goodbye!" }
 
+def copy str
+  `echo #{str} | pbcopy`
+  puts "Copied '#{str}' to clipboard"
+end
+
 def bye
   exit
 end
@@ -17,4 +22,8 @@ def discreetly
 
     ActiveRecord::Base.logger.level = old_level
   end
+end
+
+def r!
+  reload!
 end
