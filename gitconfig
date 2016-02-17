@@ -4,6 +4,10 @@
 	co = checkout
 	br = branch
 	uncommit = reset --soft HEAD^
+	fm = merge --ff-only
+	ci = commit
+	st = status
+        upstream = rev-parse --abbrev-ref --symbolic-full-name @{upstream}
 [user]
 	name = ambirdsall
 	email = ambirdsall@gmail.com
