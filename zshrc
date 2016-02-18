@@ -1,8 +1,7 @@
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
-source ~/code/zsh_business/iterm_dirs.sh
-md5 ~/Dropbox/Apps/MobileOrg/* > ~/Dropbox/Apps/MobileOrg/checksums.dat
-maybe_brew_update
+
 rm ~/Desktop/Screen\ Shot*
+~/.dotfiles/bin/list_upgradable
 
 export HISTFILE='~/.zsh_history'
 
