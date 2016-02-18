@@ -76,7 +76,19 @@ alias bes="bundle exec rails server"
 alias lkj="bundle exec rails console"
 alias kjh="bundle exec rails console --sandbox"
 
-alias g=git
+# No arguments: `git status`
+# With arguments: acts like `git`
+g() {
+  if [[ $# > 0 ]]; then
+    git $@
+  else
+    git status
+  fi
+}
+
+# Complete g like git
+compdef g=git
+
 alias co="git co"
 com () {
   if [[ $(pwd) == ~/job/helloflock.github.io ]]; then
@@ -90,7 +102,14 @@ alias cod="git co development"
 alias s="git status -s"
 alias ss="git status"
 alias p="git add -p"
-alias c="git commit"
+c () {
+  if [[ $# > 0 ]]; then
+    git commit -m '$@'
+  else
+    git commit -v
+  fi
+}
+alias cm="git commit -m"
 alias a="git commit --amend"
 alias arh="git commit --amend --reuse-message=HEAD"
 alias f="git fetch"
