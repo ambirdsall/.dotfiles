@@ -3,3 +3,4 @@
 --type-set=slim:ext:slim
 --type-set=erb:ext:erb
 --ignore-dir=log
+--ignore-dir=tmp
