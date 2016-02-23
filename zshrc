@@ -1,6 +1,7 @@
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 
-rm ~/Desktop/Screen\ Shot*
+rm ~/Desktop/Screen\ Shot* &> /dev/null
+rm ~/Desktop/dd-* &> /dev/null
 ~/.dotfiles/bin/list_upgradable
 
 export HISTFILE='~/.zsh_history'
@@ -89,7 +90,6 @@ gc () {
     /usr/share/vim/vim73/macros/less.sh "$*"
 }
 
-eval "$(rbenv init - zsh --no-rehash)"
 # The following lines were added by compinstall
 
 zstyle ':completion:*' completer _expand _complete _ignored
@@ -98,3 +98,5 @@ zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

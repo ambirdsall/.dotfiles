@@ -99,11 +99,14 @@ com () {
 }
 alias cor="git co release"
 alias cod="git co development"
+d () {
+  git diff "$@" # | diff-so-fancy
+}
 alias s="git status -s"
 alias ss="git status"
 alias p="git add -p"
 c () {
-  if [[ $# > 0 ]]; then
+  if [[ $# -gt 0 ]]; then
     git commit -m '$@'
   else
     git commit -v
@@ -116,7 +119,6 @@ alias f="git fetch"
 alias gr="git rebase"
 alias gp="git pull"
 alias gpr="git pull --rebase"
-alias d="git diff"
 alias gb="git branch"
 alias gbl="git branch -l"
 alias l="git log --oneline --decorate"
