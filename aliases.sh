@@ -79,8 +79,8 @@ alias kjh="bundle exec rails console --sandbox"
 # No arguments: `git status`
 # With arguments: acts like `git`
 g() {
-  if [[ $# > 0 ]]; then
-    git $@
+  if [[ $# -gt 0 ]]; then
+    git "$@"
   else
     git status
   fi
@@ -90,6 +90,7 @@ g() {
 compdef g=git
 
 alias co="git co"
+alias co-="git co -"
 com () {
   if [[ $(pwd) == ~/job/helloflock.github.io ]]; then
     git co source
@@ -97,17 +98,27 @@ com () {
     git co master
   fi
 }
+# "checkout wildcard"
+# - Reads the name of the current wildcard branch from ./_wildcard
+# - If args given, set ./_wildcard first
+cow () {
+  if [[ $# -gt 0 ]]; then
+    echo "$@" > ./_wildcard
+  fi
+
+  git checkout "$(cat ./_wildcard )"
+}
 alias cor="git co release"
 alias cod="git co development"
+
 d () {
   git diff "$@" # | diff-so-fancy
 }
 alias s="git status -s"
-alias ss="git status"
 alias p="git add -p"
 c () {
   if [[ $# -gt 0 ]]; then
-    git commit -m '$@'
+    git commit -m "$@"
   else
     git commit -v
   fi
