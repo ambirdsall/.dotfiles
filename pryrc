@@ -13,6 +13,10 @@ def bye
   exit
 end
 
+def colors
+  String.colors.each { |color| puts "#{color}".colorize(color) }
+end
+
 def discreetly
   if defined?(Rails) && Rails.env
     old_level = ActiveRecord::Base.logger.level
