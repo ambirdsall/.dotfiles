@@ -1,0 +1,37 @@
+{
+	"segments": {
+		"right": [
+			{
+				"function": "powerline.segments.common.players.spotify",
+				"name": "player"
+			},
+			{
+				"function": "powerline.segments.common.wthr.weather",
+				"priority": 50,
+				"args": {
+					"unit": "F"
+				}
+			},
+			{
+				"function": "powerline.segments.common.time.date",
+				"args": {
+					"format": "%a %-m/%-d"
+				}
+			},
+			{
+				"function": "powerline.segments.common.time.date",
+				"name": "time",
+				"args": {
+					"format": " %-I:%M %p",
+					"istime": true
+				}
+			},
+			{
+				"function": "powerline.segments.common.net.hostname",
+				"args": {
+					"only_if_ssh": true
+				}
+			}
+		]
+	}
+}
