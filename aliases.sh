@@ -62,8 +62,14 @@ alias tt="tmux attach -t"
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
 
-alias vi=vim
-alias ci=vim
+vi () {
+  if [[ $# -gt 0 ]]; then
+    vim "$@"
+  else
+    vim .
+  fi
+}
+alias ci=vi
 
 alias prc="vim ~/.pryrc"
 
