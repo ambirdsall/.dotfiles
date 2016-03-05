@@ -118,8 +118,10 @@ alias cor="git co release"
 alias cod="git co development"
 
 d () {
-  git diff "$@" # | diff-so-fancy
+  # git diff --word-diff "$@"
+  git diff --color "$@" | diff-so-fancy
 }
+alias gdo="git diff $(git rev-parse --abbrev-ref HEAD 2> /dev/null)..origin/$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
 alias s="git status -s"
 alias p="git add -p"
 c () {
