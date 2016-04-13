@@ -98,7 +98,6 @@ alias prc="vim ~/.pryrc"
 alias zrc="vi ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
 alias rc="source ~/.zshrc"
 
-alias bundle="bundle _1.10.6_"
 bo () {
   vi $(bundle show "$1")
 }
