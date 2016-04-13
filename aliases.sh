@@ -24,6 +24,7 @@ abbreviations=(
 "pv"    "| vim"
 "pw"    "| wc"
 "px"    "| xargs"
+"vv"    "vim-"
 )
 
 magic-abbrev-expand() {
