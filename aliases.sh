@@ -77,6 +77,13 @@ alias tt="tmux attach -t"
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
 
+alias j=jobs
+
+# Typing the percent sign gets annoying fast when you run `kill` all the time with `%n`-style arguments on suspended `jobs`
+k () {
+  kill %"$1"
+}
+
 vi () {
   if [[ $# -gt 0 ]]; then
     vim "$@"
