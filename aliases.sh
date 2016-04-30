@@ -47,6 +47,9 @@ k () {
   kill %"$1"
 }
 
+#============================#
+# DIFF'RENT WAYS TO OPEN VIM #
+#============================#
 vi () {
   if [[ $# -gt 0 ]]; then
     vim "$@"
@@ -55,6 +58,23 @@ vi () {
   fi
 }
 alias ci=vi
+mvim () {
+  if [[ $# -gt 0 ]]; then
+    mvim "$@"
+  else
+    mvim .
+  fi
+}
+vm () { # open straight to the given model
+  vim +":Emodel $1"
+}
+vc () { # open straight to the given controller
+  vim +":Econtroller $1"
+}
+vv () { # open straight to the given view
+  vim +":Eview $1"
+}
+alias nvim="nvim -u ~/.vimrc"
 
 alias prc="vim ~/.pryrc"
 
