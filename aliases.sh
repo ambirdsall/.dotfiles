@@ -8,43 +8,6 @@ alias sdf="source ~/.aliases.sh"
 # THIS SHIT #
 #===========#
 
-# ABBRV
-# cf. http://zshwiki.org/home/examples/zleiab
-#######
-typeset -Ag abbreviations
-abbreviations=(
-"pm"    "| less" # yeah, this is misleading; but less > more and pl is taken
-"pa"    "| ack"
-"peg"   "| egrep"
-"pag"   "| agrep"
-"pgr"   "| groff -s -p -t -e -Tlatin1 -mandoc"
-"ph"    "| head"
-"pk"    "| keep"
-"pt"    "| tail -f"
-"pv"    "| vim"
-"pw"    "| wc"
-"px"    "| xargs"
-"vv"    "vim-"
-)
-
-magic-abbrev-expand() {
-  local MATCH
-  LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
-  LBUFFER+=${abbreviations[$MATCH]:-$MATCH}
-  zle self-insert
-}
-
-no-magic-abbrev-expand() {
-  LBUFFER+=' '
-}
-
-zle -N magic-abbrev-expand
-zle -N no-magic-abbrev-expand
-bindkey " " magic-abbrev-expand
-bindkey "^x " no-magic-abbrev-expand
-bindkey -M isearch " " self-insert
-#######
-
 alias wut="ping -c 5 -q 127.0.0.1 && echo '' && ping -c 100 -q www.google.com"
 alias phone="ssh -t root@192.168.0.101 'echo \"photos live at /private/var/mobile/Media/DCIM/\"; exec zsh;'"
 alias ftphone="sftp root@192.168.0.101"
@@ -186,3 +149,39 @@ alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
 
 alias cpu="top -o cpu"
+
+# ABBRV
+# cf. http://zshwiki.org/home/examples/zleiab
+#######
+typeset -Ag abbreviations
+abbreviations=(
+"pm"    "| less" # yeah, this is misleading; but less > more and pl is taken
+"pa"    "| ack"
+"peg"   "| egrep"
+"pag"   "| agrep"
+"pgr"   "| groff -s -p -t -e -Tlatin1 -mandoc"
+"ph"    "| head"
+"pk"    "| keep"
+"pt"    "| tail -f"
+"pv"    "| vim"
+"pw"    "| wc"
+"px"    "| xargs"
+)
+
+magic-abbrev-expand() {
+  local MATCH
+  LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
+  LBUFFER+=${abbreviations[$MATCH]:-$MATCH}
+  zle self-insert
+}
+
+no-magic-abbrev-expand() {
+  LBUFFER+=' '
+}
+
+zle -N magic-abbrev-expand
+zle -N no-magic-abbrev-expand
+bindkey " " magic-abbrev-expand
+bindkey "^x " no-magic-abbrev-expand
+bindkey -M isearch " " self-insert
+#######
