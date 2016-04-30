@@ -57,6 +57,18 @@ chflags nohidden ~/Library
 # Show the /Volumes folder
 sudo chflags nohidden /Volumes
 
+# Display full POSIX path as Finder window title
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+
+# Remove Dropbox's green checkmark icons in Finder
+# file=/Applications/Dropbox.app/Contents/Resources/check.icns
+
+# [ -e "$file" ] && mv -f "$file" "$file.bak"
+
+# unset file
+
+
 ###############################################################################
 # Dock, Dashboard, and hot corners                                            #
 ###############################################################################
