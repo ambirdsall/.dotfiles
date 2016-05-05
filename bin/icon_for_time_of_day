@@ -4,7 +4,9 @@ begin
   require 'tod'
   require 'tod/core_extensions'
 rescue LoadError
-  puts 'run \`gem install tod\` to get prompt icons by time of day' and exit 1
+  `gem install tod`
+  require 'tod'
+  require 'tod/core_extensions'
 end
 
 morning = Tod::Shift.new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
