@@ -39,8 +39,8 @@ current_commit() {
 # totally sweet prompt
 GIT_PROMPT_EXECUTABLE="haskell"
 source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
-export PS1='%F{cyan}%~%b%f$(git_super_status) %F{yellow}$(current_commit) %F{cyan}
-%#%f '
+PS1='%F{cyan}%~%b%f $(git_super_status) %F{136}$(current_commit)
+%F{088}%f☕️  '
 
 # add homecooked stuff to $PATH
 export PATH=$PATH:~/bin:~/.bin
