@@ -40,7 +40,7 @@ current_commit() {
 GIT_PROMPT_EXECUTABLE="haskell"
 source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
 PS1='%F{cyan}%~%b%f $(git_super_status) %F{136}$(current_commit)
-%F{088}%f☕️  '
+%F{088}%f$(~/.dotfiles/bin/icon_for_time_of_day)  '
 
 # add homecooked stuff to $PATH
 export PATH=$PATH:~/bin:~/.bin

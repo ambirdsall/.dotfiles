@@ -1,0 +1,27 @@
+#! /usr/bin/env ruby
+
+begin
+  require 'tod'
+  require 'tod/core_extensions'
+rescue LoadError
+  puts 'run \`gem install tod\` to get prompt icons by time of day' and exit 1
+end
+
+morning = Tod::Shift.new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
+afternoon = Tod::Shift.new(Tod::TimeOfDay.new(13), Tod::TimeOfDay.new(18, 30), true)
+evening = Tod::Shift.new(Tod::TimeOfDay.new(18, 30), Tod::TimeOfDay.new(23, 45), true)
+night = Tod::Shift.new(Tod::TimeOfDay.new(23, 45), Tod::TimeOfDay.new(6), true)
+
+now = Time.now.to_time_of_day
+
+icon = if morning.include?(now)
+         '☕️'
+       elsif afternoon.include?(now)
+         '🐙'
+       elsif evening.include?(now)
+         '🍺'
+       elsif night.include?(now)
+         '🌒'
+       end
+
+print icon
