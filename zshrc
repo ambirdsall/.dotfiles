@@ -2,6 +2,7 @@ fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 
 rm ~/Desktop/Screen\ Shot* 2> /dev/null
 rm ~/Desktop/dd-* 2> /dev/null
+~/.dotfiles/bin/maybe_brew_update
 ~/.dotfiles/bin/list_upgradable
 
 export HISTFILE='~/.zsh_history'

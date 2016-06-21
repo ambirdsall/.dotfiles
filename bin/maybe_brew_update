@@ -1,0 +1,3 @@
+#! /usr/bin/env ruby
+
+`brew update` if rand(10) == 9
