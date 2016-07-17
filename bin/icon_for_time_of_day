@@ -19,7 +19,7 @@ now = Time.now.to_time_of_day
 icon = if morning.include?(now)
          '☕️'
        elsif afternoon.include?(now)
-         '🐙'
+         %w(🙈 🙉 🙊).sample
        elsif evening.include?(now)
          '🍺'
        elsif night.include?(now)

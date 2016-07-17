@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
 
-puts "Packages with updates available:\n"
-puts `brew outdated`
+upgradables = `brew outdated`
+unless upgradables.empty?
+  puts "Packages with upgrades available:\n"
+  puts upgradables
+end
