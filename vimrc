@@ -97,6 +97,7 @@ let g:titlecase_map_keys = 0
 """"""""""""""""""""""""""""""""""""""""""" MAKE VIM PRETTY AND FORMATTED NICE "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+set shell=zsh
 syntax enable
 set background=dark
 colorscheme solarized
@@ -110,8 +111,9 @@ set laststatus=2 " always display status line, even in single buffer
 set noswapfile " that's git's job
 set lazyredraw " don't redraw during macros "
 set showcmd
-" don't treat 0-padded numbers as octal. 008 comes after 007, not 010.
-set nrformats=
+set wildmenu
+" 008 comes after 007, not 010.
+set nrformats-=octal
 set incsearch
 set hlsearch
 " it is okay to change files without saving every damn thing
@@ -129,9 +131,8 @@ set backspace=indent,eol,start
 set softtabstop=2 shiftwidth=2 shiftround expandtab
 " 450ms is enough to finish typing combos even on a bad day, but not toooo long.
 set timeoutlen=450
-" split panes spawn to the right and bottom, b/c Principle of Least Surprise.
+" split panes spawn below the current pane, b/c Principle of Least Surprise.
 set splitbelow
-set splitright
 set nowrap " <leader>r toggles wrap for when it's needed
 set diffopt+=vertical " always compare diffs with vertical splits.
 " Speed up viewport scrolling {{{
@@ -163,6 +164,8 @@ if has("autocmd")
   " cron jobs, tho
   autocmd filetype crontab setlocal nobackup nowritebackup
 
+  autocmd filetype gitcommit setlocal textwidth=72
+
   " nice line formatting for free in markdown
   autocmd bufreadpre *.md setlocal textwidth=80
   autocmd bufreadpre *.markdown setlocal textwidth=80
@@ -172,6 +175,9 @@ if has("autocmd")
     au!
     au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
   augroup END
+
+  autocmd BufReadPre,BufNewFile */flock-landing/* set sua+=.html.slim
+  autocmd BufReadPre,BufNewFile */flock-landing/* set inex=substitute(v:fname,'partials/','partials/_','')
 
   " automatically save files on focus lost. Theoretically.
   au FocusLost * silent! wa
@@ -218,12 +224,6 @@ noremap <up> <c-y>
 noremap <down> <c-e>
 nnoremap <left> zh
 nnoremap <right> zl
-" because life is too short to hit shift that often.
-nnoremap ; :
-nnoremap : ;
-" wizard party!!!!! very magic by default
-" :nnoremap / /\v
-" :cnoremap %s/ %s/\v
 if has('nvim')
   nmap <bs> :<c-u>TmuxNavigateLeft<cr>
 endif
@@ -251,8 +251,8 @@ inoremap <c-h> <left>
 inoremap <c-j> <down>
 inoremap <c-k> <up>
 inoremap <c-l> <right>
-" typing `//` in visual mode searches for the selection
-vnoremap // y/<C-R>"<CR>
+" typing `*` in visual mode searches for the selection
+vnoremap * y/<C-R>"<CR>
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! w !sudo tee > /dev/null %
 
@@ -279,12 +279,13 @@ nnoremap <leader><leader><leader> <c-^>
 nnoremap <leader>O O<esc>
 nnoremap <leader>P "*P
 nnoremap <leader>b :buffer
-nnoremap <leader>ev :tabe ~/.vim/vimrc<cr>
+nnoremap <leader>ev :tabe $MYVIMRC<cr>
 nnoremap <leader>f ^
 nnoremap <leader>gf <c-w>f<bar><c-w>L
+nnoremap <leader>gq gq}
 nnoremap <leader>h :noh<cr>
 " quickly jump to inside an empty matched pair (e.g. '()', '""')
-nnoremap <leader>in ?\%<c-r>=line('.')<Return>l\({}\\|\[]\\|<>\\|><\\|()\\|""\\|''\\|><lt>\)?s+1<Return>
+nnoremap <leader>in ?\%<c-r>=line('.')<Return>l\({}\\|\[]\\|<>\\|><\\|()\\|""\\|''\\|``\\|><lt>\)?s+1<Return>
 nnoremap <leader>ind gq}
 nnoremap <leader>o o<esc>
 nnoremap <leader>p "*p
