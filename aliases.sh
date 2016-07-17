@@ -19,6 +19,7 @@ alias logoscroll="../../../bin/build_logo_scroll"
 alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
 alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
+alias ghidk="echo -n '¯\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\_(ツ)\_/¯\" to clipboard'"
 
 alias ls="ls -GF"
 alias la="ls -A"
@@ -46,6 +47,7 @@ alias j=jobs
 k () {
   kill %"$1"
 }
+eval "$(ruby -e '9.times {|i| puts %Q{alias k#{i+1}=k\\ #{i+1}}}')"
 
 #============================#
 # DIFF'RENT WAYS TO OPEN VIM #
@@ -149,11 +151,13 @@ alias a="git commit --amend"
 alias arh="git commit --amend --reuse-message=HEAD"
 alias f="git fetch"
 alias gr="git rebase"
+alias gri="g ri" # home-cooked git-ri, which simplifies syntax of `git rebase -i`
 alias gp="git pull --ff-only"
 alias gpr="git pull --rebase"
 alias gb="git branch"
 alias gbl="git branch -l"
 alias l="git log --oneline --decorate"
+eval "$(ruby -e '9.times {|i| puts %Q{alias l#{i+1}=l\\ -#{i+1}}}')"
 alias lg="git log --oneline --decorate --graph --all"
 alias rl="git reflog"
 # unique () {
