@@ -44,14 +44,16 @@ Plugin 'jtratner/vim-flavored-markdown'
 Plugin 'chrisbra/Colorizer'
 Plugin 'pangloss/vim-javascript'
 Plugin 'briancollins/vim-jst'
+Plugin 'lambdatoast/elm.vim'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" NAVIGATION "
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'easymotion/vim-easymotion'
+Plugin 'tpope/vim-rake'
 Plugin 'tpope/vim-bundler'
 Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-rake'
+Plugin 'tpope/vim-unimpaired'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" TYPING AIDS "
 Plugin 'Townk/vim-autoclose'
