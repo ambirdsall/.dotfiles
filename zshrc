@@ -1,3 +1,6 @@
+# Aliases are loaded in ~/.zshenv so they're available in non-interactive shell
+# sessions (i.e. vim)
+
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 
 rm ~/Desktop/Screen\ Shot* 2> /dev/null
@@ -7,9 +10,7 @@ rm ~/Desktop/dd-* 2> /dev/null
 
 export HISTFILE='~/.zsh_history'
 
-#=====================#
-# VIMIFY THE TERMINAL #
-#=====================#
+# VIMIFY THE TERMINAL {{{
 
 export EDITOR=vim
 
@@ -26,7 +27,7 @@ function zle-line-init zle-keymap-select {
 
 zle -N zle-line-init
 zle -N zle-keymap-select
-
+# }}}
 # allow mv actions on multiple files, see:
 autoload -U zmv
 #=====================#
@@ -55,50 +56,15 @@ source /usr/local/share/zsh/site-functions/_aws
 # irc settings
 export IRCSERVER="irc.freenode.net"
 
-#==============================#
-# HERE THERE BE CUSTOM ALIASES #
-#==============================#
-source ~/.aliases.sh
+# # The following lines were added by compinstall
 
-ljd () {
-  ls -lG $1 | ack '^d' | awk '{print $9}'
-}
+# zstyle ':completion:*' completer _expand _complete _ignored
+# zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
 
-rlog () {
-  tail -f $1 | ack -i 'error' --passthru
-}
+# autoload -Uz compinit
+# compinit
+# # End of lines added by compinstall
 
-mcd () {
-	mkdir -p $1
-	cd $1
-}
+export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
 
-cdd () {
-	cd $1
-	ls
-}
-
-gc () {
-       repo=$1
-       repo_dir_with_trailing_git=${repo##*/}
-       repo_dir=${repo_dir_with_trailing_git%.git}
-       git clone $repo
-       cd $repo_dir
-}
-
-# syntax highlighting pager
-# # use instead of less
-= () {
-    /usr/share/vim/vim73/macros/less.sh "$*"
-}
-
-# The following lines were added by compinstall
-
-zstyle ':completion:*' completer _expand _complete _ignored
-zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
-
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+# vim:foldmethod=marker:foldlevel=0
