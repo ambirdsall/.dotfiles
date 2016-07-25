@@ -119,7 +119,11 @@ set hlsearch
 " it is okay to change files without saving every damn thing
 set hidden
 set encoding=utf-8
-highlight ColorColumn ctermbg=0
+highlight ColorColumn ctermbg=236
+highlight CursorLine ctermbg=236
+highlight CursorColumn ctermbg=236
+highlight SignColumn ctermbg=236 " the gutter behind the numbers; where gitgutter signs are missing
+highlight LineNr ctermbg=236 " the line numbers themselves
 highlight Folded ctermbg=NONE
 " just because you shouldn't use the mouse doesn't mean you shouldn't be able to
 set mouse=a
