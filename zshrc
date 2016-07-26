@@ -67,4 +67,6 @@ export IRCSERVER="irc.freenode.net"
 
 export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
 
-# vim:foldmethod=marker:foldlevel=0
+eval "$(rbenv init -)
+
+"# vim:foldmethod=marker:foldlevel=0
