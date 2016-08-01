@@ -1,26 +1,14 @@
-#===============#
-# RUN THIS SHIT #
-#===============#
+# {{{ Current projects
+alias cdl='cd ~/code/freelance/lawfetcher'
+# }}}
+# {{{ Edit/source development config files
+alias prc="vim ~/.pryrc"
 alias ea="vim ~/.aliases.sh"
 alias sdf="source ~/.aliases.sh"
-
-#===========#
-# THIS SHIT #
-#===========#
-
-alias wut="ping -c 5 -q 127.0.0.1 && echo '' && ping -c 100 -q www.google.com"
-alias phone="ssh -t root@192.168.0.101 'echo \"photos live at /private/var/mobile/Media/DCIM/\"; exec zsh;'"
-alias ftphone="sftp root@192.168.0.101"
-
-alias logoscroll="../../../bin/build_logo_scroll"
-
-# shell script to boot up Emacs.app with given arguments
-# alias emacs='~/code/clinteresting/emacs'
-alias tetris='emacs -q --no-splash -f tetris'
-alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
-alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
-alias ghidk="echo -n '¯\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\_(ツ)\_/¯\" to clipboard'"
-
+alias zrc="vim ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
+alias rc="source ~/.zshrc"
+# }}}
+# {{{ `ls`, `cd`, and fam
 alias ls="ls -GF"
 alias la="ls -A"
 alias ll="ls -lrSGA"
@@ -34,24 +22,25 @@ alias .....="cdd ../../../.."
 alias mmv='noglob zmv -W'
 alias mkdir="mkdir -pv"
 alias fuck="rm -rf"
-
+# }}}
+# {{{ Tmux
 alias t=tmux
 alias tt="tmux attach -t"
 # When the tmux session shrinks some and fills the margin with periods, it
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
-
+alias tls="tmux list-sessions"
+# }}}
+# {{{ Background jobs & processes
 alias j=jobs
-
 # Typing the percent sign gets annoying fast when you run `kill` all the time with `%n`-style arguments on suspended `jobs`
 k () {
   kill %"$1"
 }
-eval "$(ruby -e '9.times {|i| puts %Q{alias k#{i+1}=k\\ #{i+1}}}')"
-
-#============================#
-# DIFF'RENT WAYS TO OPEN VIM #
-#============================#
+eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
+alias cpu="top -o cpu"
+# }}}
+# {{{ Vim and fam
 vi () {
   if [[ $# -gt 0 ]]; then
     vim "$@"
@@ -67,30 +56,12 @@ mvim () {
     mvim .
   fi
 }
-vm () { # open straight to the given model
-  vim +":Emodel $1"
-}
-vc () { # open straight to the given controller
-  vim +":Econtroller $1"
-}
-vv () { # open straight to the given view
-  vim +":Eview $1"
-}
 alias nvim="nvim -u ~/.vimrc"
-
-alias prc="vim ~/.pryrc"
-
-alias zrc="vi ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
-alias rc="source ~/.zshrc"
-
 bo () {
   vi $(bundle show "$1")
 }
-alias be="bundle exec"
-alias bes="bundle exec rails server"
-alias lkj="bundle exec rails console"
-alias kjh="bundle exec rails console --sandbox"
-
+# }}}
+# {{{ Git
 # No arguments: `git status`
 # With arguments: acts like `git`
 g() {
@@ -123,8 +94,6 @@ cow () {
 
   git checkout "$(cat ./_wildcard )"
 }
-alias cdl='cd ~/code/freelance/lawfetcher'
-
 d () {
   # git diff --word-diff "$@"
   git diff --color "$@" | diff-so-fancy #| less -RFK
@@ -154,28 +123,40 @@ alias gpr="git pull --rebase"
 alias gb="git branch"
 alias gbl="git branch -l"
 alias l="git log --oneline --decorate"
-eval "$(ruby -e '9.times {|i| puts %Q{alias l#{i+1}=l\\ -#{i+1}}}')"
+eval "$(ruby -e '9.times do |i| puts %Q{alias l#{i+1}=l\\ -#{i+1}} end')"
 alias lg="git log --oneline --decorate --graph --all"
 alias rl="git reflog"
 # unique () {
 #   perl -ne '$H{$_}++ or print'
 # }
-lately () {
-  # lists unique git refs you have checked out, in order of how recently you checked them out
-  git reflog | ack --nocolor checkout: | awk '{print $6}' | unique | more
-}
+# lately () {
+#   # lists unique git refs you have checked out, in order of how recently you checked them out
+#   git reflog | ack --nocolor checkout: | awk '{print $6}' | unique | more
+# }
 alias gg="git grep"
 alias b="git blame"
 alias stash="git stash -u"
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push -f origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
-
-alias cpu="top -o cpu"
-
-# ABBRV
+# }}}
+# {{{ Rails shortcuts
+vm () { # open straight to the given model
+  vim +":Emodel $1"
+}
+vc () { # open straight to the given controller
+  vim +":Econtroller $1"
+}
+vv () { # open straight to the given view
+  vim +":Eview $1"
+}
+alias be="bundle exec"
+alias bes="bundle exec rails server"
+alias lkj="bundle exec rails console"
+alias kjh="bundle exec rails console --sandbox"
+# }}}
+# {{{ Self-expanding shell abbreviations
 # cf. http://zshwiki.org/home/examples/zleiab
-#######
 typeset -Ag abbreviations
 abbreviations=(
 "pm"    "| less" # yeah, this is misleading; but less > more and pl is taken
@@ -207,4 +188,15 @@ zle -N no-magic-abbrev-expand
 bindkey " " magic-abbrev-expand
 bindkey "^x " no-magic-abbrev-expand
 bindkey -M isearch " " self-insert
-#######
+# }}}
+# {{{ Shruggies
+alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
+# Backslashes and underscores must be escaped or GitHub will parse as markdown
+alias ghidk="echo -n '¯\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\_(ツ)\_/¯\" to clipboard'"
+# }}}
+# {{{ Games and tomfoolery
+alias tetris='emacs -q --no-splash -f tetris'
+alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
+# }}}
+
+# vim:foldmethod=marker:foldlevel=0
