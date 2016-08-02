@@ -189,6 +189,8 @@ if has("autocmd")
     au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
   augroup END
 
+  " Middleman navigation with slim templating. Useful settings for reference,
+  " though the selector is obsolete since I'm not at Flock anymore.
   autocmd BufReadPre,BufNewFile */flock-landing/* set sua+=.html.slim
   autocmd BufReadPre,BufNewFile */flock-landing/* set inex=substitute(v:fname,'partials/','partials/_','')
 
