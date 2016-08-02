@@ -1,5 +1,6 @@
 set nocompatible
 runtime macros/matchit.vim
+let mapleader=" "
 
 " {{{ Plugins
 " {{{ Vundle set up
@@ -289,7 +290,6 @@ vnoremap * y/<C-R>"<CR>
 cmap w!! w !sudo tee > /dev/null %
 " }}}
 " {{{ <leader> mappings
-let mapleader=" "
 " {{{ Raw dang vim
 nnoremap <leader><leader><leader> <c-^>
 nnoremap <leader>O O<esc>
