@@ -271,17 +271,6 @@ inoremap jj <c-o>o
 " ...or below the current one in insert mode.
 inoremap uu <c-o>O
 " }}}
-" {{{ Insert Mode navigation shortcuts
-" quickly jump to end of current line in insert mode.
-inoremap kk <Esc>A
-"   or beginning
-inoremap hh <Esc>I
-" move around without arrow keys in insert mode.
-inoremap <c-h> <left>
-inoremap <c-j> <down>
-inoremap <c-k> <up>
-inoremap <c-l> <right>
-" }}}
 " }}}
 " {{{ Visual mode
 " typing `*` in visual mode searches for the selection
