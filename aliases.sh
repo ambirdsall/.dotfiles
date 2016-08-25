@@ -167,13 +167,14 @@ alias kjh="bundle exec rails console --sandbox"
 # cf. http://zshwiki.org/home/examples/zleiab
 typeset -Ag abbreviations
 abbreviations=(
-"pm"    "| less" # yeah, this is misleading; but less > more and pl is taken
 "pa"    "| ack"
-"peg"   "| egrep"
 "pag"   "| agrep"
+"pb"    "| bc"
+"peg"   "| egrep"
 "pgr"   "| groff -s -p -t -e -Tlatin1 -mandoc"
 "ph"    "| head"
 "pk"    "| keep"
+"pm"    "| less" # yeah, this is misleading; but less > more and pl is taken
 "pt"    "| tail -f"
 "pv"    "| vim"
 "pw"    "| wc"
