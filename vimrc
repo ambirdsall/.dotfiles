@@ -116,38 +116,9 @@ if has('nvim')
 endif
 "}}}
 " }}}
-" {{{ Visual settings: highlighting, linenumbers, indents, splits
-syntax enable
-set background=dark
-colorscheme solarized
-filetype indent plugin on
-" hybrid linenumbers
-set number
-set relativenumber
-set numberwidth=5 " gutter column bigger for readability
-set ruler " redundant with powerline installed; left in b/c Wu-Tang is for the
-set laststatus=2 " always display status line, even in single buffer
-set lazyredraw " don't redraw during macros "
-set showcmd
-set wildmenu
-" 008 comes after 007, not 010.
-set nrformats-=octal
-highlight ColorColumn ctermbg=236
-highlight CursorLine ctermbg=236
-highlight CursorColumn ctermbg=236
-highlight SignColumn ctermbg=236 " the gutter behind the numbers; where gitgutter signs are missing
-highlight LineNr ctermbg=236 " the line numbers themselves
-highlight Folded ctermbg=NONE
-" 2-space indents; <</>> shifting goes to nearest multiple of 2, even from odds.
-set softtabstop=2 shiftwidth=2 shiftround expandtab
-" split panes spawn below the current pane, b/c Principle of Least Surprise.
-set splitbelow
-set nowrap " <leader>r toggles wrap for when it's needed
-set diffopt+=vertical " always compare diffs with vertical splits.
-" powerline is the best line I know.
-python from powerline.vim import setup as powerline_setup
-python powerline_setup()
-python del powerline_setup
+" {{{ Folding
+set foldopen=
+set foldclose=
 " }}}
 " {{{ Shell and file settings
 set shell=zsh
@@ -170,6 +141,10 @@ set incsearch
 set hlsearch
 " <leader>h to clear highlighting when it gets annoying
 nnoremap <leader>h :noh<cr>
+" }}}
+" {{{ Navigation
+" `gf` should work with js require/import directives
+set suffixesadd+=.js,.ts
 " }}}
 " {{{ The Land Of Autocommand
 if has("autocmd")
@@ -232,6 +207,10 @@ function! g:ToggleColorColumn()
   endif
 endfunction
 
+" function! g:TagJavascript()
+"   execute '! find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \; | sed "/^$/d" | sort > tags'
+" endfunction
+
 " insert evaluated code output into buffer
 " http://blog.joncairns.com/2014/10/evaluate-ruby-or-any-command-and-insert-into-vim-buffers/
 function! InsertCommand(command)
@@ -249,7 +228,7 @@ let g:html_indent_tags = 'li\|p'
 let g:netrw_banner=0
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 " }}}
-" {{{ Mappings
+" {{{ Vanilla mappings
 " {{{ Scrolling
 " scroll browser-style
 noremap <up> <c-y>
@@ -291,32 +270,44 @@ vnoremap * y/<C-R>"<CR>
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! w !sudo tee > /dev/null %
 " }}}
+" }}}
 " {{{ <leader> mappings
-" {{{ Raw dang vim
+" {{{ Moving around
 nnoremap <leader><leader><leader> <c-^>
-nnoremap <leader>O O<esc>
-nnoremap <leader>P "*P
+nnoremap <leader>f ^
 nnoremap <leader>b :buffer
 nnoremap <leader>ev :tabe $MYVIMRC<cr>
-nnoremap <leader>f ^
 nnoremap <leader>gf <c-w>f<bar><c-w>L
-nnoremap <leader>gq gq}
 " quickly jump to inside an empty matched pair (e.g. '()', '""')
 nnoremap <leader>in ?\%<c-r>=line('.')<Return>l\({}\\|\[]\\|<>\\|><\\|()\\|""\\|''\\|``\\|><lt>\)?s+1<Return>
+" }}}
+" {{{ Inserting stuff
+nnoremap <leader>O O<esc>
 nnoremap <leader>o o<esc>
+nnoremap <leader>P "*P
 nnoremap <leader>p "*p
+" }}}
+" {{{ Formatting
+nnoremap <leader>gq gq}
+nnoremap <leader>lint :!node_modules/.bin/eslint -c .eslintrc.js %<cr>
 nnoremap <leader>r :set wrap!<cr>
 nnoremap <leader>tts :%s/\t/  /g<cr>
 nnoremap <leader>w :w<cr>
 " }}}
+" {{{ Folding
+" toggle fold under cursor
+nnoremap <leader>z za
+" }}}
 " {{{ Function calls
 nnoremap <silent> <leader>cc :call g:ToggleColorColumn()<CR>
 " }}}
-" {{{ Plugins and whatnot
+" {{{ Plugins
+" {{{ ReplaceWithRegister
+nnoremap <leader>gr "*gr
+" }}}
 " {{{ Vim-fugitive
 nnoremap <leader>s :Gstatus<cr>
 nnoremap <leader>bl :Gblame<cr>
-nnoremap <leader>ci :Gcommit
 nnoremap <leader>di :Gdiff
 " }}}
 " {{{ Vim-rspec
@@ -332,6 +323,9 @@ nnoremap <leader>ack :Ack!
 " Don't automatically jump to the first match.
 cnoreabbrev Ack Ack!
 " }}}
+" {{{ AutoClose
+nnoremap <leader>ct :AutoCloseToggle<cr>
+" }}}
 " {{{ Vim-commentary
 nmap <leader>c gcc
 " }}}
@@ -346,6 +340,38 @@ nmap <leader>a <Plug>(easymotion-s2)
 " }}}
 " }}}
 " }}}
+" {{{ Visual settings: highlighting, linenumbers, indents, splits
+syntax enable
+set background=dark
+colorscheme solarized
+filetype indent plugin on
+" hybrid linenumbers
+set number
+set relativenumber
+set numberwidth=5 " gutter column bigger for readability
+set ruler " redundant with powerline installed; left in b/c Wu-Tang is for the
+set laststatus=2 " always display status line, even in single buffer
+set lazyredraw " don't redraw during macros "
+set showcmd
+set wildmenu
+" 008 comes after 007, not 010.
+set nrformats-=octal
+highlight ColorColumn ctermbg=236
+highlight CursorLine ctermbg=236
+highlight CursorColumn ctermbg=236
+highlight SignColumn ctermbg=236 " the gutter behind the numbers; where gitgutter signs are missing
+highlight LineNr ctermbg=236 " the line numbers themselves
+highlight Folded ctermbg=NONE
+" 2-space indents; <</>> shifting goes to nearest multiple of 2, even from odds.
+set softtabstop=2 shiftwidth=2 shiftround expandtab
+" split panes spawn below the current pane, b/c Principle of Least Surprise.
+set splitbelow
+set nowrap " <leader>r toggles wrap for when it's needed
+set diffopt+=vertical " always compare diffs with vertical splits.
+" powerline is the best line I know.
+python from powerline.vim import setup as powerline_setup
+python powerline_setup()
+python del powerline_setup
 " }}}
 
 " vim:foldmethod=marker:foldlevel=0
