@@ -17,6 +17,7 @@ alias zrc="vim ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
 alias rc="source ~/.zshrc"
 # }}}
 # {{{ `ls`, `cd`, and fam
+alias e=echo
 alias ls="ls -GF"
 alias la="ls -A"
 alias ll="ls -lrSGA"
