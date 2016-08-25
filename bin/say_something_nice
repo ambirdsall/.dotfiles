@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+something_nice = [
+  'Have a lovely day!',
+  "Don't wait for an idea to come to you: damn well sit down and decide to have an idea",
+  'Try to enjoy this'
+].sample
+
+puts "\n#{something_nice}\n\n"

@@ -1,15 +1,20 @@
 # Aliases are loaded in ~/.zshenv so they're available in non-interactive shell
 # sessions (i.e. vim)
 
+# {{{ zsh setup
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
-
-rm ~/Desktop/Screen\ Shot* 2> /dev/null
-rm ~/Desktop/dd-* 2> /dev/null
-~/.dotfiles/bin/maybe_brew_update
-~/.dotfiles/bin/list_upgradable
-
 export HISTFILE='~/.zsh_history'
-
+# allow mv actions on multiple files, see:
+autoload -U zmv
+# }}}
+# {{{ Side effects on opening a terminal
+rm ~/Desktop/Screen\ Shot* > /dev/null 2>&1
+rm ~/Desktop/dd-* > /dev/null 2>&1
+~/.dotfiles/bin/say_something_nice
+# brew update in the background, suppressing output
+brew update 2>&1 > /dev/null &
+~/.dotfiles/bin/list_upgradable
+# }}}
 # VIMIFY THE TERMINAL {{{
 
 export EDITOR=vim
@@ -28,12 +33,7 @@ function zle-line-init zle-keymap-select {
 zle -N zle-line-init
 zle -N zle-keymap-select
 # }}}
-# allow mv actions on multiple files, see:
-autoload -U zmv
-#=====================#
-#       GIT LIT	      #
-#=====================#
-
+# {{{ Git prompt
 current_commit() {
     git rev-parse --short HEAD 2> /dev/null
 }

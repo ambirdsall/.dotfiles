@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
 upgradables = `brew outdated`
-unless upgradables.empty?
+if upgradables.empty?
+  puts "Homebrew packages are all up to date"
+else
   puts "Packages with upgrades available:\n"
   puts upgradables
 end
