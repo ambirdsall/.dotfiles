@@ -145,7 +145,7 @@ alias gg="git grep"
 alias b="git blame"
 alias stash="git stash -u"
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
-alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push -f origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
+alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push --force-with-lease origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
 # }}}
 # {{{ Rails shortcuts
