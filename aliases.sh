@@ -108,11 +108,7 @@ cow () {
 }
 d () {
   # git diff --word-diff "$@"
-  git diff --color "$@" | diff-so-fancy #| less -RFK
-}
-dl () {
-  # git diff --word-diff "$@"
-  git diff --color "$@" | diff-so-fancy | less
+  git diff --color "$@" | diff-so-fancy | less -RFKX
 }
 alias gdc="d --cached"
 alias gdo="git diff \$(git rev-parse --abbrev-ref HEAD 2> /dev/null)..origin/\$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
