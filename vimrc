@@ -48,12 +48,19 @@ Plugin 'vim-ruby/vim-ruby'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'mustache/vim-mustache-handlebars'
 Plugin 'slim-template/vim-slim'
+Plugin 'digitaltoad/vim-jade'
 Plugin 'tpope/vim-markdown'
 Plugin 'jtratner/vim-flavored-markdown'
 Plugin 'chrisbra/Colorizer'
-Plugin 'pangloss/vim-javascript'
+Plugin 'othree/yajs.vim'
+Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'briancollins/vim-jst'
+Plugin 'HerringtonDarkholme/yats.vim'
 Plugin 'lambdatoast/elm.vim'
+" }}}
+" {{{ Other Language Support
+" Plugin 'ternjs/tern_for_vim'
+Plugin 'ramitos/jsctags'
 " }}}
 " {{{ Typing aids
 Plugin 'Townk/vim-autoclose'
@@ -84,11 +91,15 @@ let g:ack_autofold_results = 1
 " {{{ Colorizer
 let g:colorizer_auto_filetype='css,scss,sass,html'
 " }}}
+" {{{ Ctrl-p
+let g:ctrlp_custom_ignore = 'node_modules'
+" }}}
 " {{{ Solarized
 let g:solarized_termtrans = 1
 " }}}
 " {{{ Syntastic
 let g:syntastic_check_on_open=0
+" let g:syntastic_javascript_checkers = ['~/job/rio/node_modules/.bin/eslint']
 let g:syntastic_mode_map = { "mode": "active", "active_filetypes": ["ruby"],
                                             \ "passive_filetypes": ["javascript"] }
 " }}}
