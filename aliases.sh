@@ -148,6 +148,9 @@ alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push --force-with-lease origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
 # }}}
+# {{{ tags
+alias tag_js='find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \; | sed "/^$/d" | sort > tags'
+# }}}
 # {{{ Rails shortcuts
 vm () { # open straight to the given model
   vim +":Emodel $1"
@@ -203,9 +206,10 @@ alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to
 # Backslashes and underscores must be escaped or GitHub will parse as markdown
 alias ghidk="echo -n '¯\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\_(ツ)\_/¯\" to clipboard'"
 # }}}
-# {{{ Games and tomfoolery
+# {{{ Entertainment
 alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
+alias vlc=/Applications/VLC.app/Contents/MacOS/VLC
 # }}}
 
 # vim:foldmethod=marker:foldlevel=0
