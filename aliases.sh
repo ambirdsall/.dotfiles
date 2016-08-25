@@ -1,5 +1,13 @@
 # {{{ Current projects
-alias cdl='cd ~/code/freelance/lawfetcher'
+cdc() {
+  if [[ $# -gt 0 ]]; then
+    cd ~/code/${@}
+  else
+    cd ~/code
+  fi
+}
+alias cdl='cd ~/job/freelance/lawfetcher'
+alias cdr='cd ~/job/rio'
 # }}}
 # {{{ Edit/source development config files
 alias prc="vim ~/.pryrc"
