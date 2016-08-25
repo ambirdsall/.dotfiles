@@ -71,17 +71,20 @@ bo () {
 }
 # }}}
 # {{{ Git
+# alias hub as git
+eval "$(hub alias -s)"
+
 # No arguments: `git status`
 # With arguments: acts like `git`
 g() {
   if [[ $# -gt 0 ]]; then
-    git "$@"
+    hub "$@"
   else
     git status
   fi
 }
 
-# Complete g like git
+# Complete g like git. Maybe should be `g=hub`?
 compdef g=git
 
 alias co="git co"
