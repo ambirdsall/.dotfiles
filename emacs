@@ -81,8 +81,6 @@ files are placed.
 (evil-set-initial-state 'tetris-mode 'emacs)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;             MAPPINGS             ;
-(define-key evil-motion-state-map ";" 'evil-ex)
-(define-key evil-motion-state-map ":" 'evil-repeat-find-char)
 
 (defun evil-normal-state-and-forward-char (interactive)
   ((evil-normal-state)
