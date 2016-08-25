@@ -43,30 +43,24 @@ GIT_PROMPT_EXECUTABLE="haskell"
 source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
 PS1='%F{cyan}%~%b%f $(git_super_status) %F{136}$(current_commit)
 %F{088}%f$(~/.dotfiles/bin/icon_for_time_of_day)  '
-
-# add homecooked stuff to $PATH
-export PATH=$PATH:~/bin:~/.bin
-
-# alias hub as git
-eval "$(hub alias -s)"
-
-# aws completion
+# }}}
+# {{{ $PATH
+# add homecooked stuff
+export PATH=~/bin:~/.bin:$PATH
+# hi npm
+export PATH=$PATH:./node_modules/.bin
+# }}}
+# {{{ Completion
+# aws
 source /usr/local/share/zsh/site-functions/_aws
-
-# irc settings
+# npm
+source ~/.dotfiles/npm_completion.sh
+# }}}
+# {{{ irc
 export IRCSERVER="irc.freenode.net"
+# }}}
+# {{{ Rubies
+eval "$(rbenv init -)"
+# }}}
 
-# # The following lines were added by compinstall
-
-# zstyle ':completion:*' completer _expand _complete _ignored
-# zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
-
-# autoload -Uz compinit
-# compinit
-# # End of lines added by compinstall
-
-export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
-
-eval "$(rbenv init -)
-
-"# vim:foldmethod=marker:foldlevel=0
+# vim:foldmethod=marker:foldlevel=0
