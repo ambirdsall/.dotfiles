@@ -10,11 +10,11 @@ alias cdl='cd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
 # }}}
 # {{{ Edit/source development config files
-alias prc="vim ~/.pryrc"
-alias ea="vim ~/.aliases.sh"
-alias sdf="source ~/.aliases.sh"
-alias zrc="vim ~/.zshrc" # cd ~/bin && ln -s ~/bin/zrc ~/.zshrc
-alias rc="source ~/.zshrc"
+alias prc="vim ~/.dotfiles/pryrc"
+alias ea="vim ~/.dotfiles/aliases.sh"
+alias sdf="source ~/.dotfiles/aliases.sh"
+alias zrc="vim ~/.dotfiles/zshrc"
+alias rc="source ~/.dotfiles/zshrc"
 # }}}
 # {{{ `ls`, `cd`, and fam
 alias e=echo
