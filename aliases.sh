@@ -35,6 +35,7 @@ alias fuck="rm -rf"
 # {{{ Tmux
 alias t=tmux
 alias tt="tmux attach -t"
+alias tk="tmux kill-session -t"
 # When the tmux session shrinks some and fills the margin with periods, it
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
