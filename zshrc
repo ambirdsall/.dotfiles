@@ -8,12 +8,18 @@ export HISTFILE='~/.zsh_history'
 autoload -U zmv
 # }}}
 # {{{ Side effects on opening a terminal
-rm ~/Desktop/Screen\ Shot* > /dev/null 2>&1
-rm ~/Desktop/dd-* > /dev/null 2>&1
-~/.dotfiles/bin/say_something_nice
+# clean up the desktop
+rm ~/Desktop/(dd-|Screen\ Shot)*(.N) 2> /dev/null
 # brew update in the background, suppressing output
-brew update 2>&1 > /dev/null &
+brew update &> /dev/null &
+
+# print some stuff:
 ~/.dotfiles/bin/list_upgradable
+
+echo 'Tmux sessions:'
+tmux list-sessions
+
+~/.dotfiles/bin/say_something_nice
 # }}}
 # VIMIFY THE TERMINAL {{{
 
