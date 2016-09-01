@@ -1,9 +1,9 @@
 # {{{ Current projects
 cdc() {
   if [[ $# -gt 0 ]]; then
-    cd ~/code/${@}
+    cdd ~/code/${@}
   else
-    cd ~/code
+    cdd ~/code
   fi
 }
 alias cdl='cd ~/job/freelance/lawfetcher'
