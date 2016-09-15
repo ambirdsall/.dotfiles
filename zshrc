@@ -50,6 +50,9 @@ source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
 PS1='%F{cyan}%~%b%f $(git_super_status) %F{136}$(current_commit)
 %F{088}%f$(~/.dotfiles/bin/icon_for_time_of_day)  '
 # }}}
+# {{{ $LESS
+export LESS=MR
+# }}}
 # {{{ $PATH
 # add homecooked stuff
 export PATH=~/bin:~/.bin:$PATH
