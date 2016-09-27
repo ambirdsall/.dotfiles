@@ -407,10 +407,9 @@ nmap <leader>a <Plug>(easymotion-s2)
 " }}}
 " }}}
 " {{{ Visual settings: highlighting, linenumbers, indents, splits
-syntax enable
 set background=dark
 colorscheme solarized
-filetype indent plugin on
+syntax enable
 " hybrid linenumbers
 set number
 set relativenumber
