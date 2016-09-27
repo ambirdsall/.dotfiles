@@ -128,6 +128,7 @@ endif
 " {{{ Folding
 set foldopen=
 set foldclose=
+set foldlevel=0
 " }}}
 " {{{ Shell and file settings
 set shell=zsh
