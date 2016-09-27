@@ -222,6 +222,15 @@ function! g:ToggleColorColumn()
     setlocal colorcolumn=81
   endif
 endfunction
+nnoremap <silent> <leader>cc :call g:ToggleColorColumn()<cr>
+
+function! s:VSetSearch()
+  let temp = @s
+  norm! gv"sy
+  let @/ = '\V' . substitute(escape(@s, '/|'), '|n', '||n', 'g')
+  let @s = temp
+endfunction
+
 
 " function! g:TagJavascript()
 "   execute '! find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \; | sed "/^$/d" | sort > tags'
@@ -279,8 +288,9 @@ inoremap uu <c-o>O
 " }}}
 " }}}
 " {{{ Visual mode
-" typing `*` in visual mode searches for the selection
-vnoremap * y/<C-R>"<CR>
+" use `*` or `#` in visual mode to search for the selection
+xnoremap * :<c-u>call <SID>VSetSearch()<cr>/<c-r>=@/<cr><cr>
+xnoremap # :<c-u>call <SID>VSetSearch()<cr>?<c-r>=@/<cr><cr>
 " }}}
 " {{{ Command mode
 " Allow saving of files as sudo when I forgot to start vim using sudo.
@@ -313,9 +323,6 @@ nnoremap <leader>w :w<cr>
 " {{{ Folding
 " toggle fold under cursor
 nnoremap <leader>z za
-" }}}
-" {{{ Function calls
-nnoremap <silent> <leader>cc :call g:ToggleColorColumn()<CR>
 " }}}
 " {{{ Plugins
 " {{{ ReplaceWithRegister
