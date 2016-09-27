@@ -1,4 +1,5 @@
 set nocompatible
+filetype indent plugin on
 runtime macros/matchit.vim
 let mapleader=" "
 
@@ -8,10 +9,6 @@ filetype off
 set runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-" }}}
-" {{{ git + vim
-Plugin 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-fugitive'
 " }}}
 " {{{ Custom text objects
 Plugin 'kana/vim-textobj-entire'
@@ -35,15 +32,26 @@ Plugin 'ecomba/vim-ruby-refactoring'
 Plugin 'thoughtbot/vim-rspec'
 " }}}
 " {{{ Navigation
-Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'easymotion/vim-easymotion'
-Plugin 'tpope/vim-rake'
-Plugin 'tpope/vim-bundler'
-Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-unimpaired'
 " }}}
-" {{{ Syntax highlighting
+" {{{ Tmux
+Plugin 'christoomey/vim-tmux-navigator'
+" }}}
+" {{{ Man Pages
+Plugin 'vim-utils/vim-man'
+" }}}
+" {{{ git + vim
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-fugitive'
+" }}}
+" {{{ Rails / Ruby Navigation
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-rake'
+Plugin 'tpope/vim-bundler'
+" }}}
+" {{{ Languages
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'mustache/vim-mustache-handlebars'
@@ -57,8 +65,9 @@ Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'briancollins/vim-jst'
 Plugin 'HerringtonDarkholme/yats.vim'
 Plugin 'lambdatoast/elm.vim'
+Plugin 'bumaociyuan/vim-swift'
 " }}}
-" {{{ Other Language Support
+" {{{ language-specific tagging
 " Plugin 'ternjs/tern_for_vim'
 Plugin 'ramitos/jsctags'
 " }}}
