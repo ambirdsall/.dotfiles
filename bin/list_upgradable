@@ -2,7 +2,7 @@
 
 upgradables = `brew outdated`
 if upgradables.empty?
-  puts "\nHomebrew packages are all up to date\n"
+  puts "\nHomebrew packages are all up to date\n\n"
 else
   puts "\nPackages with upgrades available:\n"
   puts upgradables
