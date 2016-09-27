@@ -6,7 +6,7 @@ cdc() {
     cdd ~/code
   fi
 }
-alias cdl='cd ~/job/freelance/lawfetcher'
+alias cdl='pushd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
 export asdf=~/asdf
 # }}}
