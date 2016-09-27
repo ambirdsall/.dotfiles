@@ -64,6 +64,7 @@ export LESS=MR
 export PATH=~/bin:~/.bin:$PATH
 # hi npm
 export PATH=$PATH:./node_modules/.bin
+export NODE_PATH=$NODE_PATH:/usr/local/lib/
 # }}}
 # {{{ Completion
 # aws
