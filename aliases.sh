@@ -61,6 +61,7 @@ vi () {
   fi
 }
 alias ci=vi
+alias vis="vi -S Session.vim"
 mvim () {
   if [[ $# -gt 0 ]]; then
     mvim "$@"
