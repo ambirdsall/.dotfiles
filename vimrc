@@ -345,7 +345,7 @@ cmap w!! w !sudo tee > /dev/null %
 nnoremap <leader><leader><leader> <c-^>
 nnoremap <leader>f ^
 nnoremap <leader>b :buffer
-nnoremap <leader>ev :tabe $MYVIMRC<cr>
+nnoremap <leader>ev :tabe ~/.dotfiles/vimrc<cr>
 nnoremap <leader>gf <c-w>f<bar><c-w>L
 " quickly jump to inside an empty matched pair (e.g. '()', '""')
 nnoremap <leader>in ?\%<c-r>=line('.')<Return>l\({}\\|\[]\\|<>\\|><\\|()\\|""\\|''\\|``\\|><lt>\)?s+1<Return>
