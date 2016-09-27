@@ -182,14 +182,13 @@ if has("autocmd")
 
   autocmd filetype gitcommit setlocal textwidth=72
 
-  " nice line formatting for free in markdown
-  autocmd bufreadpre *.md setlocal textwidth=80
-  autocmd bufreadpre *.markdown setlocal textwidth=80
-
   " [Plug] github-flavored markdown highlighting for all markdown files
   augroup markdown
     au!
-    au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
+    " nice line formatting for free in markdown
+    autocmd bufreadpre *.md setlocal textwidth=80
+    autocmd bufreadpre *.markdown setlocal textwidth=80
+    " au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
   augroup END
 
   " Middleman navigation with slim templating. Useful settings for reference,
