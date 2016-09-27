@@ -40,16 +40,21 @@ function zle-line-init zle-keymap-select {
 zle -N zle-line-init
 zle -N zle-keymap-select
 # }}}
-# {{{ Git prompt
+# {{{ Totally sweet prompt
 current_commit() {
     git rev-parse --short HEAD 2> /dev/null
 }
 
-# totally sweet prompt
-GIT_PROMPT_EXECUTABLE="haskell"
+export GIT_PROMPT_EXECUTABLE="haskell"
 source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
-PS1='%F{cyan}%~%b%f $(git_super_status) %F{136}$(current_commit)
-%F{088}%f$(~/.dotfiles/bin/icon_for_time_of_day)  '
+
+reverse_dir_stack() {
+  dirs | awk '{ for (i=NF; i>1; i--) printf "%s ", $i }'
+}
+
+PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commit)
+%F{088}%f%{$(~/.dotfiles/bin/icon_for_time_of_day)%2G%}  '
+# RPS1 set in VIMIFY THE TERMINAL
 # }}}
 # {{{ $LESS
 export LESS=MR
