@@ -132,15 +132,22 @@ set encoding=utf-8
 set mouse=a
 " ditto deleting shit in insert mode
 set backspace=indent,eol,start
-" 450ms is enough to finish typing combos even on a bad day, but not toooo long.
-set timeoutlen=450
+" 350ms is enough to finish typing combos even on a bad day, but not toooo long.
+set timeoutlen=350
 set omnifunc=syntaxcomplete#Complete
+" }}}
+" {{{ Sessions
+nnoremap <leader>ms :mksession!<cr>
+nnoremap <leader>sms :source %:p:h/Session.vim<cr>
 " }}}
 " {{{ Search
 set incsearch
 set hlsearch
 " <leader>h to clear highlighting when it gets annoying
 nnoremap <leader>h :noh<cr>
+" }}}
+" {{{ (js)?Ctags
+set tags+=./.git/jstags
 " }}}
 " {{{ Navigation
 " `gf` should work with js require/import directives
