@@ -8,6 +8,7 @@ cdc() {
 }
 alias cdl='cd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
+export asdf=~/asdf
 # }}}
 # {{{ Edit/source development config files
 alias prc="vim ~/.dotfiles/pryrc"
