@@ -19,10 +19,11 @@ brew update &> /dev/null &
 echo 'Tmux sessions:'
 tmux list-sessions
 
-~/.dotfiles/bin/say_something_nice
+# ~/.dotfiles/bin/say_something_nice
+echo "\nToday in history:"
+cat /usr/share/calendar/calendar.history | grep $(date +%m/%d) | gshuf -n 1
 # }}}
 # VIMIFY THE TERMINAL {{{
-
 export EDITOR=vim
 
 bindkey -v
