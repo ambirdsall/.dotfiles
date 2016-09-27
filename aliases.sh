@@ -31,6 +31,9 @@ alias mmv='noglob zmv -W'
 alias mkdir="mkdir -pv"
 alias fuck="rm -rf"
 # }}}
+# {{{ Man Pages
+alias man=viman
+# }}}
 # {{{ Tmux
 alias t=tmux
 alias tt="tmux attach -t"
