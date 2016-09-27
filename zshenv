@@ -9,7 +9,7 @@ compinit
 setopt extended_glob
 # }}}
 # Custom aliases {{{
-source ~/.aliases.sh
+source ~/.dotfiles/aliases.zsh
 
 ljd () {
   ls -lG $1 | ack '^d' | awk '{print $9}'

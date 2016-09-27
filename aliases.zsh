@@ -11,6 +11,13 @@ alias cdr='cd ~/job/rio'
 export asdf=~/asdf
 # }}}
 # {{{ Edit/source development config files
+cdot () {
+  if [[ $# -gt 0 ]]; then
+    pushd ~/.dotfiles/${@} && ls
+  else
+    pushd ~/.dotfiles && ls
+  fi
+}
 alias prc="vim ~/.dotfiles/pryrc"
 alias ea="vim ~/.dotfiles/aliases.zsh"
 alias sdf="source ~/.dotfiles/aliases.zsh"
