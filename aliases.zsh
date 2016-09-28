@@ -1,3 +1,7 @@
+# {{{ Saved directories
+export asdf=~/asdf
+export dot=~/.dotfiles
+# }}}
 # {{{ Current projects
 cdc() {
   if [[ $# -gt 0 ]]; then
@@ -8,7 +12,6 @@ cdc() {
 }
 alias cdl='pushd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
-export asdf=~/asdf
 # }}}
 # {{{ Edit/source development config files
 cdot () {
