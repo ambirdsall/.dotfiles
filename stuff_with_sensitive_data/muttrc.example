@@ -1,0 +1,30 @@
+set from = 'ambirdsall@gmail.com'
+set realname = 'Alex Birdsall'
+
+set imap_user = 'ambirdsall@gmail.com'
+set imap_pass = 'INSERT APPLICATION PASSWORD HERE'
+
+# REMOTE GMAIL FOLDERS
+set folder = 'imaps://imap.gmail.com:993'
+set spoolfile = '+INBOX'
+set postponed ='+[Google Mail]/Drafts'
+set trash = '+[Google Mail]/Trash'
+
+# LOCAL FOLDERS FOR CACHED HEADERS AND CERTIFICATES
+set header_cache =~/.mutt/cache/headers
+set message_cachedir =~/.mutt/cache/bodies
+set certificate_file =~/.mutt/certificates
+
+# SMTP SETTINGS
+set smtp_url = 'smtp://ambirdsall@smtp.gmail.com:587/'
+set smtp_pass = 'INSERT APPLICATION PASSWORD HERE'
+
+# SECURING
+set move = no  #Stop asking to move read messages to mbox!
+set imap_keepalive = 900
+
+bind editor noop
+macro index gi '=INBOX' 'Go to inbox'
+macro index ga '=[Google Mail]/All Mail' 'Go to all mail'
+macro index gs '=[Google Mail]/Sent Mail' 'Go to Sent Mail'
+macro index gd '=[Google Mail]/Drafts' 'Go to drafts'
