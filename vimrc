@@ -295,6 +295,7 @@ command! -nargs=+ I call InsertCommand(<q-args>)
 " Hideous and shitty hack, burn with fire ASAP
 " But it brings back colors
 command! Wtf source $MYVIMRC <bar> source $MYVIMRC
+command! Q mksession! <bar> quitall
 " }}}
 " {{{ Variables
 " Treat <li> and <p> tags like the block tags they are.
