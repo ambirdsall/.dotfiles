@@ -1,5 +1,6 @@
 set nocompatible
 filetype indent plugin on
+syntax enable
 set runtimepath+=~/.vim/bundle/Vundle.vim,$VIMRUNTIME
 runtime macros/matchit.vim
 let mapleader=" "
@@ -290,6 +291,11 @@ endfunction
 
 command! -nargs=+ I call InsertCommand(<q-args>)
 " }}}
+" {{{ Commands
+" Hideous and shitty hack, burn with fire ASAP
+" But it brings back colors
+command! Wtf source $MYVIMRC <bar> source $MYVIMRC
+" }}}
 " {{{ Variables
 " Treat <li> and <p> tags like the block tags they are.
 let g:html_indent_tags = 'li\|p'
@@ -409,7 +415,6 @@ nmap <leader>a <Plug>(easymotion-s2)
 " {{{ Visual settings: highlighting, linenumbers, indents, splits
 set background=dark
 colorscheme solarized
-syntax enable
 " hybrid linenumbers
 set number
 set relativenumber
