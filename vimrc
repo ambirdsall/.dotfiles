@@ -1,5 +1,5 @@
 set nocompatible
-filetype indent plugin on
+filetype plugin indent on
 syntax enable
 set runtimepath+=~/.vim/bundle/Vundle.vim,$VIMRUNTIME
 runtime macros/matchit.vim
@@ -92,6 +92,7 @@ Plugin 'rking/ag.vim'
 Plugin 'altercation/vim-colors-solarized'
 " }}}
 call vundle#end()
+filetype on
 " }}}
 " {{{ Plugin customization
 " {{{ Ack.vim
