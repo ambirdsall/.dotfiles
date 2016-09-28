@@ -1,12 +1,12 @@
 set nocompatible
 filetype indent plugin on
+set runtimepath+=~/.vim/bundle/Vundle.vim,$VIMRUNTIME
 runtime macros/matchit.vim
 let mapleader=" "
 
 " {{{ Plugins
 " {{{ Vundle set up
 filetype off
-set runtimepath+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 " }}}
