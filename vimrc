@@ -427,11 +427,15 @@ set showcmd
 set wildmenu
 " 008 comes after 007, not 010.
 set nrformats-=octal
+set list
+set listchars=eol:␤,tab:→·
 highlight ColorColumn ctermbg=236
 highlight CursorLine ctermbg=236
 highlight CursorColumn ctermbg=236
 highlight SignColumn ctermbg=236 " the gutter behind the numbers; where gitgutter signs are missing
 highlight LineNr ctermbg=236 " the line numbers themselves
+highlight NonText ctermfg=237
+highlight SpecialKey ctermfg=237
 highlight Folded ctermbg=NONE
 " 2-space indents; <</>> shifting goes to nearest multiple of 2, even from odds.
 set softtabstop=2 shiftwidth=2 shiftround expandtab
