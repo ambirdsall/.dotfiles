@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+# $1 is optional color escape code
+osascript -e 'tell application "Spotify" to if player state is playing then "▶ #[fg=cyan]" & name of current track & "#[fg=default] - #[fg=blue]" & artist of current track' | tr -d "\n"
+osascript -e 'tell application "Spotify" to if player state is paused then " #[fg=cyan]" & name of current track & "#[fg=default] - #[fg=blue]" & artist of current track' | tr -d "\n"
