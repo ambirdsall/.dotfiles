@@ -1,7 +1,3 @@
-# {{{ Saved directories
-export asdf=~/asdf
-export dot=~/.dotfiles
-# }}}
 # {{{ Current projects
 cdc() {
   if [[ $# -gt 0 ]]; then
@@ -12,6 +8,7 @@ cdc() {
 }
 alias cdl='pushd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
+alias ttr='tt r'
 # }}}
 # {{{ Edit/source development config files
 cdot () {
@@ -27,19 +24,14 @@ alias sdf="source ~/.dotfiles/aliases.zsh"
 alias zrc="vim ~/.dotfiles/zshrc"
 alias rc="source ~/.dotfiles/zshrc"
 # }}}
-# {{{ `ls`, `cd`, and fam
-alias e=echo
-alias ls="ls -GF"
-alias la="ls -A"
-alias less='less -RFK'
-alias 'cd-'="cd -"
-alias ..="cdd .."
-alias ...="cdd ../.."
-alias ....="cdd ../../.."
-alias .....="cdd ../../../.."
-alias mmv='noglob zmv -W'
-alias mkdir="mkdir -pv"
-alias fuck="rm -rf"
+# {{{ Background jobs & processes
+alias j=jobs
+# Typing the percent sign gets annoying fast when you run `kill` all the time with `%n`-style arguments on suspended `jobs`
+k () {
+  kill %"$1"
+}
+eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
+alias cpu="top -o cpu"
 # }}}
 # {{{ Man Pages
 alias man=viman
@@ -53,14 +45,53 @@ alias tk="tmux kill-session -t"
 alias tda="tmux detach -a"
 alias tls="tmux list-sessions"
 # }}}
-# {{{ Background jobs & processes
-alias j=jobs
-# Typing the percent sign gets annoying fast when you run `kill` all the time with `%n`-style arguments on suspended `jobs`
-k () {
-  kill %"$1"
+# {{{ `cd`
+alias 'cd-'="cd -"
+alias ..="cdd .."
+alias ...="cdd ../.."
+alias ....="cdd ../../.."
+alias .....="cdd ../../../.."
+alias ......="cdd ../../../../.."
+alias .......="cdd ../../../../../.."
+alias ........="cdd ../../../../../../.."
+alias .........="cdd ../../../../../../../.."
+
+mcd () {
+  mkdir $1
+  cd $1
 }
-eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
-alias cpu="top -o cpu"
+
+cdd () {
+  cd $1
+  ls
+}
+# }}}
+# {{{ `chmod`
+alias cx='chmod +x'
+# }}}
+# {{{ `echo`
+alias e=echo
+# }}}
+# {{{ `less`
+alias less='less -RFK'
+# }}}
+# {{{ `ls`
+alias ls="ls -GF"
+alias la="ls -A"
+# }}}
+# {{{ `mkdir`
+alias mkdir="mkdir -pv"
+# }}}
+# {{{ `rm`
+alias fuck="rm -rf"
+# }}}
+# {{{ `tail`
+tailfh () {
+  tail -f $1 | ack -i 'error' --passthru
+}
+# }}}
+# {{{ `zmv`
+alias mmv='noglob zmv -W'
 # }}}
 # {{{ Vim and fam
 vi () {
@@ -100,6 +131,15 @@ g() {
 
 # Complete g like git. Maybe should be `g=hub`?
 compdef g=git
+
+# run `git clone` and `cdd` into dir
+gc () {
+  repo=$1
+  repo_dir_with_trailing_git=${repo##*/}
+  repo_dir=${repo_dir_with_trailing_git%.git}
+  git clone $repo
+  cdd $repo_dir
+}
 
 alias co="git co"
 alias co-="git co -"
