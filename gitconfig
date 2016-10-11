@@ -36,3 +36,7 @@
  	template = ~/.gitmessage
 [rebase]
 	autosquash = true
+[man]
+	viewer = viman
+[man "viman"]
+	cmd = /Users/ambirdsall/bin/viman
