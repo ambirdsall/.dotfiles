@@ -1,6 +1,5 @@
 set nocompatible
 filetype plugin indent on
-syntax enable
 set runtimepath+=~/.vim/bundle/Vundle.vim,$VIMRUNTIME
 runtime macros/matchit.vim
 let mapleader=" "
@@ -415,6 +414,7 @@ nmap <leader>a <Plug>(easymotion-s2)
 " }}}
 " }}}
 " {{{ Visual settings: highlighting, linenumbers, indents, splits
+syntax enable
 set background=dark
 colorscheme solarized
 " hybrid linenumbers
