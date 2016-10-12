@@ -57,7 +57,7 @@ PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commi
 # RPS1 set in VIMIFY THE TERMINAL
 # }}}
 # {{{ $LESS
-export LESS=MR
+export LESS=MRFKGX
 # }}}
 # {{{ $PATH
 # add homecooked stuff

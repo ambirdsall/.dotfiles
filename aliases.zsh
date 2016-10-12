@@ -72,9 +72,6 @@ alias cx='chmod +x'
 # {{{ `echo`
 alias e=echo
 # }}}
-# {{{ `less`
-alias less='less -RFK'
-# }}}
 # {{{ `ls`
 alias ls="ls -GF"
 alias la="ls -A"
