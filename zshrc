@@ -69,6 +69,8 @@ export NODE_PATH=$NODE_PATH:/usr/local/lib/
 # {{{ Completion
 # aws
 source /usr/local/share/zsh/site-functions/_aws
+# hub
+source /usr/local/share/zsh/site-functions/_hub
 # npm
 source ~/.dotfiles/npm_completion.sh
 # }}}
