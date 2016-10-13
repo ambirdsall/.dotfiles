@@ -53,7 +53,7 @@ reverse_dir_stack() {
 }
 
 PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commit)%f
-%{$(~/.dotfiles/bin/icon_for_time_of_day)%2G%}  '
+%(!.⚡️.$(~/.dotfiles/bin/icon_for_time_of_day))  '
 # RPS1 set in VIMIFY THE TERMINAL
 # }}}
 # {{{ $LESS
