@@ -40,6 +40,7 @@ alias man=viman
 alias t=tmux
 alias tt="tmux attach -t"
 alias tk="tmux kill-session -t"
+alias tn="tmux new -s"
 # When the tmux session shrinks some and fills the margin with periods, it
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
@@ -126,8 +127,8 @@ g() {
   fi
 }
 
-# Complete g like git. Maybe should be `g=hub`?
-compdef g=git
+# Complete g like git, which is actually `hub`.
+compdef g=hub
 
 # run `git clone` and `cdd` into dir
 gc () {
@@ -159,7 +160,7 @@ cow () {
 }
 d () {
   # git diff --word-diff "$@"
-  git diff --color "$@" | diff-so-fancy | less -RFKX
+  git diff --color "$@" | diff-so-fancy | less
 }
 alias gdc="d --cached"
 alias gdo="git diff \$(git rev-parse --abbrev-ref HEAD 2> /dev/null)..origin/\$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
