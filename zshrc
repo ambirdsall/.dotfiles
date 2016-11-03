@@ -12,14 +12,14 @@ autoload -U zmv
 rm ~/Desktop/(dd-|Screen\ Shot)*(.N) 2> /dev/null
 # brew update in the background, suppressing output
 brew update &> /dev/null &
-
+# }}}
+# {{{ Login display
 # print some stuff:
-~/.dotfiles/bin/list_upgradable
+~/.dotfiles/sbin/list_upgradable
 
 echo 'Tmux sessions:'
 tmux list-sessions
 
-# ~/.dotfiles/bin/say_something_nice
 echo "\nToday in history:"
 cat /usr/share/calendar/calendar.history | grep $(date +%m/%d) | gshuf -n 1
 # }}}
@@ -53,7 +53,7 @@ reverse_dir_stack() {
 }
 
 PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commit)%f
-%(!.⚡️.$(~/.dotfiles/bin/icon_for_time_of_day))  '
+%(!.⚡️.$(~/.dotfiles/sbin/icon_for_time_of_day))  '
 # RPS1 set in VIMIFY THE TERMINAL
 # }}}
 # {{{ $LESS
