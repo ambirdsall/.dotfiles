@@ -1,0 +1,13 @@
+#! /usr/bin/env ruby
+
+recent_branches = `hub reflog | ack --nocolor checkout: | awk '{print $6}'`.split("\n")
+
+recent_branches.each_with_index do |b, i|
+  next if i == 0 || b.length == 40 # no SHAs, plz
+
+  unless %w(master development release).include? b
+    `git co #{b}` && exit
+  end
+
+  exit 1
+end

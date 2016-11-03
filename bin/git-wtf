@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+# Runs git pickaxe
+# 1 arg: string matcher, short output
+# 2+ args: args and matcher
+#
+# FLAGS
+# -p: output the whole commit with diff. Overrides --oneline --decorate
+# -r: --pickaxe-regex
+args = ARGV.join(" ").gsub(/(^-r)|( -r)/, " --pickaxe-regex")
+
+exec "git log --oneline --decorate -S '#{args}'"

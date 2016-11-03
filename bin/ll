@@ -1,0 +1,12 @@
+#!/usr/bin/env zsh
+
+# For a walkthrough of a very similar script, including handling of -R (maybe
+# useful, I dunno), see http://docstore.mik.ua/orelly/unix3/sedawk/ch07_08.htm
+
+# The CLICOLOR_FORCE environment variable allows color escape sequences to pass through the pipe
+CLICOLOR_FORCE=1 ls -lrhSGA $* | awk '
+
+BEGIN { print "PERMISSIONS", "\t", "LINKS", "\t", "OWNER", "\t", "\t", "GROUP", "\t", "SIZE", "\t", "MONTH", "\t", "DAY", "\t", "TIME", "\t", "NAME" }
+NF >= 7 && length($3) <= 7 { print $1, "\t", $2, "\t", $3, "\t", "\t", $4, "\t", $5, "\t", $6, "\t", $7, "\t", $8, "\t", $9 }
+NF >= 7 && length($3) > 7  { print $1, "\t", $2, "\t", $3, "\t", $4, "\t", $5, "\t", $6, "\t", $7, "\t", $8, "\t", $9 }
+'

@@ -1,0 +1,69 @@
+#!/usr/bin/env sh
+
+# OPTIONS USED IN THE FINAL-TYPE COMMAND:
+# -w 78
+#       MAGIC NUMBER, DO NOT DISTURB
+#       display bigly in gmail, but with no line-wrapping
+# -s
+#       subject line of email
+# -a
+#       attachment, if any
+# $1
+#       message to shitmail
+# $2
+#       email address of recipient
+
+while getopts ":s:r:a:m:" opts; do
+  case $opts in
+    s)
+      subject="$OPTARG"
+      ;;
+    r)
+      recipient="$OPTARG"
+      ;;
+    a)
+      attachment="-a $OPTARG"
+      ;;
+    m)
+      message="$OPTARG"
+      ;;
+    \?)
+      echo "WHAT THE FUCK IS -$OPTARG
+
+WHAT AM I SUPPOSED TO DO WITH THAT" >&2
+      exit 1
+      ;;
+    :)
+      echo "WHERE THE FUCK IS -$OPTARG's ARGUMENT IT NEEDS AN ARGUMENT
+
+I REGRET THE GENDERED AND SEXUALIZED TONE BUT
+
+I MEAN
+
+YOU JUST BLUE BALLED THE SHIT OUT OF -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
+# USAGE: `require_argument $arg_variable '--option-flag'`
+# TODO add error messages to an array; set usage text to variable; log one
+# usage line and then all error messages within `if [[ $missing_arg ]]` block
+require_argument () {
+  if [[ ! $1 ]]; then
+    echo "USAGE: shitmail -m \"YOUR MESSAGE\" -r RECIPIENT [-s SUBJECT LINE] [-a ATTACHMENT]
+
+You neglected to include the $2 option, which is required." >&2
+
+  missing_arg=true
+  fi
+}
+
+require_argument "$recipient" '-r'
+require_argument "$message" '-m'
+
+if [[ $missing_arg ]]; then
+  exit 1
+fi
+
+echo "<pre style='font-family: monospace'>`banner -w 78 $message | sed 's/.*/&\<br\>/'`</pre>" | mutt -s "${subject:-"Sorry I'm not sorry"}" -e "set content_type=text/html" $attachment -- $recipient

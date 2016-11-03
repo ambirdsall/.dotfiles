@@ -1,0 +1,10 @@
+#! /usr/bin/env ruby
+
+if (process_id =  `pgrep middleman`).empty?
+  system 'middleman'
+else
+  puts "There's a middleman server running. Let me kill that for you."
+  system "kill #{process_id}"
+  sleep 0.3
+  system 'middleman'
+end

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# A script to be run from crontab. I like hourly.
+# COMMANDS TO RUN TO SET THIS SUCKER UP:
+# # the leading underscore keeps the password out of VCS via .gitignore rule
+#   cp cron_brew_update.example _cron_brew_update
+#   chmod +x _cron_brew_update
+# # obviously, type your actual password instead of "actual password"
+#   sed -i 's/INSERT_ACTUAL_PASSWORD_HERE/actual password/' _cron_brew_update
+
+# SSH auth setup for git sync
+SSH_ASKPASS=/tmp/ssh-askpass-script
+USER=ambirdsall
+PASS=INSERT_ACTUAL_PASSWORD_HERE
+
+cat > ${SSH_ASKPASS} <<EOL
+#!/bin/bash
+echo "${PASS}"
+EOL
+
+chmod +x ${SSH_ASKPASS}
+
+/usr/local/bin/brew update 2>&1 > /dev/null | grep -v 'up-to-date' >&2
+
+rm ${SSH_ASKPASS}
