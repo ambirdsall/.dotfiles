@@ -175,7 +175,7 @@ alias s="git status -s"
 alias p="git add -p"
 c () {
   if [[ $# -gt 0 ]]; then
-    git commit -m "$@"
+    git commit -m "$*"
   else
     git commit -v
   fi
