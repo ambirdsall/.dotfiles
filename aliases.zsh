@@ -64,7 +64,7 @@ mcd () {
 
 cdd () {
   cd $1
-  ls
+  ls -GF
 }
 # }}}
 # {{{ `chmod`
@@ -74,7 +74,7 @@ alias cx='chmod +x'
 alias e=echo
 # }}}
 # {{{ `ls`
-alias ls="ls -GF"
+alias ls="ls -GFH"
 alias la="ls -A"
 # }}}
 # {{{ `mkdir`
