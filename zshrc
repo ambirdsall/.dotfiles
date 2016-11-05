@@ -2,7 +2,6 @@
 # sessions (i.e. vim)
 
 # {{{ zsh setup
-fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 export HISTFILE='~/.zsh_history'
 # allow mv actions on multiple files, see:
 autoload -U zmv
@@ -67,10 +66,8 @@ export PATH=$PATH:./node_modules/.bin
 export NODE_PATH=$NODE_PATH:/usr/local/lib/
 # }}}
 # {{{ Completion
-# aws
+# # aws
 source /usr/local/share/zsh/site-functions/_aws
-# hub
-source /usr/local/share/zsh/site-functions/_hub
 # npm
 source ~/.dotfiles/npm_completion.sh
 # }}}

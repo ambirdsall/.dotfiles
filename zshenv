@@ -1,4 +1,5 @@
 # {{{ The following lines were added by compinstall
+fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 zstyle ':completion:*' completer _expand _complete _ignored
 zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
 
