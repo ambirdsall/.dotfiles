@@ -66,6 +66,7 @@ Plugin 'briancollins/vim-jst'
 Plugin 'HerringtonDarkholme/yats.vim'
 Plugin 'lambdatoast/elm.vim'
 Plugin 'bumaociyuan/vim-swift'
+Plugin 'elixir-lang/vim-elixir'
 " }}}
 " {{{ language-specific tagging
 " Plugin 'ternjs/tern_for_vim'
