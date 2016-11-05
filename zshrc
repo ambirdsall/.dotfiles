@@ -16,10 +16,12 @@ brew update &> /dev/null &
 # print some stuff:
 ~/.dotfiles/sbin/list_upgradable
 
-echo 'Tmux sessions:'
-tmux list-sessions
+if tmux list-sessions &>/dev/null; then
+  echo 'Tmux sessions:'
+  echo "$(tmux list-sessions)\n"
+fi
 
-echo "\nToday in history:"
+echo "Today in history:"
 cat /usr/share/calendar/calendar.history | grep $(date +%m/%d) | gshuf -n 1
 # }}}
 # VIMIFY THE TERMINAL {{{
