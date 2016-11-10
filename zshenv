@@ -30,7 +30,7 @@ source ~/.dotfiles/aliases.zsh
 # syntax highlighting pager
 # # use instead of less
 = () {
-    /usr/share/vim/vim73/macros/less.sh "$*"
+    /usr/local/share/vim/vim80/macros/less.sh "$*"
 }
 # }}}
 
