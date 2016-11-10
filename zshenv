@@ -1,4 +1,4 @@
-# {{{ The following lines were added by compinstall
+# {{{ `fpath` and Completion
 fpath=(/usr/local/share/zsh/site-functions ~/.zsh $fpath)
 zstyle ':completion:*' completer _expand _complete _ignored
 zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
@@ -19,19 +19,9 @@ if [[ "$(uname)" = "Darwin" ]] && [[ -n `diskutil list | sed -n '/asdf.*disk2s1/
   diskutil mount -mountPoint ~/asdf disk2s1
 fi
 # }}}
-# {{{ Variables for important directories
-export asdf=~/asdf
-export dot=~/.dotfiles
-export desk=~/Desktop
-# }}}
-# Custom aliases {{{
-source ~/.dotfiles/aliases.zsh
 
-# syntax highlighting pager
-# # use instead of less
-= () {
-    /usr/local/share/vim/vim80/macros/less.sh "$*"
-}
-# }}}
+if [[ -a ~/.dotfiles/aliases.zsh ]]; then
+  source ~/.dotfiles/aliases.zsh
+fi
 
 # vim:foldmethod=marker:foldlevel=0

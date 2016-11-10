@@ -1,3 +1,9 @@
+# {{{ Shell Variables (important directories)
+export asdf=~/asdf
+export blag=~/ambirdsall.github.io
+export desk=~/Desktop
+export dot=~/.dotfiles
+# }}}
 # {{{ Current projects
 cdc() {
   if [[ $# -gt 0 ]]; then
@@ -52,6 +58,11 @@ alias tn="tmux new -s"
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
 alias tls="tmux list-sessions"
+# }}}
+# {{{ `=`
+= () {
+    /usr/local/share/vim/vim80/macros/less.sh "$*"
+}
 # }}}
 # {{{ `cd`
 alias 'cd-'="cd -"
