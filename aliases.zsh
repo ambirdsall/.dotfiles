@@ -61,7 +61,12 @@ alias tls="tmux list-sessions"
 # }}}
 # {{{ `=`
 = () {
+  # iff there are 0 arguments given, assume input from stdin (i.e. a pipe)
+  if [[ $# == 0 ]]; then
+    /usr/local/share/vim/vim80/macros/less.sh "$*" -
+  else
     /usr/local/share/vim/vim80/macros/less.sh "$*"
+  fi
 }
 # }}}
 # {{{ `cd`
