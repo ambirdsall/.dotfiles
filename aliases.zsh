@@ -171,16 +171,6 @@ com () {
     git fetch && git co master
   fi
 }
-# "checkout wildcard"
-# - Reads the name of the current wildcard branch from ./_wildcard
-# - If args given, set ./_wildcard first
-cow () {
-  if [[ $# -gt 0 ]]; then
-    echo "$@" > ./_wildcard
-  fi
-
-  git checkout "$(cat ./_wildcard )"
-}
 d () {
   # git diff --word-diff "$@"
   git diff --color "$@" | diff-so-fancy | less
