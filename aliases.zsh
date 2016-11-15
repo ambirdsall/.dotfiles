@@ -195,7 +195,13 @@ alias gp="git pull --ff-only"
 alias gpr="git pull --rebase"
 alias gb="git branch"
 alias gbl="git branch -l"
-alias l="git log --oneline --decorate"
+l () {
+  if [[ $# -gt 0 ]]; then
+    git log --oneline --decorate "$@"
+  else
+    git log --oneline --decorate --graph --all
+  fi
+}
 eval "$(ruby -e '9.times do |i| puts %Q{alias l#{i+1}=l\\ -#{i+1}} end')"
 alias lg="git log --oneline --decorate --graph --all"
 alias rl="git reflog"
