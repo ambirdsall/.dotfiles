@@ -171,14 +171,19 @@ com () {
     git fetch && git co master
   fi
 }
+
 d () {
   # git diff --word-diff "$@"
   git diff --color "$@" | diff-so-fancy | less
 }
 alias gdc="d --cached"
 alias gdo="git diff \$(git rev-parse --abbrev-ref HEAD 2> /dev/null)..origin/\$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+
 alias s="git status -s"
+alias ts="tig status"
+
 alias p="git add -p"
+
 c () {
   if [[ $# -gt 0 ]]; then
     git commit -m "$*"
@@ -188,13 +193,18 @@ c () {
 }
 alias a="git commit --amend"
 alias arh="git commit --amend --reuse-message=HEAD"
+
 alias f="git fetch"
+
 alias gr="git rebase"
 alias gri="g ri" # home-cooked git-ri, which simplifies syntax of `git rebase -i`
+
 alias gp="git pull --ff-only"
 alias gpr="git pull --rebase"
+
 alias gb="git branch"
 alias gbl="git branch -l"
+
 l () {
   if [[ $# -gt 0 ]]; then
     git log --oneline --decorate "$@"
@@ -205,6 +215,7 @@ l () {
 eval "$(ruby -e '9.times do |i| puts %Q{alias l#{i+1}=l\\ -#{i+1}} end')"
 alias lg="git log --oneline --decorate --graph --all"
 alias rl="git reflog"
+
 # unique () {
 #   perl -ne '$H{$_}++ or print'
 # }
@@ -212,11 +223,16 @@ alias rl="git reflog"
 #   # lists unique git refs you have checked out, in order of how recently you checked them out
 #   git reflog | ack --nocolor checkout: | awk '{print $6}' | unique | more
 # }
+
 alias gg="git grep"
+
 alias b="git blame"
+
 alias stash="git stash -u"
+
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push --force-with-lease origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
+
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
 # }}}
 # {{{ tags
