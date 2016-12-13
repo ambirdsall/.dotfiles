@@ -1,13 +1,26 @@
 #! /usr/bin/env ruby
 
-begin
-  require 'tod'
-  require 'tod/core_extensions'
-rescue LoadError
-  `gem install tod`
-  require 'tod'
-  require 'tod/core_extensions'
+require 'rubygems'
+
+def install_gem(name)
+  begin
+    gem name
+  rescue LoadError
+    $stderr.print "ruby gem '#{name}' not found, " <<
+      "would you like to install it (y/N)? : "
+    answer = gets
+    if answer[0].downcase.include? "y"
+      Gem.install name
+    else
+      exit(1)
+    end
+  end
 end
+
+install_gem 'tod'
+
+require 'tod'
+require 'tod/core_extensions'
 
 morning = Tod::Shift.new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
 afternoon = Tod::Shift.new(Tod::TimeOfDay.new(13), Tod::TimeOfDay.new(18, 30), true)
