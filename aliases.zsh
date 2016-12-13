@@ -58,6 +58,11 @@ alias tn="tmux new -s"
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
 alias tls="tmux list-sessions"
+
+# When clearing screen:
+#   if in a tmux session, $TMUX is defined, so nothing else happens
+#   else, list sessions atop cleared screen
+alias clear='clear; [[ -z "$TMUX" ]] && tls'
 # }}}
 # {{{ `=`
 = () {
