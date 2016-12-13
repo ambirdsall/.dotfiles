@@ -211,10 +211,12 @@ alias gb="git branch"
 alias gbl="git branch -l"
 
 l () {
-  if [[ $# -gt 0 ]]; then
-    git log --oneline --decorate "$@"
-  else
+  if [[ $# -eq 0 ]]; then
     git log --oneline --decorate --graph --all
+  elif [[ $# -eq 1 ]] && [[ "$1" = <-> ]]; then
+    git log --oneline --decorate -$1
+  else
+    echo "Usage: l [number of commits]" >&2
   fi
 }
 eval "$(ruby -e '9.times do |i| puts %Q{alias l#{i+1}=l\\ -#{i+1}} end')"
