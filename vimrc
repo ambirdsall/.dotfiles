@@ -220,6 +220,14 @@ if has("autocmd")
 endif
 " }}}
 " {{{ Functions
+function! Git_branch()
+  if !exists('b:git_dir')
+    return ''
+  endif
+
+  return " ".fugitive#head()
+endfunction
+
 function! g:ToggleColorColumn()
   if &colorcolumn != ''
     setlocal colorcolumn&
@@ -417,6 +425,31 @@ nmap <leader>a <Plug>(easymotion-s2)
 " }}}
 " }}}
 " }}}
+" " {{{ Statusline
+set statusline=%#Pmenu#
+set statusline+=%010y
+set statusline+=\ 
+set statusline+=%#PmenuSel#
+set statusline+=\ 
+" set statusline+=
+" set statusline+=\ 
+" set statusline+=%{fugitive#head()}
+set statusline+=%{Git_branch()}
+set statusline+=\ 
+set statusline+=%f
+set statusline+=%m
+set statusline+=\ 
+set statusline+=%#Pmenu#
+
+set statusline+=%=
+
+set statusline+=%l
+set statusline+=:
+set statusline+=%c
+set statusline+=\ 
+set statusline+=%P
+set statusline+=\ 
+" " }}}
 " {{{ Visual settings: highlighting, linenumbers, indents, splits
 syntax enable
 set background=dark
@@ -448,10 +481,6 @@ set softtabstop=2 shiftwidth=2 shiftround expandtab
 set splitbelow
 set nowrap " <leader>r toggles wrap for when it's needed
 set diffopt+=vertical " always compare diffs with vertical splits.
-" powerline is the best line I know.
-python from powerline.vim import setup as powerline_setup
-python powerline_setup()
-python del powerline_setup
 " }}}
 
 " vim:foldmethod=marker:foldlevel=0
