@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
 require 'rubygems'
+require 'csv'
 
 def install_gem(name)
   begin
@@ -11,6 +12,7 @@ def install_gem(name)
     answer = gets
     if answer[0].downcase.include? "y"
       Gem.install name
+      sleep 0.3
     else
       exit(1)
     end
@@ -22,20 +24,41 @@ install_gem 'tod'
 require 'tod'
 require 'tod/core_extensions'
 
-morning = Tod::Shift.new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
+morning   = Tod::Shift.new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
 afternoon = Tod::Shift.new(Tod::TimeOfDay.new(13), Tod::TimeOfDay.new(18, 30), true)
-evening = Tod::Shift.new(Tod::TimeOfDay.new(18, 30), Tod::TimeOfDay.new(23, 45), true)
-night = Tod::Shift.new(Tod::TimeOfDay.new(23, 45), Tod::TimeOfDay.new(6), true)
+evening   = Tod::Shift.new(Tod::TimeOfDay.new(18, 30), Tod::TimeOfDay.new(23, 45), true)
+night     = Tod::Shift.new(Tod::TimeOfDay.new(23, 45), Tod::TimeOfDay.new(6), true)
 
-now = Time.now.to_time_of_day
+time_of_day = Time.now.to_time_of_day
+year        = Time.now.year
+month       = Time.now.month
+today       = Time.new.strftime "%a %b%e %Y"
 
-icon = if morning.include?(now)
+nba_games = CSV.read("/users/ambirdsall/.dotfiles/data/celtics/#{year}/#{month}/schedule.csv")
+
+=begin
+  nba_games.map {|row| [row[0], row[2], row[4]] }
+  => [["Date", "Visitor/Neutral", "Home/Neutral"],
+      ["Thu Dec 1 2016", "Milwaukee Bucks", "Brooklyn Nets"],
+      ["Thu Dec 1 2016", "Dallas Mavericks", "Charlotte Hornets"],
+      ...
+     ]
+=end
+boston_game  = ->(row) { row.any? { |col| col =~ /Boston/ } }
+its_game_day = nba_games.map    { |row| [row[0], row[2], row[4]] }
+                        .select { |row| row.first == today }
+                        .select(&boston_game)
+                        .any?
+
+icon = if its_game_day
+         '🍀'
+       elsif morning.include?(time_of_day)
          '☕️'
-       elsif afternoon.include?(now)
+       elsif afternoon.include?(time_of_day)
          %w(🙈 🙉 🙊).sample
-       elsif evening.include?(now)
+       elsif evening.include?(time_of_day)
          '🍺'
-       elsif night.include?(now)
+       elsif night.include?(time_of_day)
          '🌒'
        end
 
