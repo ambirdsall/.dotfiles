@@ -67,13 +67,13 @@ Plugin 'HerringtonDarkholme/yats.vim'
 Plugin 'lambdatoast/elm.vim'
 Plugin 'bumaociyuan/vim-swift'
 Plugin 'elixir-lang/vim-elixir'
+Plugin 'slashmili/alchemist.vim'
 " }}}
 " {{{ language-specific tagging
 " Plugin 'ternjs/tern_for_vim'
 Plugin 'ramitos/jsctags'
 " }}}
 " {{{ Typing aids
-Plugin 'Townk/vim-autoclose'
 Plugin 'ambirdsall/emmet-vim'
 Plugin 'christoomey/vim-system-copy'
 Plugin 'ntpeters/vim-better-whitespace'
@@ -90,6 +90,9 @@ Plugin 'rking/ag.vim'
 " }}}
 " {{{ Colors
 Plugin 'altercation/vim-colors-solarized'
+" }}}
+" {{{ Sonic Pi
+Plugin 'dermusikman/sonicpi.vim'
 " }}}
 call vundle#end()
 filetype on
