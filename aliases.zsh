@@ -3,6 +3,7 @@ export asdf=~/asdf
 export blag=~/ambirdsall.github.io
 export desk=~/Desktop
 export dot=~/.dotfiles
+export rio=~/job/rio
 # }}}
 # {{{ Current projects
 cdc() {
