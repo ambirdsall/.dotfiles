@@ -1,101 +1,103 @@
 set nocompatible
 filetype plugin indent on
-set runtimepath+=~/.vim/bundle/Vundle.vim,$VIMRUNTIME
 runtime macros/matchit.vim
 let mapleader=" "
 
 " {{{ Plugins
-" {{{ Vundle set up
-filetype off
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
+" Load vim-plug
+if empty(glob("~/.vim/autoload/plug.vim"))
+    execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+endif
+" {{{ vim-plug set up
+call plug#begin('~/.vim/bundle')
 " }}}
 " {{{ Custom text objects
-Plugin 'kana/vim-textobj-entire'
-Plugin 'kana/vim-textobj-indent'
-Plugin 'kana/vim-textobj-line'
-Plugin 'kana/vim-textobj-user'
-Plugin 'nelstrom/vim-textobj-rubyblock'
-Plugin 'whatyouhide/vim-textobj-erb'
+Plug 'kana/vim-textobj-entire'
+Plug 'kana/vim-textobj-indent'
+Plug 'kana/vim-textobj-line'
+Plug 'kana/vim-textobj-user'
+Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'whatyouhide/vim-textobj-erb'
 " }}}
 " {{{ Custom commands
-Plugin 'tpope/vim-repeat'
-Plugin 'christoomey/vim-sort-motion'
-Plugin 'tommcdo/vim-exchange'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-surround'
-Plugin 'vim-scripts/ReplaceWithRegister'
-Plugin 'christoomey/vim-titlecase'
-Plugin 'ecomba/vim-ruby-refactoring'
+Plug 'tpope/vim-repeat'
+Plug 'christoomey/vim-sort-motion'
+Plug 'tommcdo/vim-exchange'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'vim-scripts/ReplaceWithRegister'
+Plug 'christoomey/vim-titlecase'
+Plug 'ecomba/vim-ruby-refactoring', { 'for': 'ruby' }
 " }}}
 " {{{ Testing
-Plugin 'thoughtbot/vim-rspec'
+Plug 'thoughtbot/vim-rspec', { 'for': 'ruby' }
 " }}}
 " {{{ Navigation
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'tpope/vim-unimpaired'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-unimpaired'
 " }}}
 " {{{ Tmux
-Plugin 'christoomey/vim-tmux-navigator'
+Plug 'christoomey/vim-tmux-navigator'
 " }}}
-" {{{ Man Pages
-Plugin 'vim-utils/vim-man'
+" {{{ Man/Info Pages
+Plug 'vim-utils/vim-man'
+Plug 'alx741/vinfo'
 " }}}
 " {{{ git + vim
-Plugin 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 " }}}
 " {{{ Rails / Ruby Navigation
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-rake'
-Plugin 'tpope/vim-bundler'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rake'
+Plug 'tpope/vim-bundler'
 " }}}
 " {{{ Languages
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'mustache/vim-mustache-handlebars'
-Plugin 'slim-template/vim-slim'
-Plugin 'digitaltoad/vim-jade'
-Plugin 'tpope/vim-markdown'
-Plugin 'jtratner/vim-flavored-markdown'
-Plugin 'chrisbra/Colorizer'
-Plugin 'othree/yajs.vim'
-Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'briancollins/vim-jst'
-Plugin 'HerringtonDarkholme/yats.vim'
-Plugin 'lambdatoast/elm.vim'
-Plugin 'bumaociyuan/vim-swift'
-Plugin 'elixir-lang/vim-elixir'
-Plugin 'slashmili/alchemist.vim'
+Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
+Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
+Plug 'mustache/vim-mustache-handlebars'
+Plug 'slim-template/vim-slim', { 'for': 'slim' }
+Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
+Plug 'chrisbra/Colorizer'
+Plug 'othree/yajs.vim', { 'for': 'javascript' }
+Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
+Plug 'briancollins/vim-jst', { 'for': 'jst' }
+Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
+Plug 'lambdatoast/elm.vim', { 'for': 'elm' }
+Plug 'bumaociyuan/vim-swift', { 'for': 'swift' }
+Plug 'elixir-lang/vim-elixir', { 'for': 'elixir' }
+Plug 'slashmili/alchemist.vim', { 'for': 'elixir' }
 " }}}
 " {{{ language-specific tagging
-" Plugin 'ternjs/tern_for_vim'
-Plugin 'ramitos/jsctags'
+" Plug 'ternjs/tern_for_vim'
+Plug 'ramitos/jsctags', { 'for': 'javascript' }
 " }}}
 " {{{ Typing aids
-Plugin 'ambirdsall/emmet-vim'
-Plugin 'christoomey/vim-system-copy'
-Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-endwise'
-Plugin 'vim-scripts/closetag.vim'
+" Plug 'Townk/vim-autoclose'
+Plug 'ambirdsall/emmet-vim'
+Plug 'christoomey/vim-system-copy'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-endwise'
+Plug 'alvan/vim-closetag'
 " }}}
 " {{{ Configuration
-Plugin 'tpope/vim-projectionist'
+Plug 'tpope/vim-projectionist'
 " }}}
 " {{{ Searching
-Plugin 'mileszs/ack.vim'
-Plugin 'rking/ag.vim'
+Plug 'mileszs/ack.vim'
+Plug 'rking/ag.vim'
 " }}}
 " {{{ Colors
-Plugin 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
 " }}}
 " {{{ Sonic Pi
-Plugin 'dermusikman/sonicpi.vim'
+Plug 'dermusikman/sonicpi.vim', { 'for': 'ruby' }
 " }}}
-call vundle#end()
-filetype on
+call plug#end()
 " }}}
 " {{{ Plugin customization
 " {{{ Ack.vim
