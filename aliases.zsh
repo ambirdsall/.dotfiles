@@ -217,8 +217,10 @@ alias gb="git branch"
 alias gbl="git branch -l"
 
 l () {
+  # no args
   if [[ $# -eq 0 ]]; then
     git log --oneline --decorate --graph --all
+  # one arg which is an integer
   elif [[ $# -eq 1 ]] && [[ "$1" = <-> ]]; then
     git log --oneline --decorate -$1
   else
