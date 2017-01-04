@@ -136,7 +136,13 @@ mvim () {
     mvim .
   fi
 }
-alias nvim="nvim -u ~/.vimrc"
+nv () {
+  if [[ $# -gt 0 ]]; then
+    nvim "$@"
+  else
+    nvim .
+  fi
+}
 bo () {
   vi $(bundle show "$1")
 }
