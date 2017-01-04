@@ -1,3 +1,4 @@
 secrets.sh
 config/hub
 config/inkscape/extension-errors.log
+config/nvim/.netrwhist
