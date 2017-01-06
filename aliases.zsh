@@ -1,9 +1,10 @@
-# {{{ Shell Variables (important directories)
+# {{{ Shell Variables (important files and directories)
 export asdf=~/asdf
 export blag=~/ambirdsall.github.io
 export desk=~/Desktop
 export dot=~/.dotfiles
 export rio=~/job/rio
+export nvimrc=~/.config/nvim/init.vim
 # }}}
 # {{{ Current projects
 cdc() {
