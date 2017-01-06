@@ -429,26 +429,26 @@ nmap <leader>a <Plug>(easymotion-s2)
 " }}}
 " }}}
 " " {{{ Statusline
-set statusline=%#Pmenu#
-set statusline+=%010y
+set statusline=%#DiffChange#
 set statusline+=\ 
-set statusline+=%#PmenuSel#
-set statusline+=\ 
-" set statusline+=
-" set statusline+=\ 
-" set statusline+=%{fugitive#head()}
 set statusline+=%{Git_branch()}
 set statusline+=\ 
+set statusline+=\ 
+set statusline+=%#DiffAdd#
 set statusline+=%f
 set statusline+=%m
 set statusline+=\ 
-set statusline+=%#Pmenu#
+set statusline+=%#SignColumn#
 
 set statusline+=%=
 
+set statusline+=%010y
+set statusline+=\ 
 set statusline+=%l
 set statusline+=:
+set statusline+=%#DiffText#
 set statusline+=%c
+set statusline+=%#SignColumn#
 set statusline+=\ 
 set statusline+=%P
 set statusline+=\ 
@@ -470,11 +470,15 @@ set wildmenu
 set nrformats-=octal
 set list
 set listchars=eol:␤,tab:→·
-highlight ColorColumn ctermbg=236
-highlight CursorLine ctermbg=236
-highlight CursorColumn ctermbg=236
-highlight SignColumn ctermbg=236 " the gutter behind the numbers; where gitgutter signs are missing
-highlight LineNr ctermbg=236 " the line numbers themselves
+highlight Search cterm=reverse ctermfg=66 ctermbg=143
+highlight VertSplit ctermfg=11 ctermbg=232 gui=reverse
+highlight StatusLine cterm=NONE ctermbg=232
+highlight StatusLineNC cterm=NONE ctermbg=232
+highlight ColorColumn ctermbg=0 guifg=Cyan guibg=Grey
+highlight CursorLine ctermbg=0 guifg=Cyan guibg=Grey
+highlight CursorColumn ctermbg=0 guifg=Cyan guibg=Grey
+highlight SignColumn ctermfg=12 ctermbg=0 guifg=Cyan guibg=Grey " the gutter behind the numbers; where gitgutter signs are missing
+highlight LineNr ctermfg=12 ctermbg=0 guifg=Cyan guibg=Grey     " the line numbers themselves
 highlight NonText ctermfg=237
 highlight SpecialKey ctermfg=237
 highlight Folded ctermbg=NONE
