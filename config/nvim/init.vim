@@ -211,7 +211,7 @@ if has("autocmd")
   autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
   " Automatically source init file when saving changes to it.
-  autocmd! BufWritePost init.vim source $MYVIMRC
+  autocmd! BufWritePost init.vim source ~/.dotfiles/config/nvim/init.vim
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it for commit messages, when the position is invalid, or when
