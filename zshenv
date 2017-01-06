@@ -19,9 +19,12 @@ if [[ "$(uname)" = "Darwin" ]] && [[ -n `diskutil list | sed -n '/asdf.*disk2s1/
   diskutil mount -mountPoint ~/asdf disk2s1
 fi
 # }}}
-
+# {{{ Rubies
+eval "$(rbenv init -)"
+# }}}
+# {{{ Aliases
 if [[ -a ~/.dotfiles/aliases.zsh ]]; then
   source ~/.dotfiles/aliases.zsh
 fi
-
+# }}}
 # vim:foldmethod=marker:foldlevel=0

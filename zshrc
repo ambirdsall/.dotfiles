@@ -76,8 +76,5 @@ source ~/.dotfiles/npm_completion.sh
 # {{{ irc
 export IRCSERVER="irc.freenode.net"
 # }}}
-# {{{ Rubies
-eval "$(rbenv init -)"
-# }}}
 
 # vim:foldmethod=marker:foldlevel=0
