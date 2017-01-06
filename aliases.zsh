@@ -65,6 +65,9 @@ alias tls="tmux list-sessions"
 #   else, list sessions atop cleared screen
 alias clear='clear; [[ -z "$TMUX" ]] && tls'
 # }}}
+# {{{ awk
+alias awkcsv='awk -F "\"*,\"*"'
+# }}}
 # {{{ `=`
 = () {
   # iff there are 0 arguments given, assume input from stdin (i.e. a pipe)
