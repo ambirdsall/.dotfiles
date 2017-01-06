@@ -70,6 +70,7 @@ Plug 'lambdatoast/elm.vim', { 'for': 'elm' }
 Plug 'bumaociyuan/vim-swift', { 'for': 'swift' }
 Plug 'elixir-lang/vim-elixir', { 'for': 'elixir' }
 Plug 'slashmili/alchemist.vim', { 'for': 'elixir' }
+Plug 'mattreduce/vim-mix', { 'for': 'elixir' }
 " }}}
 " {{{ language-specific tagging
 " Plug 'ternjs/tern_for_vim'
