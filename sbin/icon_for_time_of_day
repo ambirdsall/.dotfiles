@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'csv'
+require 'ostruct'
 
 def install_gem(name)
   begin
@@ -32,9 +33,10 @@ night     = Tod::Shift.new(Tod::TimeOfDay.new(23, 45), Tod::TimeOfDay.new(6), tr
 time_of_day = Time.now.to_time_of_day
 year        = Time.now.year
 month       = Time.now.month
-today       = Time.new.strftime "%a %b%e %Y"
+today       = OpenStruct.new({ nba: Time.new.strftime("%a %b%e %Y"), mlb: Time.new.strftime("%m/%d/%y")})
 
 nba_games = CSV.read("/users/ambirdsall/.dotfiles/data/celtics/#{year}/#{month}/schedule.csv")
+sox_game_day = !`awk -F '"*,"*' '{print $1}' ~/.dotfiles/data/red_sox/#{year}/schedule.csv | grep '#{today}'`.empty?
 
 =begin
   nba_games.map {|row| [row[0], row[2], row[4]] }
@@ -45,13 +47,15 @@ nba_games = CSV.read("/users/ambirdsall/.dotfiles/data/celtics/#{year}/#{month}/
      ]
 =end
 boston_game  = ->(row) { row.any? { |col| col =~ /Boston/ } }
-its_game_day = nba_games.map    { |row| [row[0], row[2], row[4]] }
-                        .select { |row| row.first == today }
+celtics_game_day = nba_games.map    { |row| [row[0], row[2], row[4]] }
+                        .select { |row| row.first == today.nba }
                         .select(&boston_game)
                         .any?
 
-icon = if its_game_day
+icon = if celtics_game_day
          '🍀'
+       elsif sox_game_day
+         '⚾️'
        elsif morning.include?(time_of_day)
          '☕️'
        elsif afternoon.include?(time_of_day)
