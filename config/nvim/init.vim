@@ -41,10 +41,6 @@ Plug 'tpope/vim-unimpaired'
 " {{{ Tmux
 Plug 'christoomey/vim-tmux-navigator'
 " }}}
-" {{{ Man/Info Pages
-Plug 'vim-utils/vim-man'
-Plug 'alx741/vinfo'
-" }}}
 " {{{ git + vim
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
