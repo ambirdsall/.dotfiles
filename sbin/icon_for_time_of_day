@@ -33,7 +33,7 @@ night     = Tod::Shift.new(Tod::TimeOfDay.new(23, 45), Tod::TimeOfDay.new(6), tr
 time_of_day = Time.now.to_time_of_day
 year        = Time.now.year
 month       = Time.now.month
-today       = OpenStruct.new({ nba: Time.new.strftime("%a %b%e %Y"), mlb: Time.new.strftime("%m/%d/%y")})
+today       = OpenStruct.new({ nba: Time.new.strftime("%a %b %e %Y"), mlb: Time.new.strftime("%m/%d/%y")})
 
 nba_games = CSV.read("/users/ambirdsall/.dotfiles/data/celtics/#{year}/#{month}/schedule.csv")
 sox_game_day = !`awk -F '"*,"*' '{print $1}' ~/.dotfiles/data/red_sox/#{year}/schedule.csv | grep '#{today}'`.empty?
