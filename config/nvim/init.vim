@@ -357,6 +357,7 @@ xnoremap # :<c-u>call <SID>VSetSearch()<cr>?<c-r>=@/<cr><cr>
 " {{{ Command mode
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! w !sudo tee > /dev/null %
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " }}}
 " }}}
 " {{{ <leader> mappings
