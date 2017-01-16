@@ -5,6 +5,28 @@ zstyle :compinstall filename '/Users/ambirdsall/.zshrc'
 
 autoload -Uz compinit
 compinit
+
+_ag() {
+  if (( CURRENT == 2 )); then
+    compadd $(cut -f 1 .git/tags tmp/tags 2>/dev/null | grep -v '!_TAG')
+  fi
+}
+compdef _ag ag
+
+_rg() {
+  if (( CURRENT == 2 )); then
+    compadd $(cut -f 1 .git/tags tmp/tags 2>/dev/null | grep -v '!_TAG')
+  fi
+}
+compdef _rg rg
+
+_ack() {
+  if (( CURRENT == 2 )); then
+    compadd $(cut -f 1 .git/tags tmp/tags 2>/dev/null | grep -v '!_TAG')
+  fi
+}
+
+compdef _ack ack
 # }}}
 # {{{ Globbing
 setopt extended_glob
