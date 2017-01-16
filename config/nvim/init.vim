@@ -10,7 +10,7 @@ if empty(glob("~/.local/share/nvim/site/autoload/plug.vim"))
 endif
 " }}}
 " {{{ vim-plug set up
-call plug#begin('~/.vim/bundle')
+call plug#begin('~/.local/share/nvim/bundle')
 " }}}
 " {{{ Custom text objects
 Plug 'kana/vim-textobj-entire'
