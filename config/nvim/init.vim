@@ -308,6 +308,7 @@ command! -nargs=+ I call InsertCommand(<q-args>)
 " But it brings back colors
 command! Wtf source $MYVIMRC <bar> source $MYVIMRC
 command! Q mksession! <bar> quitall
+command! Html -1r ~/.config/nvim/templates/html <bar> normal 7j2f<
 " }}}
 " {{{ Variables
 " Treat <li> and <p> tags like the block tags they are.
