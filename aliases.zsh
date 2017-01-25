@@ -14,6 +14,8 @@ cdc() {
     cdd ~/code
   fi
 }
+compdef '_files -W ~/code' cdc
+
 alias cdl='pushd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
 alias ttr='tt r'
