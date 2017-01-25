@@ -199,7 +199,7 @@ if has("autocmd")
   autocmd BufReadPre,BufNewFile */flock-landing/* set inex=substitute(v:fname,'partials/','partials/_','')
 
   " automatically save files on focus lost. Theoretically.
-  au FocusLost * silent! wa
+  au FocusLost * silent! w
 
   " stop that autocomment noise
   autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
