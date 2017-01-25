@@ -78,7 +78,7 @@ Plug 'tpope/vim-speeddating'
 Plug 'ambirdsall/emmet-vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'scrooloose/syntastic'
+Plug 'neomake/neomake'
 Plug 'tpope/vim-endwise'
 Plug 'alvan/vim-closetag'
 " }}}
@@ -108,14 +108,11 @@ let g:colorizer_auto_filetype='css,scss,sass,html'
 " {{{ Ctrl-p
 let g:ctrlp_custom_ignore = 'node_modules'
 " }}}
+" {{{ Neomake
+let g:neomake_javascript_enabled_makers = ['eslint']
+" }}}
 " {{{ Solarized
 let g:solarized_termtrans = 1
-" }}}
-" {{{ Syntastic
-let g:syntastic_check_on_open=0
-" let g:syntastic_javascript_checkers = ['~/job/rio/node_modules/.bin/eslint']
-let g:syntastic_mode_map = { "mode": "active", "active_filetypes": ["ruby"],
-                                            \ "passive_filetypes": ["javascript"] }
 " }}}
 " {{{ Titlecase
 " vim-titlecase's default mapping is `gt`, but I use tabs
@@ -209,6 +206,8 @@ if has("autocmd")
 
   " Automatically source init file when saving changes to it.
   autocmd! BufWritePost init.vim source ~/.dotfiles/config/nvim/init.vim
+
+  autocmd! BufWritePost * Neomake
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it for commit messages, when the position is invalid, or when
