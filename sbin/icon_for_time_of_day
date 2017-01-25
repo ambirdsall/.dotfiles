@@ -1,8 +1,12 @@
 #! /usr/bin/env ruby
 
+MINUTES_PER_DAY = 60 * 24
+
 require 'rubygems'
 require 'csv'
 require 'ostruct'
+require 'bigdecimal'
+require 'pry'
 
 def install_gem(name)
   begin
@@ -21,24 +25,57 @@ def install_gem(name)
 end
 
 install_gem 'tod'
+install_gem 'astro_moon'
 
 require 'tod'
 require 'tod/core_extensions'
+require 'astro/moon'
 
-morning   = Tod::Shift.new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
-afternoon = Tod::Shift.new(Tod::TimeOfDay.new(13), Tod::TimeOfDay.new(18, 30), true)
-evening   = Tod::Shift.new(Tod::TimeOfDay.new(18, 30), Tod::TimeOfDay.new(23, 45), true)
-night     = Tod::Shift.new(Tod::TimeOfDay.new(23, 45), Tod::TimeOfDay.new(6), true)
+class Tod::Shift
+  def self.morning
+    new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
+  end
+  def self.afternoon
+    new(Tod::TimeOfDay.new(13), Tod::TimeOfDay.new(18, 30), true)
+  end
+  def self.evening
+    new(Tod::TimeOfDay.new(18, 30), Tod::TimeOfDay.new(22), true)
+  end
+  def self.night
+    new(Tod::TimeOfDay.new(22), Tod::TimeOfDay.new(6), true)
+  end
 
-time_of_day = Time.now.to_time_of_day
-year        = Time.now.year
-month       = Time.now.month
-today       = OpenStruct.new({ nba: Time.new.strftime("%a %b %e %Y"), mlb: Time.new.strftime("%m/%d/%y")})
+  def ===(time)
+    include? time
+  end
+end
 
-nba_games = CSV.read("/users/ambirdsall/.dotfiles/data/celtics/#{year}/#{month}/schedule.csv")
-sox_game_day = !`awk -F '"*,"*' '{print $1}' ~/.dotfiles/data/red_sox/#{year}/schedule.csv | grep '#{today}'`.empty?
+def time_of_day
+  Time.now.to_time_of_day
+end
+def year
+  Time.now.year
+end
+def month
+  Time.now.month
+end
+def today
+  OpenStruct.new({ nba: Time.new.strftime("%a %b %e %Y"), mlb: Time.new.strftime("%m/%d/%y")})
+end
 
-=begin
+def nba_games
+  CSV.read("/users/ambirdsall/.dotfiles/data/celtics/#{year}/#{month}/schedule.csv")
+end
+def sox_game_day
+  todays_game = `awk -F '"*,"*' '{print $1}' ~/.dotfiles/data/red_sox/#{year}/schedule.csv | grep '#{today}'`
+  !todays_game.empty?
+end
+
+def boston_game
+  ->(row) { row.any? { |col| col =~ /Boston/ } }
+end
+
+=begin EXAMPLE DATA
   nba_games.map {|row| [row[0], row[2], row[4]] }
   => [["Date", "Visitor/Neutral", "Home/Neutral"],
       ["Thu Dec 1 2016", "Milwaukee Bucks", "Brooklyn Nets"],
@@ -46,24 +83,60 @@ sox_game_day = !`awk -F '"*,"*' '{print $1}' ~/.dotfiles/data/red_sox/#{year}/sc
       ...
      ]
 =end
-boston_game  = ->(row) { row.any? { |col| col =~ /Boston/ } }
-celtics_game_day = nba_games.map    { |row| [row[0], row[2], row[4]] }
-                        .select { |row| row.first == today.nba }
-                        .select(&boston_game)
-                        .any?
+def celtics_game_day
+  nba_games.map { |row| [row[0], row[2], row[4]] }
+           .select { |row| row.first == today.nba }
+           .select(&boston_game)
+           .any?
+end
 
-icon = if celtics_game_day
-         '🍀'
-       elsif sox_game_day
-         '⚾️'
-       elsif morning.include?(time_of_day)
-         '☕️'
-       elsif afternoon.include?(time_of_day)
-         %w(🙈 🙉 🙊).sample
-       elsif evening.include?(time_of_day)
-         '🍺'
-       elsif night.include?(time_of_day)
-         '🌒'
+def game_day_or(icon)
+  return '🍀' if celtics_game_day
+  return '⚾️' if sox_game_day
+  icon
+end
+
+def phase_of_moon
+  # in this order: %w{🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘}
+  # to add labels (as 2D array), just add:
+  #   .zip(%w{new_moon
+  #           waxing_crescent
+  #           first_quarter
+  #           waxing_gibbous
+  #           full_moon
+  #           waning_gibbous
+  #           last_quarter
+  #           waning_crescent
+  #        })
+  phases = (0x1F311..0x1F318).to_a
+                             .collect {|c| [c].pack('U*')}
+
+  phase_as_ratio = Astro::Moon.phase.phase # decimal between 0 and 1
+  index_of_phase = (phase_as_ratio * phases.length).round - 1
+
+  phases[index_of_phase]
+end
+
+icon = case time_of_day
+       when Tod::Shift.morning
+         game_day_or '☕️'
+       when Tod::Shift.afternoon
+         game_day_or %w(🙈 🙉 🙊).sample
+       when Tod::Shift.evening
+         game_day_or '🍺'
+       when Tod::Shift.night
+         phase_of_moon
        end
 
-print icon
+# obviously, this is hacky as shit and should be replaced with actual tests
+if ARGV.empty?
+  print icon
+else
+  binding.pry
+  # puts case ARGV.first
+  #      when /celtics/
+  #        celtics_game_day
+  #      when /sox/
+  #        sox_game_day
+  #      end
+end
