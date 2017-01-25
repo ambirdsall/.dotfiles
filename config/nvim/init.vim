@@ -205,7 +205,7 @@ if has("autocmd")
   autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
   " Automatically source init file when saving changes to it.
-  autocmd! BufWritePost init.vim source ~/.dotfiles/config/nvim/init.vim
+  autocmd! BufWritePost init.vim source ~/.config/nvim/init.vim
 
   autocmd! BufWritePost * Neomake
 
