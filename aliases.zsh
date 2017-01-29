@@ -64,9 +64,9 @@ alias tda="tmux detach -a"
 alias tls="tmux list-sessions"
 
 # When clearing screen:
-#   if in a tmux session, $TMUX is defined, so nothing else happens
-#   else, list sessions atop cleared screen
-alias clear='clear; [[ -z "$TMUX" ]] && tls'
+#   if `$TMUX` is defined: just clear the screen, in a tmux session already
+#   else:                  clear, then list sessions atop screen
+alias clear='clear; [[ -z "$TMUX" ]] && tls 2>/dev/null'
 # }}}
 # {{{ awk
 alias awkcsv='awk -F "\"*,\"*"'
