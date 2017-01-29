@@ -8,6 +8,7 @@
 	ci = commit
 	st = status
         upstream = rev-parse --abbrev-ref --symbolic-full-name @{upstream}
+	quick-stats = ! /usr/local/bin/git-quick-stats
 [user]
 	name = ambirdsall
 	email = ambirdsall@gmail.com
