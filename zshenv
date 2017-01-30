@@ -24,6 +24,7 @@ setopt extended_glob
 #   3) the directory ~/asdf is empty (i.e. no filesystem mounted there)
 if [[ "$(uname)" = "Darwin" ]] && [[ -n `diskutil list | sed -n '/asdf.*disk2s1/p'` ]] && [[ -z "$(ls ~/asdf)" ]]; then
   diskutil mount -mountPoint ~/asdf disk2s1
+  command -v dot_clean && dot_clean -m ~/asdf/Dropbox
 fi
 # }}}
 # {{{ Aliases
