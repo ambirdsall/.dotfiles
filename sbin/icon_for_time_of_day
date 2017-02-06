@@ -1,11 +1,11 @@
 #! /usr/bin/env ruby
 
 MINUTES_PER_DAY = 60 * 24
+HALF_AN_HOUR = 1800 # seconds
 
 require 'rubygems'
 require 'csv'
 require 'ostruct'
-require 'bigdecimal'
 require 'pry'
 
 def install_gem(name)
@@ -31,6 +31,32 @@ require 'tod'
 require 'tod/core_extensions'
 require 'astro/moon'
 
+def main
+  # shitty ad-hoc debugging
+  binding.pry if ARGV.first
+
+  if within_cache_interval
+    print "#{cached_icon}"
+    exit 0
+  end
+
+  icon = case time_of_day
+         when Tod::Shift.morning
+           game_day_or '☕️'
+         when Tod::Shift.afternoon
+           game_day_or %w(🙈 🙉 🙊).sample
+         when Tod::Shift.evening
+           game_day_or '🍺'
+         when Tod::Shift.night
+           phase_of_moon
+         end
+
+  `echo '#{icon}' > /tmp/cached_prompt_icon`
+  `echo '#{time_of_day.to_s}' > /tmp/prompt_icon_cache_time`
+
+  print icon
+end
+
 class Tod::Shift
   def self.morning
     new(Tod::TimeOfDay.new(6), Tod::TimeOfDay.new(13), true)
@@ -47,6 +73,12 @@ class Tod::Shift
 
   def ===(time)
     include? time
+  end
+end
+
+class String
+  def present?
+    !empty?
   end
 end
 
@@ -117,26 +149,23 @@ def phase_of_moon
   phases[index_of_phase]
 end
 
-icon = case time_of_day
-       when Tod::Shift.morning
-         game_day_or '☕️'
-       when Tod::Shift.afternoon
-         game_day_or %w(🙈 🙉 🙊).sample
-       when Tod::Shift.evening
-         game_day_or '🍺'
-       when Tod::Shift.night
-         phase_of_moon
-       end
+def within_cache_interval
+  cache_record = last_cached
+  time_last_cached = cache_record.present? && Tod::TimeOfDay.parse(cache_record)
 
-# obviously, this is hacky as shit and should be replaced with actual tests
-if ARGV.empty?
-  print icon
-else
-  binding.pry
-  # puts case ARGV.first
-  #      when /celtics/
-  #        celtics_game_day
-  #      when /sox/
-  #        sox_game_day
-  #      end
+  # Always recalculate if last cached time is later in day than present moment,
+  # because Tod::TimeOfDay doesn't gracefully handle comparisons that span midnight
+  if time_last_cached && time_of_day > time_last_cached
+    (time_of_day - HALF_AN_HOUR) < time_last_cached
+  end
 end
+
+def last_cached
+  `cat /tmp/prompt_icon_cache_time 2>/dev/null`.chomp
+end
+
+def cached_icon
+  `cat /tmp/cached_prompt_icon 2>/dev/null`.chomp
+end
+
+main
