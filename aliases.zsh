@@ -43,16 +43,6 @@ k () {
 eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
 alias cpu="top -o cpu"
 # }}}
-# {{{ Man Pages
-viman_or_lynx() {
-  case "$1" in
-    tig) lynx http://jonas.nitro.dk/tig/manual.html;;
-    *) viman $1;;
-  esac
-}
-
-alias man=viman_or_lynx
-# }}}
 # {{{ Tmux
 alias t=tmux
 alias tt="tmux attach -t"

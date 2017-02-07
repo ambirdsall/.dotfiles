@@ -26,6 +26,7 @@ cat /usr/share/calendar/calendar.history | grep $(date +%m/%d) | gshuf -n 1
 # }}}
 # VIMIFY THE TERMINAL {{{
 export EDITOR=vim
+export MANPAGER="nvim -c 'set ft=man' -"
 
 bindkey -v
 # export KEYTIMEOUT=3
