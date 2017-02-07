@@ -4,6 +4,7 @@ export blag=~/ambirdsall.github.io
 export desk=~/Desktop
 export dot=~/.dotfiles
 export rio=~/job/rio
+export emoji=~/code/EmojiDictionary
 export nvimrc=~/.config/nvim/init.vim
 # }}}
 # {{{ Current projects

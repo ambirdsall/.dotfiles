@@ -310,8 +310,8 @@ command! -nargs=+ I call InsertCommand(<q-args>)
 " Hideous and shitty hack, burn with fire ASAP
 " But it brings back colors
 command! Wtf source $MYVIMRC <bar> source $MYVIMRC
-command! Q mksession! <bar> quitall
 command! Html -1r ~/.config/nvim/templates/html <bar> normal 7j2f<
+command! Cx silent !chmod +x %
 " }}}
 " {{{ Variables
 " Treat <li> and <p> tags like the block tags they are.
@@ -455,6 +455,9 @@ set statusline+=\
 set statusline+=%P
 set statusline+=\ 
 " " }}}
+" {{{ External vimrc files
+set exrc
+" }}}
 " {{{ Visual settings: highlighting, linenumbers, indents, splits
 syntax enable
 set background=dark
@@ -491,5 +494,6 @@ set splitbelow
 set nowrap " <leader>r toggles wrap for when it's needed
 set diffopt+=vertical " always compare diffs with vertical splits.
 " }}}
+set secure
 
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker:foldlevel=0:syntax=vim

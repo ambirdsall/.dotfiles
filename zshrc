@@ -50,12 +50,13 @@ current_commit() {
 export GIT_PROMPT_EXECUTABLE="haskell"
 source ~/code/zsh_business/zsh-git-prompt/zshrc.sh
 
+# TODO fix handling of directories with spaces in their names
 reverse_dir_stack() {
   dirs | awk '{ for (i=NF; i>1; i--) printf("%s %%F{238}᎒%%f", $i) }'
 }
 
 PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commit)%f
-%(!.⚡️.$(~/.dotfiles/sbin/icon_for_time_of_day))  '
+%(!.⚡️.$(~/.dotfiles/sbin/icon_for_time_of_day 2>/dev/null))  '
 # RPS1 set in VIMIFY THE TERMINAL
 # }}}
 # {{{ $LESS
