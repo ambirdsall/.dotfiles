@@ -99,7 +99,7 @@ alias cx='chmod +x'
 alias e=echo
 # }}}
 # {{{ `ls`
-alias ls="ls -GFH"
+alias ls="ls -GF"
 alias la="ls -A"
 # }}}
 # {{{ `mkdir`
