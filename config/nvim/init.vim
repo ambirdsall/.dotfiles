@@ -98,6 +98,10 @@ Plug 'dermusikman/sonicpi.vim', { 'for': 'ruby' }
 call plug#end()
 " }}}
 " {{{ Plugin customization
+" {{{ netrw
+" prevents <C-^> from returning you to netrw; instead, you get the last edited file
+let g:netrw_altfile=1
+" }}}
 " {{{ Ack.vim
 " fold together all hits from same file in ack results when not under cursor.
 let g:ack_autofold_results = 1
