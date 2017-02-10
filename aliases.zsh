@@ -311,9 +311,5 @@ alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
 alias vlc=/Applications/VLC.app/Contents/MacOS/VLC
 # }}}
-# {{{ Sonic Pi
-# boot up sonic pi server without GUI
-alias spi='RBENV_VERSION=2.3.1 ruby /Applications/Sonic\ Pi.app/app/server/bin/sonic-pi-server.rb'
-#}}}
 
 # vim:foldmethod=marker:foldlevel=0

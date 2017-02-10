@@ -118,6 +118,9 @@ let g:neomake_javascript_enabled_makers = ['eslint']
 " {{{ Solarized
 let g:solarized_termtrans = 1
 " }}}
+" {{{ Sonic Pi
+let g:sonicpi_command = "sonic-pi-pipe"
+" }}}
 " {{{ Titlecase
 " vim-titlecase's default mapping is `gt`, but I use tabs
 let g:titlecase_map_keys = 0
@@ -171,55 +174,55 @@ set suffixesadd+=.js,.ts
 " }}}
 " {{{ The Land Of Autocommand
 if has("autocmd")
-  augroup CursorLine
+  augroup all_buffers " {{{
+    au!
+
+    autocmd VimResized * :wincmd = " automatically rebalance splits on resize
+
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it for commit messages, when the position is invalid, or when
+    " inside an event handler (happens when dropping a file on gvim).
+    autocmd BufReadPost *
+          \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+          \   exe "normal g`\"" |
+          \ endif
+
+    autocmd! BufWritePost * Neomake
+
+    " automatically save files on focus lost. Theoretically.
+    au FocusLost * silent! w
+
+    " stop that autocomment noise
+    autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+  augroup END " }}}
+  augroup CursorLine " {{{
     au!
     " cursorline messes with hex color highlighting
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorcolumn
     au WinLeave * setlocal nocursorline
     au WinLeave * setlocal nocursorcolumn
-  augroup END
-
-  " automatically rebalance splits on resize
-  autocmd VimResized * :wincmd =
-
-  " cron jobs, tho
+  augroup END " }}}
   autocmd filetype crontab setlocal nobackup nowritebackup
-
   autocmd filetype gitcommit setlocal textwidth=72
-
-  " [Plug] github-flavored markdown highlighting for all markdown files
-  augroup markdown
+  augroup markdown " {{{
     au!
     " nice line formatting for free in markdown
     autocmd bufreadpre *.md setlocal textwidth=80
     autocmd bufreadpre *.markdown setlocal textwidth=80
     " au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
-  augroup END
-
-  " Middleman navigation with slim templating. Useful settings for reference,
-  " though the selector is obsolete since I'm not at Flock anymore.
-  autocmd BufReadPre,BufNewFile */flock-landing/* set sua+=.html.slim
-  autocmd BufReadPre,BufNewFile */flock-landing/* set inex=substitute(v:fname,'partials/','partials/_','')
-
-  " automatically save files on focus lost. Theoretically.
-  au FocusLost * silent! w
-
-  " stop that autocomment noise
-  autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-
-  " Automatically source init file when saving changes to it.
+  augroup END " }}}
+  augroup middleman " {{{
+    au!
+    " Middleman navigation with slim templating. Useful settings for reference,
+    " though the selector is obsolete since I'm not at Flock anymore.
+    autocmd BufReadPre,BufNewFile */flock-landing/* set sua+=.html.slim
+    autocmd BufReadPre,BufNewFile */flock-landing/* set inex=substitute(v:fname,'partials/','partials/_','')
+  augroup END " }}}
+  augroup sonicpi " {{{
+    au BufNewFile,BufRead *.spi setlocal filetype=ruby
+  augroup END " }}}
   autocmd! BufWritePost init.vim source ~/.config/nvim/init.vim
-
-  autocmd! BufWritePost * Neomake
-
-  " When editing a file, always jump to the last known cursor position.
-  " Don't do it for commit messages, when the position is invalid, or when
-  " inside an event handler (happens when dropping a file on gvim).
-  autocmd BufReadPost *
-        \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
-        \   exe "normal g`\"" |
-        \ endif
 endif
 " }}}
 " {{{ Functions

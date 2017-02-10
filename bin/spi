@@ -1,0 +1,7 @@
+#!/bin/bash
+
+s_ruby="/Applications/Sonic Pi.app/app/server/native/osx/ruby/bin/ruby"
+boot_server="/Applications/Sonic Pi.app/app/server/bin/sonic-pi-server.rb"
+
+trap 'kill %1' SIGINT
+"$s_ruby" "$boot_server" & sonic-pi-logs
