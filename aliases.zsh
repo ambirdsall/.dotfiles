@@ -29,10 +29,10 @@ cdot () {
     pushd ~/.dotfiles && ls
   fi
 }
-alias prc="vim ~/.dotfiles/pryrc"
-alias ea="vim ~/.dotfiles/aliases.zsh"
+alias prc="nvim ~/.dotfiles/pryrc"
+alias ea="nvim ~/.dotfiles/aliases.zsh"
 alias sdf="source ~/.dotfiles/aliases.zsh"
-alias zrc="vim ~/.dotfiles/zshrc"
+alias zrc="nvim ~/.dotfiles/zshrc"
 alias rc="source ~/.dotfiles/zshrc"
 # }}}
 # {{{ Background jobs & processes
