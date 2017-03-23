@@ -62,12 +62,13 @@ PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commi
 # {{{ $LESS
 export LESS=MRFKGX
 # }}}
-# {{{ $PATH
+# {{{ $PATH and friends
 # add homecooked stuff
 export PATH=~/bin:~/.bin:$PATH
 # hi npm
 export PATH=$PATH:./node_modules/.bin
 export NODE_PATH=$NODE_PATH:/usr/local/lib/
+export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages
 # }}}
 # {{{ Completion
 # # aws

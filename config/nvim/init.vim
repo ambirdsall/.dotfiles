@@ -167,6 +167,7 @@ set backspace=indent,eol,start
 " 350ms is enough to finish typing combos even on a bad day, but not toooo long.
 set timeoutlen=350
 set omnifunc=syntaxcomplete#Complete
+set visualbell
 " }}}
 " {{{ Sessions
 nnoremap <leader>ms :mksession!<cr>
@@ -323,9 +324,7 @@ endfunction
 command! -nargs=+ I call InsertCommand(<q-args>)
 " }}}
 " {{{ Commands
-" Hideous and shitty hack, burn with fire ASAP
-" But it brings back colors
-command! Wtf source $MYVIMRC <bar> source $MYVIMRC
+command! Wtf set foldopen= foldclose=
 command! Html -1r ~/.config/nvim/templates/html <bar> normal 7j2f<
 command! Cx silent !chmod +x %
 " }}}
