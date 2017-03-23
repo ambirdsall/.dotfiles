@@ -48,7 +48,9 @@ alias cpu="top -o cpu"
 alias t=tmux
 alias tt="tmux attach -t"
 alias tk="tmux kill-session -t"
-alias tn="tmux new -s"
+tn () {
+  tmux new -s $1; cd; clear
+}
 # When the tmux session shrinks some and fills the margin with periods, it
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
