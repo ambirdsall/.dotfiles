@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Starts a new emacsclient session. No relation to the earlier `qed` that
+# inspired the `ed` program.
+#
+# If called from inside a tmux session, it specifies a server of the same name
+# as the session; otherwise it uses the name "default". In either case, if
+# there is no existing server by that name, it starts one such.
+if [[ -n "${TMUX+set}" ]]; then
+  server_name=`tmux display-message -p "#S"`
+  exec emacsclient -s $server_name --alternate-editor="emacs" -c "$@"
+else
+  exec emacsclient -s "default" --alternate-editor="emacs" -c "$@"
+fi

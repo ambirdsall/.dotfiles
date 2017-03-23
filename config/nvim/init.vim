@@ -340,8 +340,10 @@ nnoremap Y y$
 " {{{ Smash Escape
 "                         CURSOR POSITION AFTER:
 "                       |F| | |J| | <= backwards like esc <=
+inoremap fd <esc>
 inoremap jf <esc>
 inoremap fj <esc>
+vnoremap fd <esc>
 vnoremap jf <esc>
 vnoremap fj <esc>
 "                       | | | |J|K| => doesn't move =>
@@ -388,7 +390,10 @@ nnoremap <leader>gq gq}
 nnoremap <leader>lint :!node_modules/.bin/eslint -c .eslintrc.js %<cr>
 nnoremap <leader>r :set wrap!<cr>
 nnoremap <leader>tts :%s/\t/  /g<cr>
+" }}}
+" {{{ Saving
 nnoremap <leader>w :w<cr>
+nnoremap <leader>fs :w<cr>
 " }}}
 " {{{ Folding
 " toggle fold under cursor

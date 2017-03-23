@@ -338,8 +338,10 @@ nnoremap Y y$
 "                       |F| | |J| | <= backwards like esc <=
 inoremap jf <esc>
 inoremap fj <esc>
+inoremap fd <esc>
 vnoremap jf <esc>
 vnoremap fj <esc>
+vnoremap fd <esc>
 "                       | | | |J|K| => doesn't move =>
 inoremap jk <esc>l
 inoremap kj <esc>l
