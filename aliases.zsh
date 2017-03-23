@@ -253,6 +253,9 @@ alias update='git pull --rebase && bundle install && bundle exec rake db:migrate
 # {{{ tags
 alias tag_js='find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \; | sed "/^$/d" | sort > tags'
 # }}}
+# {{{ ip address
+alias my_ip='dig +short myip.opendns.com @resolver1.opendns.com'
+# }}}
 # {{{ Rails shortcuts
 vm () { # open straight to the given model
   vim +":Emodel $1"
@@ -302,6 +305,9 @@ zle -N no-magic-abbrev-expand
 bindkey " " magic-abbrev-expand
 bindkey "^x " no-magic-abbrev-expand
 bindkey -M isearch " " self-insert
+# }}}
+# {{{ Image processing
+alias imageoptim=/Applications/ImageOptim.app/Contents/MacOS/ImageOptim
 # }}}
 # {{{ Shruggies
 alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
