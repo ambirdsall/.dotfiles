@@ -3,6 +3,9 @@ filetype plugin indent on
 runtime macros/matchit.vim
 let mapleader=" "
 
+" {{{ Language Providers
+let g:python_host_prog = '/usr/local/bin/python'
+" }}}
 " {{{ Plugins
 " {{{ Install vim-plug if missing
 if empty(glob("~/.local/share/nvim/site/autoload/plug.vim"))
@@ -73,8 +76,12 @@ Plug 'mattreduce/vim-mix', { 'for': 'elixir' }
 " Plug 'ternjs/tern_for_vim'
 Plug 'ramitos/jsctags', { 'for': 'javascript' }
 " }}}
+" {{{ Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+" }}}
 " {{{ Typing aids
-Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-speeddating' " increment/decrement date and time strings correctly
 Plug 'ambirdsall/emmet-vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'ntpeters/vim-better-whitespace'
@@ -127,6 +134,12 @@ let g:titlecase_map_keys = 0
 nmap tit <Plug>Titlecase
 vmap tit <Plug>Titlecase
 nmap tiT <Plug>TitlecaseLine
+" }}}
+" {{{ Ultisnips
+   let g:UltiSnipsExpandTrigger="<tab>"
+   let g:UltiSnipsListSnippets="<c-tab>"
+   let g:UltiSnipsJumpForwardTrigger="<tab>"
+   let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " }}}
 " {{{ VimTmuxNavigator
 if has('nvim')
