@@ -324,8 +324,20 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;;;;;;;;;;;;;;;
   ;; PROJECTILE / TAGS
   (setq projectile-enable-idle-timer t
-        projectile-idle-timer-seconds 120
-        tags-revert-without-query t)
+  projectile-idle-timer-seconds 120
+  tags-revert-without-query t)
+
+  ;;Copyright (c) 2016, Matthew Weigel
+  ;;
+  ;; cf. https://github.com/bsdcat/effortless_git_tags
+  (defun find-git-repo-tags-file ()
+    "Find a TAGS file (as ETAGS) if the current buffer is in a git repository."
+    (when
+        (and (buffer-file-name) (vc-git-root (buffer-file-name))
+             (file-readable-p (expand-file-name ".git/ETAGS" (vc-git-root (buffer-file-name)))))
+      (expand-file-name ".git/ETAGS" (vc-git-root (buffer-file-name)))))
+
+  (defvar default-tags-table-function 'find-git-repo-tags-file)
 
   ;;;;;;;;;;;;;;;;
   ;; KEYBINDINGS

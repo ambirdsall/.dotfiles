@@ -24,6 +24,7 @@
 	ignore = dirty
 	excludesfile = /Users/ambirdsall/.gitignore_global
 	whitespace = trailing-space,space-before-tab
+	hooksPath = /Users/ambirdsall/.git_template/hooks
 
 [url "git@github.com:"]
     insteadOf = "https://github.com/"

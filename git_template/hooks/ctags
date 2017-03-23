@@ -1,8 +1,82 @@
-#!/bin/sh
+#! /bin/sh
+
+#Copyright (c) 2016, Matthew Weigel
+#
+#Permission to use, copy, modify, and/or distribute this software for any
+#purpose with or without fee is hereby granted, provided that the above
+#copyright notice and this permission notice appear in all copies.
+#
+#THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+INSIDE=`git rev-parse --is-inside-work-tree`
+if [ x"$INSIDE" != x"true" ]; then
+	exit
+fi
+
+WORK_PATH=`git rev-parse --show-toplevel`
+
+TAGSPATH=`git rev-parse --git-dir`
+TEMPETAGSPATH="${TAGSPATH}/$$.ETAGS"
+TEMPCTAGSPATH="${TAGSPATH}/$$.tags"
+ETAGSPATH="${TAGSPATH}/ETAGS"
+CTAGSPATH="${TAGSPATH}/tags"
+
+CTAGS=ctags
+ETAGS=etags
+
+cd "${WORK_PATH}"
+
+
+if ${ETAGS} --version 2>&1 | grep -q 'Exuberant Ctags'; then
+	EX_ETAGS=1
+else
+	EX_ETAGS=0
+fi
+
+CTAGS_VERSION=`${CTAGS} --version 2>&1`
+
+if echo "${CTAGS_VERSION}" | grep -q 'Exuberant Ctags'; then
+	EX_CTAGS=1
+	EM_CTAGS=0
+elif echo "${CTAGS_VERSION}" | grep -q 'Emacs'; then
+	EX_CTAGS=0
+	EM_CTAGS=1
+else
+	EX_CTAGS=0
+	EM_CTAGS=0
+fi
+
 set -e
-PATH="/usr/local/bin:$PATH"
-dir="`git rev-parse --git-dir`"
-trap 'rm -f "$dir/$$.tags"' EXIT
-git ls-files | \
-  ctags --tag-relative -L - -f"$dir/$$.tags" --languages=-javascript,sql
-mv "$dir/$$.tags" "$dir/tags"
+
+trap 'rm -f "${TEMPCTAGSPATH}" "${TEMPETAGSPATH}"' EXIT
+
+if [ x"${EX_ETAGS}" != x"0" ]; then
+	git ls-files \
+	    | ${ETAGS} --tag-relative -L - -f "${TEMPETAGSPATH}"
+else
+	touch "${TEMPETAGSPATH}"
+	git ls-files -z \
+	    | xargs -0 ${ETAGS} -o "${TEMPETAGSPATH}" -a
+fi
+
+if [ x"${EX_CTAGS}" != x"0" ]; then
+	git ls-files \
+	    | ${CTAGS} --tag-relative -L - -f "${TEMPCTAGSPATH}"
+elif [ x"${EM_CTAGS}" != x"0" ]; then
+	touch "${TEMPCTAGSPATH}"
+	git ls-files -z \
+	    | xargs -0 ${CTAGS} -o "${TEMPCTAGSPATH}" -a
+else
+	touch "${TEMPCTAGSPATH}"
+	git ls-files -z \
+	    | xargs -0 ${CTAGS} -f "${TEMPCTAGSPATH}" -a
+fi
+
+cp "${TEMPETAGSPATH}" "${ETAGSPATH}"
+cp "${TEMPCTAGSPATH}" "${CTAGSPATH}"
