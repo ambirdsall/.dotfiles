@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+
+# This will:
+#   a) abort if there are uncommitted changes or unstaged files
+#   b) push all branches to the primary remote repo
+#   c) delete the entire contents of the directory, including the `.git` directory
+#   d) create `Makefile` such that running `make` will:
+#     1) delete the Makefile itself
+#     2) clone the repo from remote
+
+# Nicer error message if attempted outside of git repo
+if !system("git rev-parse --is-inside-work-tree 2>/dev/null")
+  $stderr.puts "`git implode` can only be run inside of a git repository"
+  exit 1
+else
+  CURRENT_REPO_GIT_URL = `git remote -v | grep "origin\t.*(fetch)"`.match(/(\S+\/.+)\.git/)[0]
+end
+
+def dirty_index?
+  ! %x(git diff-index --quiet HEAD --ignore-submodules -- || echo "dirty").empty?
+end
+
+# the "--exclude-standard" flag means the presence of ignored files won't count
+# as dirtiness
+def untracked_files?
+  ! %x(git ls-files --exclude-standard --others || echo "dirty").empty?
+end
+
+def uncommitted_changes?
+  dirty_index? || untracked_files?
+end
+
+def push_local_branches!
+  puts "Pushing all local branches to origin..."
+  %x(git push origin '+*:*')
+end
+
+def empty_directory!
+  puts "Emptying directory..."
+  %x(find . -name . -o -prune -exec rm -rf -- {} +)
+end
+
+def build_makefile!
+  puts "Building Makefile..."
+  makefile_contents = <<-END_MAKE
+.DEFAULT_GOAL: restore
+
+restore: .git
+
+.git:
+	rm Makefile && git clone #{CURRENT_REPO_GIT_URL} .
+END_MAKE
+
+  %x(echo '#{makefile_contents}' > Makefile)
+end
+
+def say_goodbye
+  puts "All done!\n"
+  puts "Run `make` inside this directory if you ever desire to restore the git repo."
+  puts "Otherwise, have a nice day and enjoy the extra space on your hard drive!"
+end
+
+def exit_if_uncommitted_changes!
+  if uncommitted_changes?
+    $stderr.puts("Please commit all uncommitted changes before running `git implode`")
+    exit 1
+  end
+end
+
+def implode!
+  exit_if_uncommitted_changes!
+
+  push_local_branches!
+  empty_directory!
+  build_makefile!
+  say_goodbye
+end
+
+implode!
