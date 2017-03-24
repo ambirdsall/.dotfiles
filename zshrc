@@ -1,6 +1,3 @@
-# Aliases are loaded in ~/.zshenv so they're available in non-interactive shell
-# sessions (i.e. vim)
-
 # {{{ zsh setup
 export HISTFILE='~/.zsh_history'
 # allow mv actions on multiple files, see:
@@ -13,7 +10,7 @@ rm ~/Desktop/(dd-|Screen\ Shot)*(.N) 2> /dev/null
 brew update &> /dev/null &
 # }}}
 # {{{ Login display
-# print some stuff:
+# print outdated libraries:
 ~/.dotfiles/sbin/list_upgradable
 
 if tmux list-sessions &>/dev/null; then
@@ -70,14 +67,16 @@ export PATH=$PATH:./node_modules/.bin
 export NODE_PATH=$NODE_PATH:/usr/local/lib/
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages
 # }}}
+# {{{ irc
+export IRCSERVER="irc.freenode.net"
+# }}}
 # {{{ Completion
 # # aws
 source /usr/local/share/zsh/site-functions/_aws
 # npm
 source ~/.dotfiles/npm_completion.sh
 # }}}
-# {{{ irc
-export IRCSERVER="irc.freenode.net"
+# {{{ Aliases
+[[ -a ~/.dotfiles/aliases.zsh ]] && source ~/.dotfiles/aliases.zsh
 # }}}
-
 # vim:foldmethod=marker:foldlevel=0
