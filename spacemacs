@@ -298,8 +298,10 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   ;;;;;;;;;;;;
   ;; INDENTS
-  (setq js2-basic-offset 2
-        web-mode-code-indent-offset 2)
+  (setq-default web-mode-code-indent-offset 2
+                js-indent-level 2
+                js2-basic-offset 2
+                standard-indent 2)
 
   ;;;;;;;;;;;;;
   ;; FLYCHECK
