@@ -13,36 +13,47 @@ values."
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(
-     javascript
+     vimscript
+     auto-completion
+     better-defaults
+     colors
+     elixir
+     emacs-lisp
+     git
+     helm
      html
+     javascript
+     markdown
+     (org :variables
+          org-enable-bootstrap-support t
+          org-enable-github-support t
+          org-enable-reveal-js-support t)
+     osx
      php
      ruby
      ruby-on-rails
-     elixir
-     osx
-     helm
-     auto-completion
-     better-defaults
-     emacs-lisp
-     git
-     markdown
-     (org :variables
-          org-enable-github-support t)
      (shell :variables
             shell-default-height 30
-            shell-default-position 'full
+            shell-default-position 'bottom
             shell-default-shell 'ansi-term)
      shell-scripts
      spell-checking
      syntax-checking
+     themes-megapack
      tmux
+     typescript
      version-control
+     vimscript
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(org-tree-slide
+                                      evil-replace-with-register
+                                      editorconfig
+                                      osc
+                                      sonic-pi
                                       )
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '()
@@ -107,7 +118,7 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark
-                         leuven)
+                         material-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -152,10 +163,10 @@ values."
    ;; (default nil)
    dotspacemacs-ex-substitute-global nil
    ;; Name of the default layout (default "Default")
-   dotspacemacs-default-layout-name "Default"
+   dotspacemacs-default-layout-name "Everything"
    ;; If non nil the default layout name is displayed in the mode-line.
    ;; (default nil)
-   dotspacemacs-display-default-layout nil
+   dotspacemacs-display-default-layout t
    ;; If non nil then the last auto saved layouts are resume automatically upon
    ;; start. (default nil)
    dotspacemacs-auto-resume-layouts t
@@ -200,7 +211,7 @@ values."
    dotspacemacs-loading-progress-bar t
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup t
+   dotspacemacs-fullscreen-at-startup nil
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
@@ -275,6 +286,73 @@ before packages are loaded. If you are unsure, you should try in setting them in
 (defun dotspacemacs/user-config ()
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; LET'S JUST GET SOME THINGS STRAIGHT AROUND HERE
+  ;;
+  ;; TOC:
+  ;; 1) Text editing conceptual UI: keybindings, text objects, commands, etc
+  ;; 2) Visual application UI: modeline, file browser settings, etc
+  ;; 3) Conceptual UI setup/config: tags, syntax checking, etc
+  ;; 4) File settings: indents, etc
+
+
+  ;; 1) Text editing conceptual UI: keybindings, text objects, etc
+
+  ;;;;;;;;;;;;;;;;
+  ;; KEYBINDINGS
+  (defun evil-open-above-without-leaving-normal-state (count)
+    "Insert a new line above the current line and move the cursor to the new line without changing editing state."
+    (interactive "p")
+    (evil-open-above count)
+    (normal-mode))
+
+  (defun evil-open-below-without-leaving-normal-state (count)
+    "Insert a new line below the current line and move the cursor to the new line without changing editing state."
+    (interactive "p")
+    (evil-open-below count)
+    (normal-mode))
+
+  (defun switch-to-named-terminal-buffer (buffer-name)
+    "Open a new terminal buffer with the given name.
+
+If the buffer already exists (there is no check that it is, in fact, a terminal
+buffer), it is opened; if not, a new ansi-term buffer is opened with the given
+name. Compared to the default terminal buffer, this is much more useful for
+long-running processes."
+    (interactive "BName of buffer: ")
+    (let ((given-buffer (get-buffer buffer-name))
+             (term-command "/usr/local/bin/zsh"))
+      (if given-buffer (switch-to-buffer given-buffer)
+       (set-buffer (ansi-term term-command buffer-name)))))
+
+  (defun define-new-op-command (command)
+    "Installs the given command under the `<SPC>op` keybinding.
+
+For convenience, this keybinding (picked because there's no obvious mnemonic and
+it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
+    (interactive "aFunction: ")
+    (spacemacs/set-leader-keys "op" command))
+
+  (spacemacs/set-leader-keys
+    ; the keybinding for `<spc>op` is reserved for whatever nonsense I'm into at the moment
+    ; lowercase p => call this moment's function
+    ; uppercase P => install a new function
+    "oP" 'define-new-op-command
+    ; the rest can be considered stable
+    "oe" 'eval-expression
+    "of" 'evil-first-non-blank
+    "oh" (kbd ":noh") ; tbh I have no idea why I can't directly bind to 'evil-ex-nohighlight
+    "oo" 'evil-open-below-without-leaving-normal-state
+    "oO" 'evil-open-above-without-leaving-normal-state
+    "ot" 'switch-to-named-terminal-buffer
+    "jj" 'evil-avy-goto-char-2
+    "jJ" 'evil-avy-goto-char)
+
+  (define-key evil-motion-state-map (kbd "<up>") 'evil-scroll-line-up)
+  (define-key evil-motion-state-map (kbd "<down>") 'evil-scroll-line-down)
+  (define-key Info-mode-map (kbd "<right>") 'Info-forward-node)
+  (define-key Info-mode-map (kbd "<left>") 'Info-backward-node)
+
+  ;;;;;;;;;;;;;;;;;;;;;;
+  ;; CUSTOM TEXT OBJECTS
   (defmacro define-and-bind-text-object (key start-regex end-regex)
     (let ((inner-name (make-symbol "inner-name"))
           (outer-name (make-symbol "outer-name")))
@@ -285,23 +363,39 @@ before packages are loaded. If you are unsure, you should try in setting them in
            (evil-select-paren ,start-regex ,end-regex beg end type count t))
          (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
          (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
-  ;;;;;;;;;;;;;;;;;;;;;;
-  ;; EVIL TEXT OBJECTS
+
   ;; create "il"/"al" (inside/around) line text objects:
   (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
   ;; create "ie"/"ae" (inside/around) entire buffer text objects:
   (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Replace with register
+  (setq evil-replace-with-register-key (kbd "gr"))
+  (evil-replace-with-register-install)
+
+  ;; 2) Visual application UI: modeline, file browser settings, etc
+
   ;;;;;;;;;;;;;;
   ;; FILE TREE
   (setq neo-theme 'nerd)
 
-  ;;;;;;;;;;;;
-  ;; INDENTS
-  (setq-default web-mode-code-indent-offset 2
-                js-indent-level 2
-                js2-basic-offset 2
-                standard-indent 2)
+  ;;;;;;;;;;;;;
+  ;; ORG-MODE
+  (setq org-src-fontify-natively t
+        org-confirm-babel-evaluate nil
+        ; TODO install local copy of reveal.js to allow presenter mode
+        org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+
+  ;;;;;;;;;;;;;
+  ;; MODELINE
+  (spacemacs/toggle-mode-line-battery-on)
+
+  ;; RAINBOW-MODE
+  ;; (setq old-rainbow-html-colors-major-mode-list rainbow-html-colors-major-mode-list)
+  (setq rainbow-html-colors-major-mode-list (cons 'scss-mode rainbow-html-colors-major-mode-list))
+
+  ;; 3) Conceptual UI setup/config: tags, syntax checking, etc
 
   ;;;;;;;;;;;;;
   ;; FLYCHECK
@@ -319,19 +413,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
                 (append flycheck-disabled-checkers
                         '(javascript-jshint)))
 
-  ;;;;;;;;;;;;;
-  ;; ORG-MODE
-  (setq org-src-fontify-natively t)
-
   ;;;;;;;;;;;;;;;
   ;; PROJECTILE / TAGS
-  (setq projectile-enable-idle-timer t
-  projectile-idle-timer-seconds 120
-  tags-revert-without-query t)
-
-  ;;Copyright (c) 2016, Matthew Weigel
-  ;;
-  ;; cf. https://github.com/bsdcat/effortless_git_tags
+  ;; Copyright (c) 2016, Matthew Weigel, cf. https://github.com/bsdcat/effortless_git_tags
   (defun find-git-repo-tags-file ()
     "Find a TAGS file (as ETAGS) if the current buffer is in a git repository."
     (when
@@ -341,12 +425,24 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (defvar default-tags-table-function 'find-git-repo-tags-file)
 
-  ;;;;;;;;;;;;;;;;
-  ;; KEYBINDINGS
-  (spacemacs/set-leader-keys "of" 'evil-first-non-blank)
-  (spacemacs/set-leader-keys "jj" 'evil-avy-goto-char-2)
-  (spacemacs/set-leader-keys "jJ" 'evil-avy-goto-char)
+
+  ;; 4) File settings: indents, etc
+
+  ;;;;;;;;;;;;
+  ;; INDENTS
+  (setq-default web-mode-code-indent-offset 2
+                web-mode-markup-indent-offset 2
+                js-indent-level 2
+                typescript-indent-level 2
+                js2-basic-offset 2
+                standard-indent 2)
+
+  (use-package editorconfig
+    :ensure t
+    :config
+    (editorconfig-mode 1))
   )
+
 dotspacemacs-configuration-layers
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -355,13 +451,40 @@ dotspacemacs-configuration-layers
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(evil-want-Y-yank-to-eol t)
+ '(fci-rule-color "#ECEFF1" t)
+ '(hl-sexp-background-color "#efebe9")
  '(package-selected-packages
    (quote
-    (fireplace define-word xterm-color ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs rbenv rainbow-delimiters quelpa pug-mode projectile-rails popwin phpunit phpcbf php-extras php-auto-yasnippets persp-mode pbcopy paradox ox-gfm osx-trash osx-dictionary orgit org-tree-slide org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file ob-elixir neotree mwim multi-term move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc insert-shebang info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md flyspell-correct-helm flycheck-pos-tip flycheck-mix flx-ido fish-mode fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump drupal-mode diff-hl company-web company-tern company-statistics company-shell column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile alchemist aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
- '(paradox-github-token t))
+    (sonic-pi osc ox-reveal ox-twbs rainbow-mode rainbow-identifiers color-identifiers-mode editorconfig tide typescript-mode evil-replace-with-register vimrc-mode dactyl-mode zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme fireplace define-word xterm-color ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs rbenv rainbow-delimiters quelpa pug-mode projectile-rails popwin phpunit phpcbf php-extras php-auto-yasnippets persp-mode pbcopy paradox ox-gfm osx-trash osx-dictionary orgit org-tree-slide org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file ob-elixir neotree mwim multi-term move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc insert-shebang info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md flyspell-correct-helm flycheck-pos-tip flycheck-mix flx-ido fish-mode fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump drupal-mode diff-hl company-web company-tern company-statistics company-shell column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile alchemist aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(paradox-github-token t)
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#B71C1C")
+     (40 . "#FF5722")
+     (60 . "#FFA000")
+     (80 . "#558b2f")
+     (100 . "#00796b")
+     (120 . "#2196f3")
+     (140 . "#4527A0")
+     (160 . "#B71C1C")
+     (180 . "#FF5722")
+     (200 . "#FFA000")
+     (220 . "#558b2f")
+     (240 . "#00796b")
+     (260 . "#2196f3")
+     (280 . "#4527A0")
+     (300 . "#B71C1C")
+     (320 . "#FF5722")
+     (340 . "#FFA000")
+     (360 . "#558b2f"))))
+ '(vc-annotate-very-old-color nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
