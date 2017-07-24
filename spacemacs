@@ -2,6 +2,8 @@
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
+(add-to-list 'load-path "/Users/ambirdsall/.emacs.d/lisp/")
+
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
@@ -13,10 +15,12 @@ values."
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(
+     csv
      vimscript
      auto-completion
      better-defaults
-     colors
+     (colors :variables
+             colors-enable-nyan-cat-progress-bar t)
      elixir
      emacs-lisp
      git
@@ -32,12 +36,15 @@ values."
      php
      ruby
      ruby-on-rails
+     scala
+     scheme
      (shell :variables
             shell-default-height 30
-            shell-default-position 'bottom
-            shell-default-shell 'ansi-term)
+            shell-default-position 'fullscreen
+            shell-default-shell 'eshell)
      shell-scripts
-     spell-checking
+     (spell-checking :variables
+                     spell-checking-enable-by-default nil)
      syntax-checking
      themes-megapack
      tmux
@@ -127,7 +134,7 @@ values."
                                :size 13
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.5)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -292,6 +299,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; 2) Visual application UI: modeline, file browser settings, etc
   ;; 3) Conceptual UI setup/config: tags, syntax checking, etc
   ;; 4) File settings: indents, etc
+  ;; 5) One-off commands
 
 
   ;; 1) Text editing conceptual UI: keybindings, text objects, etc
@@ -313,15 +321,19 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (defun switch-to-named-terminal-buffer (buffer-name)
     "Open a new terminal buffer with the given name.
 
-If the buffer already exists (there is no check that it is, in fact, a terminal
-buffer), it is opened; if not, a new ansi-term buffer is opened with the given
-name. Compared to the default terminal buffer, this is much more useful for
-long-running processes."
+If the buffer already exists, it is opened; if not, a new ansi-term buffer is
+opened with the given name. Compared to the default terminal buffer, this is
+much more useful for long-running processes."
     (interactive "BName of buffer: ")
     (let ((given-buffer (get-buffer buffer-name))
              (term-command "/usr/local/bin/zsh"))
       (if given-buffer (switch-to-buffer given-buffer)
        (set-buffer (ansi-term term-command buffer-name)))))
+
+  (defun amb/open-agenda-file ()
+    "Opens the file ~/notes/agenda.org"
+    (interactive)
+    (find-file "~/notes/agenda.org"))
 
   (defun define-new-op-command (command)
     "Installs the given command under the `<SPC>op` keybinding.
@@ -337,19 +349,30 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
     ; uppercase P => install a new function
     "oP" 'define-new-op-command
     ; the rest can be considered stable
+    "oa" 'amb/open-agenda-file
     "oe" 'eval-expression
     "of" 'evil-first-non-blank
     "oh" (kbd ":noh") ; tbh I have no idea why I can't directly bind to 'evil-ex-nohighlight
+    "ol" 'evil-buffer
     "oo" 'evil-open-below-without-leaving-normal-state
     "oO" 'evil-open-above-without-leaving-normal-state
     "ot" 'switch-to-named-terminal-buffer
+    "ow" 'delete-trailing-whitespace
     "jj" 'evil-avy-goto-char-2
     "jJ" 'evil-avy-goto-char)
 
-  (define-key evil-motion-state-map (kbd "<up>") 'evil-scroll-line-up)
-  (define-key evil-motion-state-map (kbd "<down>") 'evil-scroll-line-down)
-  (define-key Info-mode-map (kbd "<right>") 'Info-forward-node)
+  ; TODO: IF the value of variable `last-command` was an org-mode subtree
+  ; manipulation command; AND the current major mode is org-mode; THEN up and
+  ; down arrows should change lines, rather than scrolling
+  (with-eval-after-load 'org-mode
+    (define-key org-mode-map (kbd "<up>") 'previous-line)
+    (define-key org-mode-map (kbd "<down>") 'next-line)
+    )
+  (define-key Info-mode-map (kbd "<up>") 'evil-scroll-line-up)
+  (define-key Info-mode-map (kbd "<down>") 'evil-scroll-line-down)
   (define-key Info-mode-map (kbd "<left>") 'Info-backward-node)
+  (define-key Info-mode-map (kbd "<right>") 'Info-forward-node)
+  (define-key evil-normal-state-map (kbd "gf") 'helm-find-files)
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; CUSTOM TEXT OBJECTS
@@ -387,22 +410,50 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
         ; TODO install local copy of reveal.js to allow presenter mode
         org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
 
+  ; Add projectile TODO.org files to agenda automatically
+  (with-eval-after-load 'org-agenda
+    (require 'org-projectile)
+    (append (org-projectile:todo-files) org-agenda-files)
+    (push "~/notes/agenda.org" org-agenda-files)
+    (push "~/notes/ical-entries.org" org-agenda-files))
+
+  ;; ORG TABLES IN MARKDOWN FILES PLZ
+  ;; (require 'org-table)
+
+  ;; (defun amb/convert-org-tables-to-gfm-tables ()
+  ;;   (save-excursion
+  ;;     (goto-char (point-min))
+  ;;     (while (search-forward "-+-" nil t) (replace-match "-|-"))
+  ;;     ))
+
+  ;; (add-hook 'markdown-mode-hook 'orgtbl-mode)
+  ;; (add-hook 'markdown-mode-hook
+  ;;           (lambda()
+  ;;             (add-hook 'after-save-hook 'amb/convert-org-tables-to-gfm-tables  nil 'make-it-local)))
+
   ;;;;;;;;;;;;;
   ;; MODELINE
   (spacemacs/toggle-mode-line-battery-on)
+  ;; (setq powerline-default-separator 'utf-8)
 
   ;; RAINBOW-MODE
   ;; (setq old-rainbow-html-colors-major-mode-list rainbow-html-colors-major-mode-list)
-  (setq rainbow-html-colors-major-mode-list (cons 'scss-mode rainbow-html-colors-major-mode-list))
+  (with-eval-after-load 'rainbow-mode
+    (setq rainbow-html-colors-major-mode-list (cons 'scss-mode rainbow-html-colors-major-mode-list)))
+
+  ;; GOOGLE MAPS
+  (require 'google-maps)
+  (require 'org-location-google-maps)
 
   ;; 3) Conceptual UI setup/config: tags, syntax checking, etc
 
   ;;;;;;;;;;;;;
   ;; FLYCHECK
-  (setq flycheck-checkers '(javascript-standard)
+  (with-eval-after-load 'flycheck
+    (setq flycheck-checkers '(javascript-standard)
         js2-mode-show-parse-errors nil
         js2-mode-show-strict-warnings nil
-        js2-strict-missing-semi-warning nil)
+        js2-strict-missing-semi-warning nil))
 
   (require 'flycheck)
   ;; turn on flychecking globally
@@ -441,6 +492,9 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
     :ensure t
     :config
     (editorconfig-mode 1))
+
+  ;; 5) One-off commands
+  (call-interactively 'spacemacs/toggle-fullscreen-frame-off)
   )
 
 dotspacemacs-configuration-layers
@@ -451,40 +505,14 @@ dotspacemacs-configuration-layers
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(evil-want-Y-yank-to-eol t)
- '(fci-rule-color "#ECEFF1" t)
- '(hl-sexp-background-color "#efebe9")
+ '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (sonic-pi osc ox-reveal ox-twbs rainbow-mode rainbow-identifiers color-identifiers-mode editorconfig tide typescript-mode evil-replace-with-register vimrc-mode dactyl-mode zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme fireplace define-word xterm-color ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spacemacs-theme spaceline smeargle slim-mode shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restart-emacs rbenv rainbow-delimiters quelpa pug-mode projectile-rails popwin phpunit phpcbf php-extras php-auto-yasnippets persp-mode pbcopy paradox ox-gfm osx-trash osx-dictionary orgit org-tree-slide org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file ob-elixir neotree mwim multi-term move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc insert-shebang info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md flyspell-correct-helm flycheck-pos-tip flycheck-mix flx-ido fish-mode fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump drupal-mode diff-hl company-web company-tern company-statistics company-shell column-enforce-mode coffee-mode clean-aindent-mode chruby bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile alchemist aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
- '(paradox-github-token t)
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#B71C1C")
-     (40 . "#FF5722")
-     (60 . "#FFA000")
-     (80 . "#558b2f")
-     (100 . "#00796b")
-     (120 . "#2196f3")
-     (140 . "#4527A0")
-     (160 . "#B71C1C")
-     (180 . "#FF5722")
-     (200 . "#FFA000")
-     (220 . "#558b2f")
-     (240 . "#00796b")
-     (260 . "#2196f3")
-     (280 . "#4527A0")
-     (300 . "#B71C1C")
-     (320 . "#FF5722")
-     (340 . "#FFA000")
-     (360 . "#558b2f"))))
- '(vc-annotate-very-old-color nil))
+    (geiser csv-mode typescript-mode sbt-mode scala-mode inf-ruby company smartparens evil flycheck helm helm-core markdown-mode alert org-plus-contrib magit magit-popup git-commit with-editor async yasnippet php-mode js2-mode dash s define-word zonokai-theme zenburn-theme zen-and-art-theme xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tide tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme soothe-theme sonic-pi solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode shell-pop seti-theme scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reverse-theme reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme purple-haze-theme pug-mode projectile-rails professional-theme popwin planet-theme phpunit phpcbf php-extras php-auto-yasnippets phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pbcopy pastels-on-dark-theme paradox ox-twbs ox-reveal ox-gfm osx-trash osx-dictionary orgit organic-green-theme org-tree-slide org-projectile org-present org-pomodoro org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-elixir noflet noctilux-theme niflheim-theme neotree naquadah-theme mwim mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minitest minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum livid-mode linum-relative link-hint light-soap-theme less-css-mode launchctl json-mode js2-refactor js-doc jbeans-theme jazz-theme ir-black-theme insert-shebang inkpot-theme info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flycheck-mix flycheck-credo flx-ido flatui-theme flatland-theme fish-mode firebelly-theme fill-column-indicator feature-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-replace-with-register evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help ensime emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dracula-theme django-theme diff-hl darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme dactyl-mode cyberpunk-theme company-web company-tern company-statistics company-shell column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-identifiers-mode coffee-mode clues-theme clean-aindent-mode chruby cherry-blossom-theme busybee-theme bundler bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes alchemist aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
+ )
