@@ -98,6 +98,9 @@ Plug 'altercation/vim-colors-solarized'
 " {{{ Sonic Pi
 Plug 'dermusikman/sonicpi.vim', { 'for': 'ruby' }
 " }}}
+" {{{ Org Mode
+Plug 'jceb/vim-orgmode'
+" }}}
 call plug#end()
 " }}}
 " {{{ Plugin customization
