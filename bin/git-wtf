@@ -9,4 +9,10 @@
 # -r: --pickaxe-regex
 args = ARGV.join(" ").gsub(/(^-r)|( -r)/, " --pickaxe-regex")
 
-exec "git log --oneline --decorate -S '#{args}'"
+if args.empty?
+  # search for contents of clipboard
+  exec 'git log --oneline --decorate -S "$(pbpaste)"'
+else
+  # search for given string
+  exec "git log --oneline --decorate -S '#{args}'"
+end
