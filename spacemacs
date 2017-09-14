@@ -45,6 +45,8 @@ values."
      shell-scripts
      (spell-checking :variables
                      spell-checking-enable-by-default nil)
+     spotify
+     sml
      syntax-checking
      themes-megapack
      tmux
@@ -125,7 +127,7 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark
-                         material-light)
+                         solarized-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -333,7 +335,36 @@ much more useful for long-running processes."
   (defun amb/open-agenda-file ()
     "Opens the file ~/notes/agenda.org"
     (interactive)
-    (find-file "~/notes/agenda.org"))
+    (find-file "~/notes/sigfig.org"))
+
+  (defun amb/org-insert-subheading-respect-content ()
+    "Opens a new subheading without affecting the current line"
+    (interactive)
+    (call-interactively 'spacemacs/evil-insert-line-below)
+    (call-interactively 'next-line)
+    (call-interactively 'org-insert-subheading))
+
+  ;;;;;;;;;;;;;;;;;;
+  ;; Avoid polluting the system clipboard
+  (defun amb/toggle-clipboard ()
+    "Toggles whether the system clipboard is accessable to emacs.
+
+If it's connected, you can paste from the system clipboard, but all deleted or killed text will end
+up polluting the system clipboard, which can get annoying fast.
+
+If not, the system clipboard doesn't get polluted, but there's no great way to quickly grab text
+from outside applications."
+    (interactive)
+    (if x-select-enable-clipboard
+        (progn
+          (setq x-select-enable-clipboard nil)
+          (message "The system clipboard is safe and sound again!"))
+      (progn
+        (setq x-select-enable-clipboard t)
+        (message "Copy and paste away, slugger!"))))
+
+  ; Clipboard should be disabled at startup
+  (setq x-select-enable-clipboard nil)
 
   (defun define-new-op-command (command)
     "Installs the given command under the `<SPC>op` keybinding.
@@ -344,12 +375,15 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
     (spacemacs/set-leader-keys "op" command))
 
   (spacemacs/set-leader-keys
+    "nk" 'evil-numbers/inc-at-pt
+    "nj" 'evil-numbers/dec-at-pt
     ; the keybinding for `<spc>op` is reserved for whatever nonsense I'm into at the moment
     ; lowercase p => call this moment's function
     ; uppercase P => install a new function
     "oP" 'define-new-op-command
     ; the rest can be considered stable
     "oa" 'amb/open-agenda-file
+    "oc" 'amb/toggle-clipboard
     "oe" 'eval-expression
     "of" 'evil-first-non-blank
     "oh" (kbd ":noh") ; tbh I have no idea why I can't directly bind to 'evil-ex-nohighlight
@@ -358,16 +392,20 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
     "oO" 'evil-open-above-without-leaving-normal-state
     "ot" 'switch-to-named-terminal-buffer
     "ow" 'delete-trailing-whitespace
+    "oz" 'evil-toggle-fold
     "jj" 'evil-avy-goto-char-2
     "jJ" 'evil-avy-goto-char)
 
   ; TODO: IF the value of variable `last-command` was an org-mode subtree
   ; manipulation command; AND the current major mode is org-mode; THEN up and
   ; down arrows should change lines, rather than scrolling
-  (with-eval-after-load 'org-mode
+  ;; (with-eval-after-load 'org-mode
     (define-key org-mode-map (kbd "<up>") 'previous-line)
     (define-key org-mode-map (kbd "<down>") 'next-line)
-    )
+    (define-key org-mode-map (kbd "<C-S-return>") 'amb/org-insert-subheading-respect-content)
+    (spacemacs/set-leader-keys-for-major-mode 'org-mode
+      "hs" 'amb/org-insert-subheading-respect-content)
+    ;; )
   (define-key Info-mode-map (kbd "<up>") 'evil-scroll-line-up)
   (define-key Info-mode-map (kbd "<down>") 'evil-scroll-line-down)
   (define-key Info-mode-map (kbd "<left>") 'Info-backward-node)
@@ -402,6 +440,13 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
   ;;;;;;;;;;;;;;
   ;; FILE TREE
   (setq neo-theme 'nerd)
+
+  ;;;;;;;;;;;;;
+  ;; Typescript
+  (with-eval-after-load 'typescript
+    (progn
+      (setq tide-tsserver-executable "/Users/abirdsall/workspace/ngts/ngts_dev_tools/node_modules/typescript/bin/tsserver")
+      (setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log"))))
 
   ;;;;;;;;;;;;;
   ;; ORG-MODE
@@ -442,10 +487,21 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
     (setq rainbow-html-colors-major-mode-list (cons 'scss-mode rainbow-html-colors-major-mode-list)))
 
   ;; GOOGLE MAPS
-  (require 'google-maps)
-  (require 'org-location-google-maps)
+  (with-eval-after-load 'org-mode
+    (progn (require 'google-maps)
+           (require 'org-location-google-maps)))
 
   ;; 3) Conceptual UI setup/config: tags, syntax checking, etc
+
+  ;;;;;;;;;;
+  ;; grepping
+  (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s")
+  (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'"))
+
+  ;;;;;;;;;;;
+  ;; Folding
+  (with-eval-after-load 'origami-mode
+    (push '(typescript-mode . origami-c-style-parser) origami-parser-alist))
 
   ;;;;;;;;;;;;;
   ;; FLYCHECK
@@ -479,6 +535,10 @@ it's extremely ergonomic to type) is reserved for ad-hoc or temporary commands."
 
   ;; 4) File settings: indents, etc
 
+  ;;;;;;;;;;;
+  ;; FILL COLUMN
+  (setq fill-column 100)
+
   ;;;;;;;;;;;;
   ;; INDENTS
   (setq-default web-mode-code-indent-offset 2
@@ -505,10 +565,11 @@ dotspacemacs-configuration-layers
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(fill-column 100)
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (geiser csv-mode typescript-mode sbt-mode scala-mode inf-ruby company smartparens evil flycheck helm helm-core markdown-mode alert org-plus-contrib magit magit-popup git-commit with-editor async yasnippet php-mode js2-mode dash s define-word zonokai-theme zenburn-theme zen-and-art-theme xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tide tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme soothe-theme sonic-pi solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode shell-pop seti-theme scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reverse-theme reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme purple-haze-theme pug-mode projectile-rails professional-theme popwin planet-theme phpunit phpcbf php-extras php-auto-yasnippets phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pbcopy pastels-on-dark-theme paradox ox-twbs ox-reveal ox-gfm osx-trash osx-dictionary orgit organic-green-theme org-tree-slide org-projectile org-present org-pomodoro org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-elixir noflet noctilux-theme niflheim-theme neotree naquadah-theme mwim mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minitest minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum livid-mode linum-relative link-hint light-soap-theme less-css-mode launchctl json-mode js2-refactor js-doc jbeans-theme jazz-theme ir-black-theme insert-shebang inkpot-theme info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flycheck-mix flycheck-credo flx-ido flatui-theme flatland-theme fish-mode firebelly-theme fill-column-indicator feature-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-replace-with-register evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help ensime emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dracula-theme django-theme diff-hl darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme dactyl-mode cyberpunk-theme company-web company-tern company-statistics company-shell column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-identifiers-mode coffee-mode clues-theme clean-aindent-mode chruby cherry-blossom-theme busybee-theme bundler bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes alchemist aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (ob-sml sml-mode origami spotify helm-spotify multi powerline rake inflections pcre2el spinner osc log4e gntp skewer-mode simple-httpd json-snatcher json-reformat multiple-cursors hydra parent-mode projectile request haml-mode gitignore-mode fringe-helper git-gutter+ git-gutter flyspell-correct pos-tip flx iedit anzu goto-chg undo-tree highlight f diminish autothemer web-completion-data dash-functional tern bind-map bind-key packed elixir-mode pkg-info epl avy auto-complete popup geiser csv-mode typescript-mode sbt-mode scala-mode inf-ruby company smartparens evil flycheck helm helm-core markdown-mode alert org-plus-contrib magit magit-popup git-commit with-editor async yasnippet php-mode js2-mode dash s define-word zonokai-theme zenburn-theme zen-and-art-theme xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tide tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme soothe-theme sonic-pi solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode shell-pop seti-theme scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reverse-theme reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme purple-haze-theme pug-mode projectile-rails professional-theme popwin planet-theme phpunit phpcbf php-extras php-auto-yasnippets phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pbcopy pastels-on-dark-theme paradox ox-twbs ox-reveal ox-gfm osx-trash osx-dictionary orgit organic-green-theme org-tree-slide org-projectile org-present org-pomodoro org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-elixir noflet noctilux-theme niflheim-theme neotree naquadah-theme mwim mustang-theme multi-term move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minitest minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum livid-mode linum-relative link-hint light-soap-theme less-css-mode launchctl json-mode js2-refactor js-doc jbeans-theme jazz-theme ir-black-theme insert-shebang inkpot-theme info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flycheck-mix flycheck-credo flx-ido flatui-theme flatland-theme fish-mode firebelly-theme fill-column-indicator feature-mode farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-replace-with-register evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help ensime emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dracula-theme django-theme diff-hl darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme dactyl-mode cyberpunk-theme company-web company-tern company-statistics company-shell column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-identifiers-mode coffee-mode clues-theme clean-aindent-mode chruby cherry-blossom-theme busybee-theme bundler bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes alchemist aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
