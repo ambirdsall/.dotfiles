@@ -7,6 +7,21 @@ export rio=~/job/rio
 export emoji=~/code/EmojiDictionary
 export nvimrc=~/.config/nvim/init.vim
 # }}}
+# {{{ emacsen
+on-your-mark () {
+sleep 0.4
+echo get set....
+sleep 1
+/usr/local/bin/emacs --daemon --exec dotspacemacs/user-config
+}
+em () {
+  if [[ $# -gt 0 ]]; then
+    /usr/local/bin/emacsclient -t --alternate-editor=emacs "$@"
+  else
+    /usr/local/bin/emacsclient -t --alternate-editor=emacs $(um)
+  fi
+}
+# }}}
 # {{{ Current projects
 cdc() {
   if [[ $# -gt 0 ]]; then
@@ -20,6 +35,14 @@ compdef '_files -W ~/code' cdc
 alias cdl='pushd ~/job/freelance/lawfetcher'
 alias cdr='cd ~/job/rio'
 alias ttr='tt r'
+wut() {
+  rg "export (class|interface|function|const|let|type) $1"
+}
+
+wur() {
+  rg "import $1"
+}
+
 # }}}
 # {{{ Edit/source development config files
 cdot () {
@@ -49,7 +72,11 @@ alias t=tmux
 alias tt="tmux attach -t"
 alias tk="tmux kill-session -t"
 tn () {
-  tmux new -s $1; cd; clear
+  if [[ $# -gt 0 ]]; then
+    tmux new -s $1; cd; clear
+  else
+    tmux new -s $(basename $(pwd)); cd; clear
+  fi
 }
 # When the tmux session shrinks some and fills the margin with periods, it
 # thinks there's another instance of the session in a smaller terminal. F that.
@@ -101,6 +128,26 @@ alias cx='chmod +x'
 # {{{ `echo`
 alias e=echo
 # }}}
+# {{{ fzf
+# DEPENDENCY: gem install rouge
+alias um="find . -type f | grep -vE '.tmp-*|.git|node_modules|bower_components' | fzf --multi --preview 'rougify {}'"
+cdf() {
+  pushd $(dirname $(find . -type f | grep -vE '.tmp-*|.git|node_modules|bower_components|DS_Store' | fzf --preview 'rougify {}'))
+}
+h () {
+  local cols sep
+  cols=$(( COLUMNS / 3 ))
+  sep='{::}'
+
+  cp -f ~/Library/Application\ Support/Google/Chrome/Default/History /tmp/h
+
+  sqlite3 -separator $sep /tmp/h \
+    "select substr(title, 1, $cols), url
+     from urls order by last_visit_time desc" |
+  awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
+  fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
+}
+# }}}
 # {{{ `ls`
 alias ls="ls -GF"
 alias la="ls -A"
@@ -129,13 +176,6 @@ vi () {
 }
 alias ci=vi
 alias vis="vi -S Session.vim"
-mvim () {
-  if [[ $# -gt 0 ]]; then
-    mvim "$@"
-  else
-    mvim .
-  fi
-}
 nv () {
   if [[ $# -gt 0 ]]; then
     nvim "$@"
@@ -173,8 +213,19 @@ gc () {
   cdd $repo_dir
 }
 
-alias co="git co"
+co () {
+  if [[ $# -gt 0 ]]; then
+    git checkout "$@"
+  else
+    git checkout `git branch -l | sed 's/^ *//' | fzf --preview 'git show heads/{} | diff-so-fancy'`
+  fi
+}
 alias co-="git co -"
+
+cob () {
+  co -b "`echo $* | tr ' ' -`"
+}
+
 com () {
   if [[ $(pwd) == ~/job/helloflock.github.io ]]; then
     git fetch && git co source
@@ -243,7 +294,8 @@ alias gg="git grep"
 
 alias b="git blame"
 
-alias stash="git stash -u"
+alias stash="git stash save -u"
+alias pop="git stash pop"
 
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push --force-with-lease origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
@@ -280,7 +332,9 @@ abbreviations=(
 "pb"    "| bc"
 "peg"   "| egrep"
 "pgr"   "| groff -s -p -t -e -Tlatin1 -mandoc"
+"pf"    "| fzf"
 "ph"    "| head"
+"pj"    "| jq"
 "pk"    "| keep"
 "pm"    "| less" # yeah, this is misleading; but less > more and pl is taken
 "pt"    "| tail -f"
@@ -309,15 +363,22 @@ bindkey -M isearch " " self-insert
 # {{{ Image processing
 alias imageoptim=/Applications/ImageOptim.app/Contents/MacOS/ImageOptim
 # }}}
-# {{{ Shruggies
+# {{{ Unicode arts and farts
 alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
-# Backslashes and underscores must be escaped or GitHub will parse as markdown
-alias ghidk="echo -n '¯\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\_(ツ)\_/¯\" to clipboard'"
+# Backslashes and underscores must be escaped if the text will be parsed as markdown
+alias idke="echo -n '¯\\\\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\\\_(ツ)\_/¯\" to clipboard'"
+alias om="echo -n '¯\_( ˘͡ ˘̯)_/¯' | pbcopy && echo 'Copied \"¯\_( ˘͡ ˘̯)_/¯\" to clipboard'"
+alias tableflip="echo -n '(╯°□°）╯︵ ┻━┻' | pbcopy && echo 'Copied \"(╯°□°）╯︵ ┻━┻\" to clipboard'"
+alias muscles="echo -n 'ᕙ(⇀‸↼‶)ᕗ' | pbcopy && echo 'Copied \"ᕙ(⇀‸↼‶)ᕗ\" to clipboard'"
+alias heyo="echo -n '(╭☞'ω')╭☞' | pbcopy && echo 'Copied \"(╭☞'ω')╭☞¯\" to clipboard'"
 # }}}
 # {{{ Entertainment
 alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
 alias vlc=/Applications/VLC.app/Contents/MacOS/VLC
 # }}}
+
+# and machine-specific aliases/overrides:
+[ -f ~/.local-aliases.zsh ] && source ~/.local-aliases || true
 
 # vim:foldmethod=marker:foldlevel=0
