@@ -2,6 +2,7 @@
 --type-add=css:ext:sass,scss,less
 --type-set=slim:ext:slim
 --type-set=erb:ext:erb
+--type-set=ts:ext:ts
 --ignore-dir=log
 --ignore-dir=tmp
 --ignore-dir=coverage
