@@ -1,7 +1,9 @@
 # {{{ zsh setup
 export HISTFILE='~/.zsh_history'
+export HISTCONTROL=ignorespace
 # allow mv actions on multiple files, see:
 autoload -U zmv
+setopt auto_cd
 # }}}
 # {{{ Login display
 # print outdated libraries:
@@ -21,14 +23,15 @@ rm ~/Desktop/(dd-|Screen\ Shot)*(.N) 2> /dev/null
 # brew update in the background, suppressing output
 # brew update &> /dev/null &
 # }}}
-# VIMIFY THE TERMINAL {{{
-export EDITOR=vim
+# terminal setup {{{
+# export EDITOR=vim
+export EDITOR='emacsclient -nw --alternate-editor="emacs"'
 export MANPAGER="nvim -c 'set ft=man' -"
 
 bindkey -v
-# export KEYTIMEOUT=3
-bindkey -M viins 'jf' vi-cmd-mode
-bindkey -M viins 'fj' vi-cmd-mode
+# # export KEYTIMEOUT=3
+# bindkey -M viins 'jf' vi-cmd-mode
+# bindkey -M viins 'fj' vi-cmd-mode
 
 function zle-line-init zle-keymap-select {
     NORMAL_MODE_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
@@ -53,7 +56,8 @@ reverse_dir_stack() {
 }
 
 PS1='$(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commit)%f
-%(!.⚡️.$(~/.dotfiles/sbin/icon_for_time_of_day 2>/dev/null))  '
+%(?.%F{239}.%F{196})⭆%f '
+
 # RPS1 set in VIMIFY THE TERMINAL
 # }}}
 # {{{ $LESS
@@ -62,10 +66,17 @@ export LESS=MRFKGX
 # {{{ $PATH and friends
 # add homecooked stuff
 export PATH=~/bin:~/.bin:$PATH
-# hi npm
-export PATH=$PATH:./node_modules/.bin
+# hi rust
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.npm-packages/bin:$PATH"
+# hi go
+export PATH="$HOME/go/bin:$PATH"
+# hi sigfig
+export PATH="$PATH:$HOME/workspace/ngts/ngts_dev_tools/bin"
 export NODE_PATH=$NODE_PATH:/usr/local/lib/
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages
+# hi nix
+eval "$(direnv hook zsh)"
 # }}}
 # {{{ irc
 export IRCSERVER="irc.freenode.net"
@@ -124,3 +135,7 @@ xi18n) opts="--app --i18n-format --locale --out-file --output-path --progress --
 [[ -a ~/.dotfiles/aliases.zsh ]] && source ~/.dotfiles/aliases.zsh
 # }}}
 # vim:foldmethod=marker:foldlevel=0
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

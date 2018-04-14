@@ -33,11 +33,11 @@ if [[ "$(uname)" = "Darwin" ]] && [[ -n `diskutil list | sed -n '/asdf.*disk2s1/
 fi
 # }}}
 # {{{ Rubies
-eval "$(rbenv init -)"
+eval "$(/usr/local/bin/rbenv init -)"
 # }}}
-# {{{ Make aliases available when shelling out from n?vim
-if [[ -n `env | grep VIMRUNTIME` ]]; then
-  [[ -a ~/.dotfiles/aliases.zsh ]] && source ~/.dotfiles/aliases.zsh
-fi
+# {{{ [commented out] Make aliases available when shelling out from n?vim
+# if [[ -n `env | grep VIMRUNTIME` ]]; then
+#   [[ -a ~/.dotfiles/aliases.zsh ]] && source ~/.dotfiles/aliases.zsh
+# fi
 # }}}
 # vim:foldmethod=marker:foldlevel=0
