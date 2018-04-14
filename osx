@@ -92,3 +92,6 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 
 # Disable continuous spell checking
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
+
+# Prevent a sneaky bug with escape key with emacs
+defaults write org.gnu.Emacs NSAppSleepDisabled -bool YES
