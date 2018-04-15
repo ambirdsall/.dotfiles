@@ -54,18 +54,22 @@ Plug 'tpope/vim-rake'
 Plug 'tpope/vim-bundler'
 " }}}
 " {{{ Languages
+Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
+" Plug 'Quramy/tsuquyomi', { 'for': 'typescript' }
+Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'Quramy/vim-js-pretty-template', { 'for': 'typescript' }
+Plug 'mhartington/vim-typings', { 'for': 'typescript' }
+Plug 'jason0x43/vim-js-indent'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
-Plug 'mustache/vim-mustache-handlebars'
-Plug 'slim-template/vim-slim', { 'for': 'slim' }
-Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
+" Plug 'mustache/vim-mustache-handlebars'
+" Plug 'slim-template/vim-slim', { 'for': 'slim' }
+" Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 Plug 'chrisbra/Colorizer'
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'othree/javascript-libraries-syntax.vim', { 'for': 'javascript' }
 Plug 'briancollins/vim-jst', { 'for': 'jst' }
-Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
 Plug 'lambdatoast/elm.vim', { 'for': 'elm' }
 Plug 'bumaociyuan/vim-swift', { 'for': 'swift' }
 Plug 'elixir-lang/vim-elixir', { 'for': 'elixir' }
@@ -84,6 +88,7 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-endwise'
 Plug 'alvan/vim-closetag'
+Plug 'Valloric/YouCompleteMe'
 " }}}
 " {{{ Configuration
 Plug 'tpope/vim-projectionist'
@@ -122,6 +127,14 @@ let g:syntastic_check_on_open=0
 " let g:syntastic_javascript_checkers = ['~/job/rio/node_modules/.bin/eslint']
 let g:syntastic_mode_map = { "mode": "active", "active_filetypes": ["ruby"],
                                             \ "passive_filetypes": ["javascript"] }
+" }}}
+" {{{ typescript
+let g:tsuquyomi_disable_quickfix = 1
+let g:syntastic_typescript_checkers = ['tsuquyomi']
+if !exists("g:ycm_semantic_triggers")
+ let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers['typescript'] = ['.']
 " }}}
 " {{{ Titlecase
 " vim-titlecase's default mapping is `gt`, but I use tabs
@@ -321,7 +334,7 @@ let g:html_indent_tags = 'li\|p'
 let g:netrw_banner=0
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 " }}}
-" {{{ Vanilla mappings
+" {{{ non-leader mappings
 " {{{ Scrolling
 " scroll browser-style
 noremap <up> <c-y>
@@ -384,12 +397,13 @@ nnoremap <leader>o o<esc>
 nnoremap <leader>P "*P
 nnoremap <leader>p "*p
 " }}}
-" {{{ Formatting
+" {{{ Formatting & Saving
 nnoremap <leader>gq gq}
 nnoremap <leader>lint :!node_modules/.bin/eslint -c .eslintrc.js %<cr>
 nnoremap <leader>r :set wrap!<cr>
 nnoremap <leader>tts :%s/\t/  /g<cr>
 nnoremap <leader>w :w<cr>
+nnoremap <leader>fs :w<cr>
 " }}}
 " {{{ Folding
 " toggle fold under cursor
@@ -431,6 +445,9 @@ nnoremap <leader>sw :StripWhitespace<cr>
 " }}}
 " {{{ easymotion
 nmap <leader>a <Plug>(easymotion-s2)
+" }}}
+" {{{ typescript
+nnoremap <leader>ts :TsuquyomiStartServer<cr>
 " }}}
 " }}}
 " }}}
@@ -489,7 +506,8 @@ highlight NonText      ctermfg=237
 highlight SpecialKey   ctermfg=237
 highlight Folded       ctermbg=NONE
 " 2-space indents; <</>> shifting goes to nearest multiple of 2, even from odds.
-set softtabstop=2 shiftwidth=2 shiftround expandtab
+set tabstop=2
+set shiftwidth=2
 " split panes spawn below the current pane, b/c Principle of Least Surprise.
 set splitbelow
 set nowrap " <leader>r toggles wrap for when it's needed
