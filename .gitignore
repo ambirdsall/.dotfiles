@@ -1,4 +1,5 @@
 secrets.sh
+local-aliases.zsh
 config/hub
 config/inkscape/extension-errors.log
 config/nvim/.netrwhist
