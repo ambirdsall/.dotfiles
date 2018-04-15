@@ -1,18 +1,14 @@
 # {{{ Shell Variables (important files and directories)
-export asdf=~/asdf
-export blag=~/ambirdsall.github.io
 export desk=~/Desktop
 export dot=~/.dotfiles
-export rio=~/job/rio
-export emoji=~/code/EmojiDictionary
 export nvimrc=~/.config/nvim/init.vim
 # }}}
 # {{{ emacsen
 on-your-mark () {
-sleep 0.4
-echo get set....
-sleep 1
-/usr/local/bin/emacs --daemon --exec dotspacemacs/user-config
+  sleep 0.4
+  echo get set....
+  sleep 1
+  /usr/local/bin/emacs --daemon --exec dotspacemacs/user-config
 }
 em () {
   if [[ $# -gt 0 ]]; then
@@ -32,9 +28,6 @@ cdc() {
 }
 compdef '_files -W ~/code' cdc
 
-alias cdl='pushd ~/job/freelance/lawfetcher'
-alias cdr='cd ~/job/rio'
-alias ttr='tt r'
 wut() {
   rg "export (class|interface|function|const|let|type) $1"
 }
@@ -42,7 +35,6 @@ wut() {
 wur() {
   rg "import $1"
 }
-
 # }}}
 # {{{ Edit/source development config files
 cdot () {
@@ -54,6 +46,7 @@ cdot () {
 }
 alias prc="nvim ~/.dotfiles/pryrc"
 alias ea="nvim ~/.dotfiles/aliases.zsh"
+alias el="nvim ~/.local-aliases.zsh"
 alias sdf="source ~/.dotfiles/aliases.zsh"
 alias zrc="nvim ~/.dotfiles/zshrc"
 alias rc="source ~/.dotfiles/zshrc"
@@ -66,6 +59,13 @@ k () {
 }
 eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
 alias cpu="top -o cpu"
+# }}}
+# {{{ popup notification on command completion
+# you need to preface this with an external semicolon: the one inside the alias is a goddamn liar.
+alias notify="; [[ \"\$?\" -eq 0 ]] && osascript -e 'display notification \"Task Done\"' || osascript -e 'display notification \"Task Failed\"'"
+# }}}
+# {{{ serve local files
+alias serve="python -m SimpleHTTPServer"
 # }}}
 # {{{ Tmux
 alias t=tmux
@@ -86,7 +86,7 @@ alias tls="tmux list-sessions"
 # When clearing screen:
 #   if `$TMUX` is defined: just clear the screen, in a tmux session already
 #   else:                  clear, then list sessions atop screen
-alias clear='clear; [[ -z "$TMUX" ]] && tls 2>/dev/null'
+alias clear='clear; [[ -z "$TMUX" ]] && tls 2>/dev/null || true'
 # }}}
 # {{{ awk
 alias awkcsv='awk -F "\"*,\"*"'
@@ -162,6 +162,7 @@ alias fuck="rm -rf"
 tailfh () {
   tail -f $1 | ack -i 'error' --passthru
 }
+alias tsslog='tail -f /tmp/tss.log'
 # }}}
 # {{{ `zmv`
 alias mmv='noglob zmv -W'
@@ -189,15 +190,15 @@ bo () {
 # }}}
 # {{{ Git
 # alias hub as git
-eval "$(hub alias -s)"
+# eval "$(hub alias -s)"
 
 # No arguments: `git status`
 # With arguments: acts like `git`
 g() {
   if [[ $# -gt 0 ]]; then
-    hub "$@"
+    git "$@"
   else
-    git status
+    git status -s
   fi
 }
 
@@ -226,22 +227,13 @@ cob () {
   co -b "`echo $* | tr ' ' -`"
 }
 
-com () {
-  if [[ $(pwd) == ~/job/helloflock.github.io ]]; then
-    git fetch && git co source
-  else
-    git fetch && git co master
-  fi
-}
-
 d () {
   # git diff --word-diff "$@"
-  git diff --diff-algorithm=minimal --color "$@" | diff-so-fancy | less
+  git diff --diff-algorithm=minimal --color "$@" | diff-so-fancy | less --tabs=4
 }
 alias gdc="d --cached"
 alias gdo="git diff \$(git rev-parse --abbrev-ref HEAD 2> /dev/null)..origin/\$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
 
-alias s="git status -s"
 alias ts="tig status"
 
 alias p="git add -p"
@@ -259,6 +251,7 @@ alias arh="git commit --amend --reuse-message=HEAD"
 alias f="git fetch"
 
 alias gr="git rebase"
+alias gr-="git rebase -"
 alias gri="g ri" # home-cooked git-ri, which simplifies syntax of `git rebase -i`
 
 alias gp="git pull --ff-only"
@@ -308,26 +301,11 @@ alias tag_js='find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -ex
 # {{{ ip address
 alias my_ip='dig +short myip.opendns.com @resolver1.opendns.com'
 # }}}
-# {{{ Rails shortcuts
-vm () { # open straight to the given model
-  vim +":Emodel $1"
-}
-vc () { # open straight to the given controller
-  vim +":Econtroller $1"
-}
-vv () { # open straight to the given view
-  vim +":Eview $1"
-}
-alias be="bundle exec"
-alias bes="bundle exec rails server"
-alias lkj="bundle exec rails console"
-alias kjh="bundle exec rails console --sandbox"
-# }}}
 # {{{ Self-expanding shell abbreviations
 # cf. http://zshwiki.org/home/examples/zleiab
 typeset -Ag abbreviations
 abbreviations=(
-"pa"    "| ack"
+"pa"    "| rg"
 "pag"   "| agrep"
 "pb"    "| bc"
 "peg"   "| egrep"
@@ -379,6 +357,6 @@ alias vlc=/Applications/VLC.app/Contents/MacOS/VLC
 # }}}
 
 # and machine-specific aliases/overrides:
-[ -f ~/.local-aliases.zsh ] && source ~/.local-aliases || true
+[ -f ~/.local-aliases.zsh ] && source ~/.local-aliases.zsh || true
 
 # vim:foldmethod=marker:foldlevel=0
