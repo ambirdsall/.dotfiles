@@ -3,20 +3,63 @@ export desk=~/Desktop
 export dot=~/.dotfiles
 export nvimrc=~/.config/nvim/init.vim
 # }}}
+# {{{ Tmux
+# This function is primarily intended as a helper function for naming things
+# after the current session, so a string that I'm confident I wouldn't ever use
+# for a tmux session name is actually appropriate "error handling" if I'm not,
+# in fact, inside a tmux session; certainly better than the default behavior of
+# `tmux display-message -p "#S"` outside of a session, which is to echo the
+# name of the last attached session.
+tmux-session-name () {
+  [[ -n $TMUX ]] && tmux display-message -p '#S' || NOTMUX
+}
+alias t=tmux
+alias tt="tmux attach -t"
+alias tk="tmux kill-session -t"
+tn () {
+  if [[ $# -gt 0 ]]; then
+    tmux new -s $1; cd; clear
+  else
+    tmux new -s $(basename $(pwd)); cd; clear
+  fi
+}
+# When the tmux session shrinks some and fills the margin with periods, it
+# thinks there's another instance of the session in a smaller terminal. F that.
+alias tda="tmux detach -a"
+alias tls="tmux list-sessions"
+
+# When clearing screen:
+#   if `$TMUX` is defined: just clear the screen, in a tmux session already
+#   else:                  clear, then list sessions atop screen
+alias clear='clear; [[ -z "$TMUX" ]] && tls 2>/dev/null || true'
+# }}}
 # {{{ emacsen
+emacs-is-running () {
+  emacsclient -s $(tmux-session-name) -a false -e 't' 2>& /dev/null
+}
 on-your-mark () {
   sleep 0.4
   echo get set....
   sleep 1
   /usr/local/bin/emacs --daemon --exec dotspacemacs/user-config
 }
-em () {
-  if [[ $# -gt 0 ]]; then
-    /usr/local/bin/emacsclient -t --alternate-editor=emacs "$@"
+# "ed" would've been a better mnemonic for "emacs daemon/editor", but I have a soft spot for ol' /bin/ed
+# TODO make this actually work maybe?
+edd () {
+  if emacs-is-running; then
+    if [[ $# -gt 0 ]]; then
+      /usr/local/bin/emacsclient -s $(tmux-session-name) "$@"
+    else
+      # emacsclient demands a file to open, so default to the current directory
+      /usr/local/bin/emacsclient -s $(tmux-session-name) .
+    fi
   else
-    /usr/local/bin/emacsclient -t --alternate-editor=emacs $(um)
+    /usr/local/bin/emacs --daemon=$(tmux-session-name)
+    edd
   fi
 }
+alias em=edd
+alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
 # }}}
 # {{{ Current projects
 cdc() {
@@ -61,32 +104,19 @@ eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
 alias cpu="top -o cpu"
 # }}}
 # {{{ popup notification on command completion
-# you need to preface this with an external semicolon: the one inside the alias is a goddamn liar.
-alias notify="; [[ \"\$?\" -eq 0 ]] && osascript -e 'display notification \"Task Done\"' || osascript -e 'display notification \"Task Failed\"'"
+notify () {
+  if [[ -z $1 ]]; then
+    osascript -e "display notification 'Task finished with exit code $?'"
+  else
+    osascript -e "display notification '$@ finished with exit code $?'"
+  fi
+}
+# }}}
+# {{{ when the terminal display fucks up
+alias smh='stty sane'
 # }}}
 # {{{ serve local files
 alias serve="python -m SimpleHTTPServer"
-# }}}
-# {{{ Tmux
-alias t=tmux
-alias tt="tmux attach -t"
-alias tk="tmux kill-session -t"
-tn () {
-  if [[ $# -gt 0 ]]; then
-    tmux new -s $1; cd; clear
-  else
-    tmux new -s $(basename $(pwd)); cd; clear
-  fi
-}
-# When the tmux session shrinks some and fills the margin with periods, it
-# thinks there's another instance of the session in a smaller terminal. F that.
-alias tda="tmux detach -a"
-alias tls="tmux list-sessions"
-
-# When clearing screen:
-#   if `$TMUX` is defined: just clear the screen, in a tmux session already
-#   else:                  clear, then list sessions atop screen
-alias clear='clear; [[ -z "$TMUX" ]] && tls 2>/dev/null || true'
 # }}}
 # {{{ awk
 alias awkcsv='awk -F "\"*,\"*"'
@@ -113,7 +143,7 @@ alias ........="cdd ../../../../../../.."
 alias .........="cdd ../../../../../../../.."
 
 mcd () {
-  mkdir $1
+  mkdir -p $1
   cd $1
 }
 
@@ -147,6 +177,12 @@ h () {
   awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
   fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs open
 }
+redo() {
+  $(history -n -500 | fzf)
+}
+# }}}
+# {{{ fc
+alias shit=fc
 # }}}
 # {{{ `ls`
 alias ls="ls -GF"
@@ -221,6 +257,10 @@ co () {
     git checkout `git branch -l | sed 's/^ *//' | fzf --preview 'git show heads/{} | diff-so-fancy'`
   fi
 }
+# compdef co=git-checkout # zsh can't find git-checkout harrumph harrumph
+cor () {
+  co $(git recent $(echo "$(tput lines) - 2" | bc) | fzf --preview 'git show heads/{} | diff-so-fancy')
+}
 alias co-="git co -"
 
 cob () {
@@ -272,6 +312,7 @@ l () {
   fi
 }
 eval "$(ruby -e '9.times do |i| puts %Q{alias l#{i+1}=l\\ -#{i+1}} end')"
+alias lo='git log --oneline --decorate'
 alias lg="git log --oneline --decorate --graph --all"
 alias rl="git reflog"
 
@@ -294,6 +335,10 @@ alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push --force-with-lease origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
+
+ghe () {
+  curl -H "Authorization: token 124fe675cdf2c6fadbeadbb75bc81bd5f248c7ad" https://git.sigfig.com/api/v3/$(echo $* | tr " " "/")
+}
 # }}}
 # {{{ tags
 alias tag_js='find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \; | sed "/^$/d" | sort > tags'
@@ -305,10 +350,11 @@ alias my_ip='dig +short myip.opendns.com @resolver1.opendns.com'
 # cf. http://zshwiki.org/home/examples/zleiab
 typeset -Ag abbreviations
 abbreviations=(
-"pa"    "| rg"
+"pa"    "| awk"
 "pag"   "| agrep"
 "pb"    "| bc"
 "peg"   "| egrep"
+"pg"    "| rg"
 "pgr"   "| groff -s -p -t -e -Tlatin1 -mandoc"
 "pf"    "| fzf"
 "ph"    "| head"
@@ -348,7 +394,8 @@ alias idke="echo -n '¯\\\\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\\\_(�
 alias om="echo -n '¯\_( ˘͡ ˘̯)_/¯' | pbcopy && echo 'Copied \"¯\_( ˘͡ ˘̯)_/¯\" to clipboard'"
 alias tableflip="echo -n '(╯°□°）╯︵ ┻━┻' | pbcopy && echo 'Copied \"(╯°□°）╯︵ ┻━┻\" to clipboard'"
 alias muscles="echo -n 'ᕙ(⇀‸↼‶)ᕗ' | pbcopy && echo 'Copied \"ᕙ(⇀‸↼‶)ᕗ\" to clipboard'"
-alias heyo="echo -n '(╭☞'ω')╭☞' | pbcopy && echo 'Copied \"(╭☞'ω')╭☞¯\" to clipboard'"
+alias heyo="echo -n '(╭☞\'ω\')╭☞' | pbcopy && echo 'Copied \"(╭☞\'ω\')╭☞¯\" to clipboard'"
+alias thanks="echo -n '(´▽\`ʃƪ)' | pbcopy && echo 'Copied \"(´▽\`ʃƪ)\" to clipboard'"
 # }}}
 # {{{ Entertainment
 alias tetris='emacs -q --no-splash -f tetris'
