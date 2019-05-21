@@ -1,0 +1,8 @@
+* Dotfiles
+I use zsh and tmux and emacs, though I also hold onto my old vimrc out of fondness.
+
+To Install:
+1) type ~cd && git clone git@github.com/ambirdsall/.dotfiles.git~
+2) type return
+3) :coffee:
+4) symlink the files so your OS gets in on the party
