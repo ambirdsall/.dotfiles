@@ -1,9 +1,8 @@
-# {{{ Shell Variables (important files and directories)
+# * Shell Variables (important files and directories)
 export desk=~/Desktop
 export dot=~/.dotfiles
-export nvimrc=~/.config/nvim/init.vim
-# }}}
-# {{{ Tmux
+export nvimrc=~/.config/vim/init.vim
+# * Tmux
 # This function is primarily intended as a helper function for naming things
 # after the current session, so a string that I'm confident I wouldn't ever use
 # for a tmux session name is actually appropriate "error handling" if I'm not,
@@ -11,7 +10,7 @@ export nvimrc=~/.config/nvim/init.vim
 # `tmux display-message -p "#S"` outside of a session, which is to echo the
 # name of the last attached session.
 tmux-session-name () {
-  [[ -n $TMUX ]] && tmux display-message -p '#S' || NOTMUX
+  [[ -n $TMUX ]] && tmux display-message -p '#S' || echo NOTMUX
 }
 alias t=tmux
 alias tt="tmux attach -t"
@@ -32,36 +31,22 @@ alias tls="tmux list-sessions"
 #   if `$TMUX` is defined: just clear the screen, in a tmux session already
 #   else:                  clear, then list sessions atop screen
 alias clear='clear; [[ -z "$TMUX" ]] && tls 2>/dev/null || true'
-# }}}
-# {{{ emacsen
-emacs-is-running () {
-  emacsclient -s $(tmux-session-name) -a false -e 't' 2>& /dev/null
+# * emacsen
+alias em='emacsclient -nw'
+emm () {
+  # uses fzf to pick a file and then passes it to emacsclient as the file argument
+  em $(um)
 }
-on-your-mark () {
-  sleep 0.4
-  echo get set....
-  sleep 1
-  /usr/local/bin/emacs --daemon --exec dotspacemacs/user-config
-}
-# "ed" would've been a better mnemonic for "emacs daemon/editor", but I have a soft spot for ol' /bin/ed
-# TODO make this actually work maybe?
-edd () {
-  if emacs-is-running; then
-    if [[ $# -gt 0 ]]; then
-      /usr/local/bin/emacsclient -s $(tmux-session-name) "$@"
-    else
-      # emacsclient demands a file to open, so default to the current directory
-      /usr/local/bin/emacsclient -s $(tmux-session-name) .
-    fi
-  else
-    /usr/local/bin/emacs --daemon=$(tmux-session-name)
-    edd
-  fi
-}
-alias em=edd
 alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
-# }}}
-# {{{ Current projects
+alias amacs='emacs -q --load ~/.emacs.amb/init.el --debug-init --no-splash ~/.emacs.amb/init.el'
+amb () {
+    if [[ $# -gt 0 ]]; then
+        emacsclient -s amb "$@" || emacs -q -l ~/.emacs.amb/init.el --daemon=amb
+    else
+        emacsclient -s amb . || emacs -q -l ~/.emacs.amb/init.el --daemon=amb
+    fi
+}
+# * Current projects
 cdc() {
   if [[ $# -gt 0 ]]; then
     cdd ~/code/${@}
@@ -78,8 +63,7 @@ wut() {
 wur() {
   rg "import $1"
 }
-# }}}
-# {{{ Edit/source development config files
+# * Edit/source development config files
 cdot () {
   if [[ $# -gt 0 ]]; then
     pushd ~/.dotfiles/${@} && ls
@@ -87,23 +71,21 @@ cdot () {
     pushd ~/.dotfiles && ls
   fi
 }
-alias prc="nvim ~/.dotfiles/pryrc"
-alias ea="nvim ~/.dotfiles/aliases.zsh"
-alias el="nvim ~/.local-aliases.zsh"
+alias prc="em ~/.dotfiles/pryrc"
+alias ea="em ~/.dotfiles/aliases.zsh"
+alias el="em ~/.local-aliases.zsh"
 alias sdf="source ~/.dotfiles/aliases.zsh"
-alias zrc="nvim ~/.dotfiles/zshrc"
+alias zrc="em ~/.dotfiles/zshrc"
 alias rc="source ~/.dotfiles/zshrc"
-# }}}
-# {{{ Background jobs & processes
+# * Background jobs & processes
 alias j=jobs
 # Typing the percent sign gets annoying fast when you run `kill` all the time with `%n`-style arguments on suspended `jobs`
 k () {
   kill %"$1"
 }
-eval "$(ruby -e '9.times do |i| puts %Q{alias k#{i+1}=k\\ #{i+1}} end')"
+
 alias cpu="top -o cpu"
-# }}}
-# {{{ popup notification on command completion
+# * popup notification on command completion
 notify () {
   if [[ -z $1 ]]; then
     osascript -e "display notification 'Task finished with exit code $?'"
@@ -111,17 +93,13 @@ notify () {
     osascript -e "display notification '$@ finished with exit code $?'"
   fi
 }
-# }}}
-# {{{ when the terminal display fucks up
+# * when the terminal display fucks up
 alias smh='stty sane'
-# }}}
-# {{{ serve local files
+# * serve local files
 alias serve="python -m SimpleHTTPServer"
-# }}}
-# {{{ awk
+# * awk
 alias awkcsv='awk -F "\"*,\"*"'
-# }}}
-# {{{ `=`
+# * `=`
 = () {
   # iff there are 0 arguments given, assume input from stdin (i.e. a pipe)
   if [[ $# == 0 ]]; then
@@ -130,8 +108,7 @@ alias awkcsv='awk -F "\"*,\"*"'
     /usr/local/share/vim/vim80/macros/less.sh "$*"
   fi
 }
-# }}}
-# {{{ `cd`
+# * `cd`
 alias 'cd-'="cd -"
 alias ..="cdd .."
 alias ...="cdd ../.."
@@ -151,14 +128,13 @@ cdd () {
   cd $1
   ls -GF
 }
-# }}}
-# {{{ `chmod`
+# * `chmod`
 alias cx='chmod +x'
-# }}}
-# {{{ `echo`
+# * Docker
+alias docc='docker-compose'
+# * `echo`
 alias e=echo
-# }}}
-# {{{ fzf
+# * fzf
 # DEPENDENCY: gem install rouge
 alias um="find . -type f | grep -vE '.tmp-*|.git|node_modules|bower_components' | fzf --multi --preview 'rougify {}'"
 cdf() {
@@ -180,30 +156,26 @@ h () {
 redo() {
   $(history -n -500 | fzf)
 }
-# }}}
-# {{{ fc
+# * fc
 alias shit=fc
-# }}}
-# {{{ `ls`
+# * treeish
+# npm i -g @aweary/alder
+alias tree=alder
+# * `ls`
 alias ls="ls -GF"
 alias la="ls -A"
-# }}}
-# {{{ `mkdir`
+# * `mkdir`
 alias mkdir="mkdir -pv"
-# }}}
-# {{{ `rm`
+# * `rm`
 alias fuck="rm -rf"
-# }}}
-# {{{ `tail`
+# * `tail`
 tailfh () {
   tail -f $1 | ack -i 'error' --passthru
 }
 alias tsslog='tail -f /tmp/tss.log'
-# }}}
-# {{{ `zmv`
+# * `zmv`
 alias mmv='noglob zmv -W'
-# }}}
-# {{{ Vim and fam
+# * Vim and fam
 vi () {
   if [[ $# -gt 0 ]]; then
     vim "$@"
@@ -215,16 +187,15 @@ alias ci=vi
 alias vis="vi -S Session.vim"
 nv () {
   if [[ $# -gt 0 ]]; then
-    nvim "$@"
+    vim "$@"
   else
-    nvim .
+    vim .
   fi
 }
 bo () {
   vi $(bundle show "$1")
 }
-# }}}
-# {{{ Git
+# * Git
 # alias hub as git
 # eval "$(hub alias -s)"
 
@@ -333,20 +304,19 @@ alias pop="git stash pop"
 
 alias shipit='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
 alias SHIPIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && git push --force-with-lease origin $(git rev-parse --abbrev-ref HEAD 2> /dev/null)'
+# an important part of being a good programmer is making fun of yourself when you make a typo
+alias SHIIT='echo "       _~\n    _~ )_)_~\n    )_))_))_)\n    _!__!__!_\n    \______t/\n  ~~~~~~~~~~~~~" && echo "      FUUCK"'
 
 alias update='git pull --rebase && bundle install && bundle exec rake db:migrate'
 
 ghe () {
   curl -H "Authorization: token 124fe675cdf2c6fadbeadbb75bc81bd5f248c7ad" https://git.sigfig.com/api/v3/$(echo $* | tr " " "/")
 }
-# }}}
-# {{{ tags
+# * tags
 alias tag_js='find . -type f -iregex ".*\.js$" -not -path "./node_modules/*" -exec jsctags {} -f \; | sed "/^$/d" | sort > tags'
-# }}}
-# {{{ ip address
+# * ip address
 alias my_ip='dig +short myip.opendns.com @resolver1.opendns.com'
-# }}}
-# {{{ Self-expanding shell abbreviations
+# * Self-expanding shell abbreviations
 # cf. http://zshwiki.org/home/examples/zleiab
 typeset -Ag abbreviations
 abbreviations=(
@@ -383,11 +353,9 @@ zle -N no-magic-abbrev-expand
 bindkey " " magic-abbrev-expand
 bindkey "^x " no-magic-abbrev-expand
 bindkey -M isearch " " self-insert
-# }}}
-# {{{ Image processing
+# * Image processing
 alias imageoptim=/Applications/ImageOptim.app/Contents/MacOS/ImageOptim
-# }}}
-# {{{ Unicode arts and farts
+# * Unicode arts and farts
 alias idk="echo -n '¯\_(ツ)_/¯' | pbcopy && echo 'Copied \"¯\_(ツ)_/¯\" to clipboard'"
 # Backslashes and underscores must be escaped if the text will be parsed as markdown
 alias idke="echo -n '¯\\\\\\_(ツ)\_/¯' | pbcopy && echo 'Copied \"¯\\\\\_(ツ)\_/¯\" to clipboard'"
@@ -396,12 +364,10 @@ alias tableflip="echo -n '(╯°□°）╯︵ ┻━┻' | pbcopy && echo 'Copi
 alias muscles="echo -n 'ᕙ(⇀‸↼‶)ᕗ' | pbcopy && echo 'Copied \"ᕙ(⇀‸↼‶)ᕗ\" to clipboard'"
 alias heyo="echo -n '(╭☞\'ω\')╭☞' | pbcopy && echo 'Copied \"(╭☞\'ω\')╭☞¯\" to clipboard'"
 alias thanks="echo -n '(´▽\`ʃƪ)' | pbcopy && echo 'Copied \"(´▽\`ʃƪ)\" to clipboard'"
-# }}}
-# {{{ Entertainment
+# * Entertainment
 alias tetris='emacs -q --no-splash -f tetris'
 alias hall="say -v cellos Doo da doo da dum dee dee doodly doo dum dum dum doo da doo da doo da doo da doo da doo da doo"
 alias vlc=/Applications/VLC.app/Contents/MacOS/VLC
-# }}}
 
 # and machine-specific aliases/overrides:
 [ -f ~/.local-aliases.zsh ] && source ~/.local-aliases.zsh || true
