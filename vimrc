@@ -55,15 +55,11 @@ Plug 'tpope/vim-bundler'
 " }}}
 " {{{ Languages
 Plug 'HerringtonDarkholme/yats.vim', { 'for': 'typescript' }
-" Plug 'Quramy/tsuquyomi', { 'for': 'typescript' }
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 Plug 'Quramy/vim-js-pretty-template', { 'for': 'typescript' }
 Plug 'mhartington/vim-typings', { 'for': 'typescript' }
 Plug 'jason0x43/vim-js-indent'
 Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-" Plug 'mustache/vim-mustache-handlebars'
-" Plug 'slim-template/vim-slim', { 'for': 'slim' }
-" Plug 'digitaltoad/vim-jade', { 'for': 'jade' }
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'jtratner/vim-flavored-markdown', { 'for': 'markdown' }
 Plug 'chrisbra/Colorizer'
@@ -77,18 +73,15 @@ Plug 'slashmili/alchemist.vim', { 'for': 'elixir' }
 Plug 'mattreduce/vim-mix', { 'for': 'elixir' }
 " }}}
 " {{{ language-specific tagging
-" Plug 'ternjs/tern_for_vim'
 Plug 'ramitos/jsctags', { 'for': 'javascript' }
 " }}}
 " {{{ Typing aids
-" Plug 'Townk/vim-autoclose'
 Plug 'ambirdsall/emmet-vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-endwise'
 Plug 'alvan/vim-closetag'
-Plug 'Valloric/YouCompleteMe'
 " }}}
 " {{{ Configuration
 Plug 'tpope/vim-projectionist'
