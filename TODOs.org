@@ -1,0 +1,8 @@
+* TODO automate symlinking
+** TODO write a makefile
+It only has to run one shell command as the default, so you only have to type ~make~ to symlink everything.
+** TODO write a good backup functionality for any preexisting/conflicting config files
+If ~$FILE~ exists and isn't a symlink, ask user (=y= or =n=) if they want to backup the old one and
+proceed or abandon symlinking ~$FILE~. If they want to proceed, run ~mv $FILE $FILE.old~ and make the
+symlink; if they don't, on to the next file.
+** TODO write a shell script to symlink (with backups as needed)
