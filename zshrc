@@ -8,8 +8,6 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 # hi sigfig
 export PATH="$PATH:$HOME/workspace/ngts/ngts_dev_tools/bin"
-# export PYTHONPATH=/usr/local/lib/python3.6/site-packages:$PYTHONPATH
-unset PYTHONPATH
 export RAINBOW_TIME=yep
 # * Side effects on opening a terminal
 # clean up the desktop
