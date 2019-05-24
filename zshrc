@@ -118,7 +118,8 @@ reverse_dir_stack() {
   dirs | awk '{ for (i=NF; i>1; i--) printf("%s %%F{238}᎒%%f", $i) }'
 }
 
-export PS1='%F{239}┌%f $(reverse_dir_stack)%F{cyan}%~%f $(git_super_status) %F{136}$(current_commit)%f $(~/bin/moon-phase)
+#  git rev-parse --git-dir &>/dev/null
+export PS1='%F{239}┌%f $(reverse_dir_stack)%F{cyan}%~%f$(if git rev-parse --git-dir &>/dev/null; then echo " $(git_super_status) %F{136}$(current_commit)%f "; else echo " "; fi)$(~/bin/moon-phase)
 %F{239}└─%f%(?.%F{239}.%F{196})➣%f '
 
 # RPS1 set in VIMIFY THE TERMINAL
