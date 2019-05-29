@@ -459,36 +459,488 @@ dump."
   (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s --ignore-file '*/dist-*' ")
   (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'"))
   (setq-default indent-tabs-mode nil)
-;; ** load amb/*
-  (add-to-load-path (concat user-emacs-directory "amb"))
-  (require 'amb-predicate-aliases)
-  (require 'amb-terminal)
-  (require 'amb-ui)
-  (require 'amb-helper-functions)
-  (require 'amb-git)
-  (require 'amb-org)
-
-  (cl-flet ((amb/ (lambda (filename) (s-concat user-emacs-directory "amb/" filename))))
-    ;; (load (amb/ "whitespace.el"))
-    ;; (load (amb/ "predicate-aliases.el"))
-    ;; (load (amb/ "git.el"))
-    (load (amb/ "hooks.el"))
-    ;; (load (amb/ "text-objects.el"))
-    ;; (load (amb/ "helper-functions.el"))
-    ;; (load (amb/ "keybindings.el"))
-    (load (amb/ "variables.el")))
-
 ;; ** require some generally-useful libraries just in case they're not around yet
   (require 'cl)
   (require 'dash)
   (require 's)
+  (require 'f)
+;; ** terminal
+  ;; ITERM2 MOUSE SUPPORT
+  (unless window-system
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (defun track-mouse (e))
+    (setq mouse-sel-mode t)
+    (global-set-key (kbd "<mouse-4>") (lambda () (interactive) (scroll-down 1)))
+    (global-set-key (kbd "<mouse-5>") (lambda () (interactive) (scroll-up 1))))
 
-  (progn ;; nvm
-    (require 'nvm)
-    (nvm-use (with-temp-buffer
-               ;; (insert-file-contents "~/workspace/react-mono/.nvmrc")
-               (insert-file-contents "~/workspace/ngts/.nvmrc")
-               (s-chomp (buffer-string)))))
+;; ** load amb/*
+  (add-to-load-path (concat user-emacs-directory "amb"))
+;; ** predicate?
+  ;; I just really vastly prefer "use question mark as suffix" as an idiom for
+  ;; type predicates to "use 'p' as a suffix except when it looks really weird or
+  ;; would be misleading because there exists some other word"
+  (defalias 'atom? 'atom)
+  (defalias 'buffer? 'bufferp)
+  (defalias 'cons? 'consp)
+  (defalias 'display-graphic? 'display-graphic-p)
+  (defalias 'frame? 'framep)
+  (defalias 'list? 'listp)
+  (defalias 'null? 'null)
+  (defalias 'number? 'numberp)
+  (defalias 'process? 'processp)
+  (defalias 'string? 'stringp)
+  (defalias 'subr? 'subrp)
+  (defalias 'symbol? 'symbolp)
+  (defalias 'vector? 'vectorp)
+  (defalias 'window? 'windowp)
+
+  ;; Hell, it's just better for predicates generally
+  (defalias 'bound? 'boundp)
+  (defalias 'fbound? 'fboundp)
+  (defalias 'use-region? 'use-region-p)
+
+;; ** defuns
+  (defun amb/insert-jira-ticket-org-link (ticket-id)
+    "inserts an org link to the given jira ticket at point, with `ticket-id' as the visible text.
+
+`ticket-id' is a jira number like COP-123 or MRY-444 or whatever."
+    (interactive (list (read-string "Jira ticket: ")))
+    (insert (s-concat "[[//jira.sigfig.com/browse/" ticket-id "][" ticket-id "]]")))
+
+  (defun amb/org-new-subheading (is-todo)
+    (interactive "P")
+    (if is-todo
+        (progn
+          (amb/org-insert-subheading-respect-content)
+          (org-todo))
+      (amb/org-insert-subheading-respect-content)))
+
+  (defun amb/org-new-heading (is-todo)
+    (interactive "P")
+    (if is-todo
+        (progn
+          (org-insert-heading-after-current)
+          (org-todo))
+      (org-insert-heading-after-current)))
+
+  (defun source-dotspacemacs-user-config ()
+    (interactive)
+    (dotspacemacs/user-config))
+
+  (defun evil-open-above-without-leaving-normal-state (count)
+    "Insert a new line above the current line and move the cursor to the new line without changing editing state."
+    (interactive "p")
+    (evil-open-above count)
+    (normal-mode))
+
+  (defun evil-open-below-without-leaving-normal-state (count)
+    "Insert a new line below the current line and move the cursor to the new line without changing editing state."
+    (interactive "p")
+    (evil-open-below count)
+    (normal-mode))
+
+  (defun open-line-below ()
+    (interactive)
+    (end-of-line)
+    (newline)
+    (indent-for-tab-command))
+
+  (defun open-line-above ()
+    (interactive)
+    (beginning-of-line)
+    (newline)
+    (forward-line -1)
+    (indent-for-tab-command))
+
+  (defun move-current-line (n)
+    "Move the current line up or down by N lines."
+    (interactive "p")
+    (let ((col (current-column))
+          start
+          end)
+      (beginning-of-line)
+      (setq start (point))
+      (end-of-line)
+      (forward-char)
+      (setq end (point))
+      (let ((line-text (delete-and-extract-region start end)))
+        (forward-line n)
+        (insert line-text)
+        ;; restore point to original column in moved line
+        (forward-line -1)
+        (forward-char col))))
+
+  (defun setup-tide-mode ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    ;; company is an optional dependency. You have to
+    ;; install it separately via package-install
+    ;; `M-x package-install [ret] company`
+    (company-mode +1))
+
+  (defun amb/fix-inline-images ()
+    (when org-inline-image-overlays
+      (org-redisplay-inline-images)))
+
+  (defun copy-filepath (relative-to-repo)
+    "Copy the filename of the current buffer to the system clipboard, even if it's disabled."
+    (interactive "P")
+    (let ((select-enable-clipboard t)
+          (filepath (when (buffer-file-name)
+                      (if relative-to-repo
+                          (f-relative (buffer-file-name) (projectile-project-root))
+                        (buffer-file-name)))))
+      (if (display-graphic-p)
+          (when filepath (gui-select-text filepath))
+        (when filepath (kill-new filepath)))))
+
+  (defun copy-filename ()
+    "Copy the filename of the current buffer to the system clipboard, even if it's disabled."
+    (interactive)
+    (let ((select-enable-clipboard t)
+          (filename (f-filename (buffer-file-name))))
+      (if (display-graphic-p)
+          (gui-select-text filename)
+        (when filename (kill-new filename)))))
+
+  (defun amb/type-check-current-buffer-file ()
+    "Pass the current buffer file to `tsc` for a type-checking pass.
+Does not emit any compiled js."
+    (interactive)
+    (shell-command (s-concat "tsc --noEmit " (buffer-file-name))))
+
+  (defun amb/org-insert-subheading-respect-content ()
+    "Opens a new subheading without affecting the current line"
+    (interactive)
+    (call-interactively 'spacemacs/evil-insert-line-below)
+    (call-interactively 'next-line)
+    (call-interactively 'org-insert-subheading))
+
+  (defun amb/keymap-symbol (keymap)
+    "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
+    (catch 'gotit
+      (mapatoms (lambda (sym)
+                  (and (boundp sym)
+                       (eq (symbol-value sym) keymap)
+                       (not (eq sym 'keymap))
+                       (throw 'gotit sym))))))
+
+  (defun amb/current-keymap ()
+    "Print the name of the symbol to which the current keymap is bound, if any such symbol exists"
+    (interactive)
+    (if-let ((current-keymap (amb/keymap-symbol (current-local-map))))
+        (message (symbol-name current-keymap))))
+
+  ;; Avoid polluting the system clipboard
+  (defun amb/toggle-clipboard ()
+    "Toggles whether the system clipboard is accessable to emacs.
+
+If it's connected, you can paste from the system clipboard, but all deleted or killed text will end
+up polluting the system clipboard, which can get annoying fast.
+
+If not, the system clipboard doesn't get polluted, but there's no great way to quickly grab text
+from outside applications."
+    (interactive)
+    (if select-enable-clipboard
+        (progn
+          (setq select-enable-clipboard nil)
+          (message "The system clipboard is safe and sound again!"))
+      (progn
+        (setq select-enable-clipboard t)
+        (message "Copy and paste away, slugger!"))))
+
+  (defvar clipboard-was-enabled?)
+  (defun amb/paste-from-clipboard ()
+    "Inserts the contents of the system clipboard at point."
+    (interactive)
+    (let ((clipboard-was-enabled? select-enable-clipboard))
+      (setq select-enable-clipboard t)
+      (call-interactively 'evil-paste-after))
+    (setq select-enable-clipboard clipboard-was-enabled?))
+
+  (defun amb/evil-yank-to-clipboard ()
+    "Ensures the system clipboard is enabled and then calls evil-yank.
+
+You should probably just use this on a region? Not totally sure
+how evil-motions work yet, tbh."
+    (interactive)
+    (let ((clipboard-was-enabled? select-enable-clipboard))
+      (setq select-enable-clipboard t)
+      (call-interactively 'evil-yank)
+      (setq select-enable-clipboard clipboard-was-enabled?)))
+
+  (defun amb/dired-mode-setup ()
+    "to be run as hook for `dired-mode'."
+    (dired-hide-details-mode 1))
+
+  (defun amb/prettify-buffer ()
+    "Invoke the shell command prettier on region, replacing
+contents with reformatted version."
+    (interactive)
+    (shell-command-on-region (point-min) (point-max)
+                             "/Users/abirdsall/workspace/ngts/ngts_dev_tools/bin/ngts-reformat"
+                             t ; direct command output to current buffer
+                             t ; replace buffer contents
+                             ))
+
+  (defun amb/prettify-region ()
+    "Invoke the shell command prettier on region, replacing
+contents with reformatted version.
+
+This only works on self-contained semantic units, unfortunately: that is, you
+can reformat a single class from a file, but not a single private method from a
+class. \"Not working\" here means \"is replaced with an error message, not
+a reformatted version of itself\"."
+    (interactive)
+    (let ((range-start (int-to-string (min (point) (mark))))
+          (range-end (int-to-string (max (point) (mark)))))
+      (shell-command
+       (s-concat "prettier --range-start=" range-start " --range-end=" range-end " --parser typescript --use-tabs --trailing-comma 'all' " (buffer-file-name))
+       (current-buffer))))
+
+  (defun amb/copy-file-path-relative-to-project-root ()
+    "Put the current buffer's filepath relative to the project root in the kill ring. Good for imports"
+    (interactive)
+    ;; TODO if text is selected, add it into the saved string as the imported object
+    ;; TODO select buffer with helm and insert in current buffer, respecting aliases and resolving
+    ;; relative to the current buffer if they're in the same subproject
+    (let* ((relative-path (f-relative (buffer-file-name) (projectile-project-root)))
+           (trimmed-path (replace-regexp-in-string "\.ts$" "" relative-path))
+           )
+      (kill-new trimmed-path)))
+
+  (defun comment-auto-fill ()
+    (setq-local comment-auto-fill-only-comments t)
+    (auto-fill-mode 1))
+
+  (defun amb/fill-or-unfill ()
+    "Like `fill-paragraph', but unfill if used twice."
+    (interactive)
+    (let ((fill-column
+           (if (eq last-command 'endless/fill-or-unfill)
+               (progn (setq this-command nil)
+                      (point-max))
+             fill-column)))
+      (call-interactively #'fill-paragraph)))
+
+  (defun amb/jump-around (restrict-to-open-buffers)
+    "Grab the helm and go to a project file quickly.
+
+If called with a prefix arg, restricts to open buffers; by default, any file."
+    (interactive "P")
+    (if restrict-to-open-buffers
+        (call-interactively #'helm-buffers-list)
+      (if (projectile-project-p)
+          (call-interactively #'helm-projectile-find-file)
+        (call-interactively #'helm-find-files))))
+
+  (defun amb/html2org-clipboard ()
+    "Convert clipboard contents from HTML to Org and then paste (yank)."
+    (interactive)
+    (kill-new (shell-command-to-string "osascript -e 'the clipboard as \"HTML\"' | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' | pandoc -f html -t json | pandoc -f json -t org --wrap=none"))
+    (yank))
+
+  (defun dired-projectile-project-root ()
+    "If in a projectile project, open a dired buffer in the project root directory."
+    (interactive)
+    (and (projectile-project-p) (dired (projectile-project-root))))
+;; *** tab wrangling
+  (defun amb/tabify-buffer ()
+    "tabify current buffer, the whole current buffer, and nothing but the current buffer."
+    (interactive)
+    (save-excursion (tabify (point-min) (point-max))))
+
+  (defun amb/untabify-buffer ()
+    "untabify current buffer, the whole current buffer, and nothing but the current buffer."
+    (interactive)
+    (save-excursion (untabify (point-min) (point-max))))
+;; *** file wrangling
+  (defun amb/find-alternate-file ()
+    "Tries to find a conventionally-located test file based on the current file's filename and location."
+    (interactive)
+    (cond
+     ((s-matches? ".scala$" (buffer-file-name))
+      (if (s-matches? "Spec.scala" (buffer-file-name))
+          (let ((implementation-file-path (s-replace-all '(("Spec.scala" . ".scala") ("test" . "main")) (buffer-file-name))))
+            (if (f-exists? implementation-file-path) (find-file implementation-file-path)
+              (message (s-concat "could not find that fucker " implementation-file-path))))
+        (let ((spec-file-path (s-replace-all '((".scala" . "Spec.scala") ("main" . "test")) (buffer-file-name))))
+          (if (f-exists? spec-file-path) (find-file spec-file-path)
+            (message (s-concat "could not find that fucker " spec-file-path))))))
+     ((t (message "don't know how to find the alternate file for this file type")))))
+
+  (defun amb/touch-current-file ()
+    "does what it says on the tin, where `touch' refers to the shell command."
+    (interactive)
+    (shell-command (s-concat "touch " (buffer-file-name))))
+;; *** find-file-as-command commands
+  (defmacro find-file-as-command (filename)
+    `(lambda (P-is-for-prefix-arg)
+       (interactive "P")
+       (if current-prefix-arg (split-window-right-and-focus))
+       (find-file ,filename)))
+
+  (cl-flet ((amb/ (lambda (filename) (s-concat user-emacs-directory "amb/" filename))))
+    (fset 'amb/edit-elisp-notes (find-file-as-command (amb/ "elisp.org"))))
+  (fset 'amb/edit-cli-primer (find-file-as-command "~/notes/cli-primer.org"))
+  (fset 'amb/edit-ngts-todos (find-file-as-command "~/workspace/ngts/TODOs.org"))
+  (fset 'amb/open-agenda-file (find-file-as-command "~/notes/agenda.org"))
+  (fset 'amb/edit-sigfig-notes (find-file-as-command "~/notes/sigfig.org"))
+  (fset 'amb/edit-org-mode-glossary-notes (find-file-as-command "~/notes/org-mode-glossary.org"))
+
+  (defmacro helm-edit-file-from-directory (helm-title dir)
+    `(lambda (_prefix)
+       (interactive "P")
+       (helm :sources `((name . ,,helm-title)
+                        (candidates . ,(-map (lambda (f)
+                                               `(,(f-relative f ,dir) . ,f))
+                                             (f-files ,dir
+                                                      (lambda (g) (not (s-matches? "\.DS_Store" g))))))
+                        (action . (lambda (c)
+                                    (if current-prefix-arg (split-window-right-and-focus))
+                                    (find-file c)))))))
+
+  (fset 'amb/pick-a-note-why-dont-ya (helm-edit-file-from-directory "NOTES" "/Users/abirdsall/notes"))
+
+  (defmacro on-string-or-region (fn)
+    `(lambda (string &optional from to)
+       (interactive
+        (if (use-region?)
+            (list nil (region-beginning) (region-end))
+          (let ((bds (bounds-of-thing-at-point 'paragraph)))
+            (list nil (car bds) (cdr bds)))))
+
+       (let* ((work-on-string? (if string t nil))
+              (input-str (if work-on-string?
+                             string
+                           (buffer-substring-no-properties from to)))
+              (output-str (funcall ,fn input-str)))
+
+         (if work-on-string?
+             output-str
+           (save-excursion
+             (delete-region from to)
+             (goto-char from)
+             (insert output-str))))))
+
+  (fset 'kebab-case (on-string-or-region #'s-dashed-words))
+  (fset 'pascal-case (on-string-or-region #'s-upper-camel-case))
+  (fset 'camel-case (on-string-or-region #'s-lower-camel-case))
+  (fset 'snake-case (on-string-or-region #'s-snake-case))
+  (fset 'screaming-snake-case (on-string-or-region #'(lambda (str) (s-upcase (s-snake-case str)))))
+  (fset 'lower-words-case (on-string-or-region #'(lambda (str) (s-join " " (-map #'s-downcase (s-split-words str))))))
+
+;; ** git
+  (defadvice magit-status (around magit-fullscreen activate)
+    (window-configuration-to-register :magit-fullscreen)
+    ad-do-it
+    (delete-other-windows))
+
+  (defun magit-quit-session ()
+    "Restores the previous window configuration and kills the magit buffer"
+    (interactive)
+    (kill-buffer)
+    (jump-to-register :magit-fullscreen))
+
+  (with-eval-after-load 'magit-status
+    (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
+
+  ;; Make magit-gh-pulls look at the correct URL for GHE
+  ;; This is an incomplete solution; it appears the library hardcodes the github URL
+  (setq gh-profile-alist '(("github"
+                            :url "https://git.sigfig.com/api/v3"
+                            :remote-regexp "^\\(?:git@git\\.sigfig\\.com:\\|\\(?:git\\|https?\\|ssh\\)://.*@?git\\.sigfig\\.com/\\)\\(.*\\)/\\(.*\\)\\(?:\\.git\\)?")))
+
+  ;; use emacs for command line git stuff
+  (global-git-commit-mode)
+
+;; ** org
+  ;; Add projectile TODO.org files to agenda automatically
+  (with-eval-after-load 'org-agenda
+    (require 'org-projectile)
+    (append (org-projectile-todo-files) org-agenda-files)
+    (push "~/notes/agenda.org" org-agenda-files)
+    (push "~/notes/ical-entries.org" org-agenda-files))
+
+  (with-eval-after-load 'org
+    (require 'ox-beamer)
+    (require 'ox-confluence)
+    (require 'ox-tufte)
+    (require 'ob-dot)
+    (require 'ob-js)
+    (require 'ob-ruby)
+    (require 'ob-shell)
+    (require 'ob-typescript)
+    (setq org-export-babel-evaluate nil)
+    ;; Set sensible mode for editing dot files
+    (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+    ;; Update images from babel code blocks automatically
+    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+    (setq org-src-fontify-natively t)
+    (setq org-src-tab-acts-natively t)
+    (setq org-confirm-babel-evaluate nil)
+    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((dot . t)
+       (js . t)
+       (ruby . t)
+       (shell . t)
+       (typescript . t))))
+
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
+
+  (use-package ox-tufte
+    :ensure t
+    :after ox)
+
+;; ** hooks
+  (add-hook 'dired-mode-hook 'amb/dired-mode-setup)
+  (add-hook 'org-babel-after-execute-hook 'amb/fix-inline-images)
+  (add-hook 'outline-minor-mode-hook 'outshine-mode)
+  (add-hook 'prog-mode-hook 'outline-minor-mode)
+  (add-hook 'prog-mode-hook 'comment-auto-fill)
+  (add-hook 'js2-mode-hook (lambda () (jasminejs-mode)))
+  (add-hook 'jasminejs-mode-hook (lambda () (jasminejs-add-snippets-to-yas-snippet-dirs)))
+  (add-hook 'typescript-mode-hook 'setup-tide-mode)
+
+  ;; paredit!
+  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+
+;; ** variables
+(setq bart-manage-window t)
+(setq bart-station '24th)
+(setq insert-directory-program (executable-find "gls"))
+(setq mc/always-run-for-all t)
+(setq neo-theme 'nerd)
+(setq web-mode-engines-alist
+      '(("angular" . "\\.html")))
+(setq-default truncate-lines t)
+(setq-default js-indent-level 2)
+(setq-default js2-basic-offset 2)
+(setq-default standard-indent 2)
+(setq-default typescript-indent-level 2)
+(setq-default web-mode-code-indent-offset 2)
+(setq-default web-mode-markup-indent-offset 2)
+
+;; ** node setup
+  (require 'nvm)
+  (nvm-use (with-temp-buffer
+             ;; (insert-file-contents "~/workspace/react-mono/.nvmrc")
+             (insert-file-contents "~/workspace/ngts/.nvmrc")
+             (s-chomp (buffer-string))))
 
 ;; ** evil
 ;; *** evil-replace-with-register
@@ -516,16 +968,58 @@ dump."
                                        (outline-previous-visible-heading 1))))
 
 ;; ** paint me like one of your french editors
+;; *** Get rid of some dated-ass default UI
+    (scroll-bar-mode -1)
+    (tool-bar-mode   -1)
+    (tooltip-mode    -1)
+    (menu-bar-mode   -1)
+
 ;; *** frame appearance
     (when (eq system-type 'darwin)
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
       (add-to-list 'default-frame-alist '(ns-appearance . dark)))
 
-;; *** Get rid of the dated stuff
-    (scroll-bar-mode -1)
-    (tool-bar-mode   -1)
-    (tooltip-mode    -1)
-    (menu-bar-mode   -1)
+;; *** whitespace
+    (require 'whitespace)
+    (setq whitespace-display-mappings
+          ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+          '(
+            (space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+            (newline-mark 10 [182 10]) ; 10 LINE FEED
+            (tab-mark 9 [187 9] [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+            ))
+    (setq whitespace-style '(face tabs trailing tab-mark))
+
+    ;; set to dark by default, same as the actual themes
+    (set-face-attribute 'whitespace-tab nil
+                        :background "#272727"
+                        :foreground "#383838"
+                        :weight 'normal)
+    (set-face-attribute 'whitespace-trailing nil
+                        :background "#e4eeff"
+                        :foreground "#183bc8"
+                        :weight 'normal)
+    (add-hook 'prog-mode-hook 'whitespace-mode)
+
+    ;; and keep this ish in sync with the theme, at least for standard theme switching via 'spacemacs/cycle-spacemacs-theme
+    (defun amb/set-tab-color ()
+      (if (eq (frame-parameter nil 'background-mode) 'dark)
+          (set-face-attribute 'whitespace-tab nil
+                              :background "#272727"
+                              :foreground "#383838"
+                              :weight 'normal)
+        (set-face-attribute 'whitespace-tab nil
+                            :background "#d7b797"
+                            :foreground "#fdffe3"
+                            :weight 'normal)))
+
+    (advice-add 'spacemacs/cycle-spacemacs-theme :after #'amb/set-tab-color)
+
+;; *** modeline
+    (require 'doom-modeline)
+    (doom-modeline-init)
+    (setq doom-modeline-height 23)
+
 ;; *** mode-line
   (spacemacs/toggle-mode-line-battery-on)
 
@@ -650,19 +1144,12 @@ dump."
 (spacemacs/declare-prefix "o" "ᕙ(⇀‸↼‶)ᕗ")
 (spacemacs/declare-prefix "oe" "edit note files")
 (spacemacs/set-leader-keys
-  "oea" #'amb/edit-aliases
   "oec" #'amb/edit-cli-primer
   "oee" #'amb/pick-a-note-why-dont-ya
   "oeE" #'amb/edit-elisp-notes
-  "oed" #'amb/edit-helper-functions
   "oen" #'amb/edit-ngts-todos
-  "oev" #'amb/edit-variables
-  "fev" #'amb/edit-variables
-  "fee" #'amb/pick-an-elisp-file-why-dont-ya
-  "oet" #'amb/edit-text-objects
   "oes" #'amb/edit-sigfig-notes
-  "oek" #'amb/edit-keybindings
-  "fek" #'amb/edit-keybindings)
+  )
 
 (spacemacs/declare-prefix "ot" "typescript")
 (spacemacs/set-leader-keys
