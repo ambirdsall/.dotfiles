@@ -132,3 +132,6 @@ eval "$(direnv hook zsh)"
 export IRCSERVER="irc.freenode.net"
 # * Aliases
 [[ -a ~/.dotfiles/aliases.zsh ]] && source ~/.dotfiles/aliases.zsh
+
+export YVM_DIR=/usr/local/opt/yvm
+[ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
