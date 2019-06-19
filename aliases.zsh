@@ -41,9 +41,9 @@ alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
 alias amacs='emacs -q --load ~/.emacs.amb/init.el --debug-init --no-splash ~/.emacs.amb/init.el'
 amb () {
     if [[ $# -gt 0 ]]; then
-        emacsclient -s amb "$@" || emacs -q -l ~/.emacs.amb/init.el --daemon=amb
+        emacsclient -s amb "$@" || emacs -q -l ~/.emacs.amb/init.el --daemon=amb &
     else
-        emacsclient -s amb . || emacs -q -l ~/.emacs.amb/init.el --daemon=amb
+        emacsclient -s amb . || emacs -q -l ~/.emacs.amb/init.el --daemon=amb &
     fi
 }
 # * Current projects
