@@ -432,6 +432,10 @@ before packages are loaded. If you are unsure, you should try in setting them in
         `(("." . ,(expand-file-name
                    (concat user-emacs-directory "backups"))))))
 
+;; ** package-specific vars
+;; *** bart
+  (setq bart-manage-window t)
+  (setq bart-station '24th)
 ;; * dumping
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
@@ -449,16 +453,30 @@ dump."
     (setq ns-function-modifier 'hyper))
 
 ;; ** better defaults
+;; *** global defaults
   (setq-default major-mode 'org-mode)
   (setq auto-save-default nil)
   (setq frame-title-format '((:eval (if (buffer-file-name) (abbreviate-file-name (buffer-file-name)) "%b"))))
   (setq fill-column 100)
+  (setq-default truncate-lines t)
+;; *** dired
+  (setq insert-directory-program (executable-find "gls"))
+;; *** clipboard
   (setq x-select-enable-clipboard nil)
+;; *** helm
   (setq helm-info-default-sources '(helm-source-info-emacs helm-source-info-elisp helm-source-info-org helm-source-info-magit))
-  (setq company-tooltip-align-annotations t)
   (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s --ignore-file '*/dist-*' ")
   (setq helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black'" "--colors 'match:bg:yellow'"))
+;; *** company
+  (setq company-tooltip-align-annotations t)
+;; *** indentation
   (setq-default indent-tabs-mode nil)
+  (setq-default js-indent-level 2)
+  (setq-default js2-basic-offset 2)
+  (setq-default standard-indent 2)
+  (setq-default typescript-indent-level 2)
+  (setq-default web-mode-code-indent-offset 2)
+  (setq-default web-mode-markup-indent-offset 2)
 ;; ** require some generally-useful libraries just in case they're not around yet
   (require 'cl)
   (require 'dash)
@@ -473,32 +491,6 @@ dump."
     (setq mouse-sel-mode t)
     (global-set-key (kbd "<mouse-4>") (lambda () (interactive) (scroll-down 1)))
     (global-set-key (kbd "<mouse-5>") (lambda () (interactive) (scroll-up 1))))
-
-;; ** load amb/*
-  (add-to-load-path (concat user-emacs-directory "amb"))
-;; ** predicate?
-  ;; I just really vastly prefer "use question mark as suffix" as an idiom for
-  ;; type predicates to "use 'p' as a suffix except when it looks really weird or
-  ;; would be misleading because there exists some other word"
-  (defalias 'atom? 'atom)
-  (defalias 'buffer? 'bufferp)
-  (defalias 'cons? 'consp)
-  (defalias 'display-graphic? 'display-graphic-p)
-  (defalias 'frame? 'framep)
-  (defalias 'list? 'listp)
-  (defalias 'null? 'null)
-  (defalias 'number? 'numberp)
-  (defalias 'process? 'processp)
-  (defalias 'string? 'stringp)
-  (defalias 'subr? 'subrp)
-  (defalias 'symbol? 'symbolp)
-  (defalias 'vector? 'vectorp)
-  (defalias 'window? 'windowp)
-
-  ;; Hell, it's just better for predicates generally
-  (defalias 'bound? 'boundp)
-  (defalias 'fbound? 'fboundp)
-  (defalias 'use-region? 'use-region-p)
 
 ;; ** defuns
   (defun amb/insert-jira-ticket-org-link (ticket-id)
@@ -749,6 +741,30 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
     "If in a projectile project, open a dired buffer in the project root directory."
     (interactive)
     (and (projectile-project-p) (dired (projectile-project-root))))
+;; *** predicate?
+  ;; I just really vastly prefer "use question mark as suffix" as an idiom for
+  ;; type predicates to "use 'p' as a suffix except when it looks really weird or
+  ;; would be misleading because there exists some other word"
+  (defalias 'atom? 'atom)
+  (defalias 'buffer? 'bufferp)
+  (defalias 'cons? 'consp)
+  (defalias 'display-graphic? 'display-graphic-p)
+  (defalias 'frame? 'framep)
+  (defalias 'list? 'listp)
+  (defalias 'null? 'null)
+  (defalias 'number? 'numberp)
+  (defalias 'process? 'processp)
+  (defalias 'string? 'stringp)
+  (defalias 'subr? 'subrp)
+  (defalias 'symbol? 'symbolp)
+  (defalias 'vector? 'vectorp)
+  (defalias 'window? 'windowp)
+
+  ;; Hell, it's just better for predicates generally
+  (defalias 'bound? 'boundp)
+  (defalias 'fbound? 'fboundp)
+  (defalias 'use-region? 'use-region-p)
+
 ;; *** tab wrangling
   (defun amb/tabify-buffer ()
     "tabify current buffer, the whole current buffer, and nothing but the current buffer."
@@ -859,48 +875,6 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   ;; use emacs for command line git stuff
   (global-git-commit-mode)
 
-;; ** org
-  ;; Add projectile TODO.org files to agenda automatically
-  (with-eval-after-load 'org-agenda
-    (require 'org-projectile)
-    (append (org-projectile-todo-files) org-agenda-files)
-    (push "~/notes/agenda.org" org-agenda-files)
-    (push "~/notes/ical-entries.org" org-agenda-files))
-
-  (with-eval-after-load 'org
-    (require 'ox-beamer)
-    (require 'ox-confluence)
-    (require 'ox-tufte)
-    (require 'ob-dot)
-    (require 'ob-js)
-    (require 'ob-ruby)
-    (require 'ob-shell)
-    (require 'ob-typescript)
-    (setq org-export-babel-evaluate nil)
-    ;; Set sensible mode for editing dot files
-    (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
-    ;; Update images from babel code blocks automatically
-    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
-    (setq org-src-fontify-natively t)
-    (setq org-src-tab-acts-natively t)
-    (setq org-confirm-babel-evaluate nil)
-    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((dot . t)
-       (js . t)
-       (ruby . t)
-       (shell . t)
-       (typescript . t))))
-
-  (use-package ox-hugo
-    :ensure t
-    :after ox)
-
-  (use-package ox-tufte
-    :ensure t
-    :after ox)
-
 ;; ** hooks
   (add-hook 'dired-mode-hook 'amb/dired-mode-setup)
   (add-hook 'org-babel-after-execute-hook 'amb/fix-inline-images)
@@ -919,21 +893,6 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 
-;; ** variables
-(setq bart-manage-window t)
-(setq bart-station '24th)
-(setq insert-directory-program (executable-find "gls"))
-(setq mc/always-run-for-all t)
-(setq neo-theme 'nerd)
-(setq web-mode-engines-alist
-      '(("angular" . "\\.html")))
-(setq-default truncate-lines t)
-(setq-default js-indent-level 2)
-(setq-default js2-basic-offset 2)
-(setq-default standard-indent 2)
-(setq-default typescript-indent-level 2)
-(setq-default web-mode-code-indent-offset 2)
-(setq-default web-mode-markup-indent-offset 2)
 
 ;; ** node setup
   (require 'nvm)
@@ -966,6 +925,49 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
     (advice-add 'outshine-narrow-to-subtree :before
                 (lambda (&rest args) (unless (outline-on-heading-p t)
                                        (outline-previous-visible-heading 1))))
+
+;; *** agenda
+    ;; Add projectile TODO.org files to agenda automatically
+    (with-eval-after-load 'org-agenda
+      (require 'org-projectile)
+      (append (org-projectile-todo-files) org-agenda-files)
+      (push "~/notes/agenda.org" org-agenda-files)
+      (push "~/notes/ical-entries.org" org-agenda-files))
+
+;; *** language support and export formats
+    (with-eval-after-load 'org
+      (require 'ox-beamer)
+      (require 'ox-confluence)
+      (require 'ox-tufte)
+      (require 'ob-dot)
+      (require 'ob-js)
+      (require 'ob-ruby)
+      (require 'ob-shell)
+      (require 'ob-typescript)
+      (setq org-export-babel-evaluate nil)
+      ;; Set sensible mode for editing dot files
+      (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+      ;; Update images from babel code blocks automatically
+      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+      (setq org-src-fontify-natively t)
+      (setq org-src-tab-acts-natively t)
+      (setq org-confirm-babel-evaluate nil)
+      (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+      (org-babel-do-load-languages
+       'org-babel-load-languages
+       '((dot . t)
+         (js . t)
+         (ruby . t)
+         (shell . t)
+         (typescript . t))))
+
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
+
+  (use-package ox-tufte
+    :ensure t
+    :after ox)
 
 ;; ** paint me like one of your french editors
 ;; *** Get rid of some dated-ass default UI
@@ -1028,6 +1030,9 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
     (setq old-rainbow-html-colors-major-mode-list rainbow-html-colors-major-mode-list)
     (setq rainbow-html-colors-major-mode-list (cons 'scss-mode rainbow-html-colors-major-mode-list)))
 
+;; *** treemacs
+  (with-eval-after-load 'treemacs
+    (treemacs-resize-icons 13))
 ;; ** programming language environments
 ;; *** elisp
 ;; **** lord help me, I need a better tabs vs spaces system
@@ -1059,6 +1064,9 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
 
   (defvar default-tags-table-function 'find-git-repo-tags-file)
 
+;; ** web-mode
+  (setq web-mode-engines-alist
+        '(("angular" . "\\.html")))
 ;; ** editorconfig
   (use-package editorconfig
     :ensure t
