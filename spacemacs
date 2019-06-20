@@ -851,6 +851,16 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   (fset 'screaming-snake-case (on-string-or-region #'(lambda (str) (s-upcase (s-snake-case str)))))
   (fset 'lower-words-case (on-string-or-region #'(lambda (str) (s-join " " (-map #'s-downcase (s-split-words str))))))
 
+;; *** dead sea scrolling
+  (defun amb/scroll-down ()
+    "scroll down a line, for the definition of \"down\" I find intuitive."
+    (interactive)
+    (scroll-up 1))
+
+  (defun amb/scroll-up ()
+    "scroll up a line, for the definition of \"up\" I find intuitive."
+    (interactive)
+    (scroll-down 1))
 ;; ** git
   (defadvice magit-status (around magit-fullscreen activate)
     (window-configuration-to-register :magit-fullscreen)
@@ -1127,6 +1137,10 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
 ;; **** C-return/C-S-return == vim-style o/O
 (global-set-key (kbd "<C-return>") 'open-line-below)
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
+
+;; **** arrow keys, amirite?
+(global-set-key (kbd "<down>") 'amb/scroll-down)
+(global-set-key (kbd "<up>") 'amb/scroll-up)
 
 ;; **** global application shortcuts to match OS keybindings
 (global-set-key (kbd "M-s-SPC") (lambda () (interactive) (shell-command "open '/Applications/Google Chrome.app'")))
