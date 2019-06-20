@@ -1204,8 +1204,8 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
 
 (spacemacs/declare-prefix "(" "paredit ⇦")
 (spacemacs/set-leader-keys
-  "(s" #'paredit-forward-slurp-sexp
-  "(b" #'paredit-forward-barf-sexp)
+  "(s" #'paredit-backward-slurp-sexp
+  "(b" #'paredit-backward-barf-sexp)
 
 (spacemacs/declare-prefix "H" "helm")
 (spacemacs/set-leader-keys
