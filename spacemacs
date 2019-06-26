@@ -627,25 +627,19 @@ from outside applications."
         (setq select-enable-clipboard t)
         (message "Copy and paste away, slugger!"))))
 
-  (defvar clipboard-was-enabled?)
   (defun amb/paste-from-clipboard ()
     "Inserts the contents of the system clipboard at point."
     (interactive)
-    (let ((clipboard-was-enabled? select-enable-clipboard))
-      (setq select-enable-clipboard t)
-      (call-interactively 'evil-paste-after))
-    (setq select-enable-clipboard clipboard-was-enabled?))
+    (let ((select-enable-clipboard t))
+      (call-interactively 'evil-paste-after)))
 
   (defun amb/evil-yank-to-clipboard ()
     "Ensures the system clipboard is enabled and then calls evil-yank.
 
-You should probably just use this on a region? Not totally sure
-how evil-motions work yet, tbh."
+Works with vim-style motions."
     (interactive)
-    (let ((clipboard-was-enabled? select-enable-clipboard))
-      (setq select-enable-clipboard t)
-      (call-interactively 'evil-yank)
-      (setq select-enable-clipboard clipboard-was-enabled?)))
+    (let ((select-enable-clipboard t))
+      (call-interactively 'evil-yank)))
 
   (defun amb/dired-mode-setup ()
     "to be run as hook for `dired-mode'."
