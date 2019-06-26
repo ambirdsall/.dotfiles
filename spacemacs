@@ -900,6 +900,18 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   ;; hitting "y" once is plenty, thanks
   (advice-add 'risky-local-variable-p :override #'ignore)
 
+;; ** eshell
+;; *** defuns
+  (defun root ()
+    "Returns as a string the name of the root directory or the filesystem root, whichever comes first.
+
+If you're anywhere but the top-level directory inside of a
+projectile project, it returns the project root directory. If the
+current working directory already is the project root or you're
+outside of a projectile project, returns either the nearest
+parent directory that's a projectile root directory or the
+filesystem root, whichever comes first."
+    (or (projectile-project-root) "/"))
 ;; ** org it up
 ;; *** defuns
   (defun amb/insert-jira-ticket-org-link (ticket-id)
