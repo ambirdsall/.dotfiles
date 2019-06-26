@@ -497,29 +497,6 @@ dump."
     (global-set-key (kbd "<mouse-5>") (lambda () (interactive) (scroll-up 1))))
 
 ;; ** defuns
-  (defun amb/insert-jira-ticket-org-link (ticket-id)
-    "inserts an org link to the given jira ticket at point, with `ticket-id' as the visible text.
-
-`ticket-id' is a jira number like COP-123 or MRY-444 or whatever."
-    (interactive (list (read-string "Jira ticket: ")))
-    (insert (s-concat "[[//jira.sigfig.com/browse/" ticket-id "][" ticket-id "]]")))
-
-  (defun amb/org-new-subheading (is-todo)
-    (interactive "P")
-    (if is-todo
-        (progn
-          (amb/org-insert-subheading-respect-content)
-          (org-todo))
-      (amb/org-insert-subheading-respect-content)))
-
-  (defun amb/org-new-heading (is-todo)
-    (interactive "P")
-    (if is-todo
-        (progn
-          (org-insert-heading-after-current)
-          (org-todo))
-      (org-insert-heading-after-current)))
-
   (defun source-dotspacemacs-user-config ()
     (interactive)
     (dotspacemacs/user-config))
@@ -930,6 +907,30 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   (advice-add 'risky-local-variable-p :override #'ignore)
 
 ;; ** org it up
+;; *** defuns
+  (defun amb/insert-jira-ticket-org-link (ticket-id)
+    "inserts an org link to the given jira ticket at point, with `ticket-id' as the visible text.
+
+`ticket-id' is a jira number like COP-123 or MRY-444 or whatever."
+    (interactive (list (read-string "Jira ticket: ")))
+    (insert (s-concat "[[//jira.sigfig.com/browse/" ticket-id "][" ticket-id "]]")))
+
+  (defun amb/org-new-subheading (is-todo)
+    (interactive "P")
+    (if is-todo
+        (progn
+          (amb/org-insert-subheading-respect-content)
+          (org-todo))
+      (amb/org-insert-subheading-respect-content)))
+
+  (defun amb/org-new-heading (is-todo)
+    (interactive "P")
+    (if is-todo
+        (progn
+          (org-insert-heading-after-current)
+          (org-todo))
+      (org-insert-heading-after-current)))
+
 ;; *** outshine
     (require 'outshine)
 
