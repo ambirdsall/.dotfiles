@@ -444,6 +444,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
 ;; *** bart
   (setq bart-manage-window t)
   (setq bart-station '24th)
+;; *** doc-view
+  (setq doc-view-resolution 300)
 ;; * dumping
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
@@ -1158,8 +1160,9 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
 (global-set-key (kbd "C-}") 'paredit-forward-barf-sexp)
 (global-set-key (kbd "C-}") 'paredit-backward-barf-sexp)
 
-;; **** fix clobbered keybinding in docview mode
+;; **** doc-view mode
 (with-eval-after-load 'doc-view
+  ;; fix clobbered keybindings
   (define-key doc-view-mode-map (kbd "n") 'doc-view-next-page)
   (define-key doc-view-mode-map (kbd "l") 'doc-view-next-page))
 
