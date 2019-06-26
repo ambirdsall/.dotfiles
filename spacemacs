@@ -415,6 +415,13 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+;; ** return of the macOS
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'super)
+    (setq ns-function-modifier 'hyper)
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser))
+
 ;; ** language environments
 ;; *** typescript
   (setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log"))
@@ -447,12 +454,6 @@ dump."
 
 ;; * user-config
 (defun dotspacemacs/user-config ()
-;; ** return of the macOS
-  (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'meta)
-    (setq mac-option-modifier 'super)
-    (setq ns-function-modifier 'hyper))
-
 ;; ** better defaults
 ;; *** global defaults
   (setq-default major-mode 'org-mode)
