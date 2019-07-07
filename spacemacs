@@ -57,6 +57,7 @@ values."
                                             org-enable-reveal-js-support t
                                             org-hide-emphasis-markers t)
                                        osx
+                                       pdf
                                        phoenix
                                        react
                                        (restclient :variables
