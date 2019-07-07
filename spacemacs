@@ -1262,6 +1262,7 @@ filesystem root, whichever comes first."
   "oy"   #'amb/evil-yank-to-clipboard
   "oz"   #'evil-toggle-fold
   "po"   #'org-projectile/goto-todos
+  "pO"   #'org-projectile-goto-location-for-project
   "ps"   #'amb/helm-ag-in-projectile-root
   "hf"   #'describe-function
   "hh"   #'describe-key-briefly
