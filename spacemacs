@@ -436,10 +436,14 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (push '("melpa-stable" . "stable.melpa.org/packages/") configuration-layer-elpa-archives)
   (push '("ensime" . "melpa-stable") package-pinned-packages)
 
+;; ** clipboard integration (or insulation)
+  ;; initially, and in general, the system clipboard should not get the kill-ring's dirty laundary
+  (setq x-select-enable-clipboard nil)
+  (setq select-enable-clipboard nil)
 ;; ** backup files
   (setq backup-directory-alist
         `(("." . ,(expand-file-name
-                   (concat user-emacs-directory "backups"))))))
+                   (concat user-emacs-directory "backups")))))
 
 ;; ** package-specific vars
 ;; *** bart
@@ -447,6 +451,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq bart-station '24th)
 ;; *** doc-view
   (setq doc-view-resolution 300)
+  ) ;; end of defun
 ;; * dumping
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
@@ -466,8 +471,6 @@ dump."
   (setq-default truncate-lines t)
 ;; *** dired
   (setq insert-directory-program (executable-find "gls"))
-;; *** clipboard
-  (setq x-select-enable-clipboard nil)
 ;; *** helm
   (setq helm-info-default-sources '(helm-source-info-emacs helm-source-info-elisp helm-source-info-org helm-source-info-magit))
   (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s --ignore-file '*/dist-*' ")
