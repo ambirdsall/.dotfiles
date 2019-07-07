@@ -1088,7 +1088,8 @@ filesystem root, whichever comes first."
 
 ;; ** web-mode
   (setq web-mode-engines-alist
-        '(("angular" . "\\.html")))
+        '(("angular" . "\\.html")
+          ("phoenix" . "\\.html.eex")))
 ;; ** editorconfig
   (use-package editorconfig
     :ensure t
