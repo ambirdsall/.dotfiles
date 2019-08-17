@@ -49,7 +49,7 @@ fi
 # * Editing text
 # ** $EDITOR and friends
 export EDITOR='emacsclient -nw --alternate-editor="emacs -q -nw -l ~/.emacs.amb/init.el"'
-export MANPAGER="vim -c 'set ft=man' -"
+export MANPAGER="col -b | vim -c 'set ft=man' -"
 
 # ** bringing some hybrid mode to zsh
 bindkey -v
