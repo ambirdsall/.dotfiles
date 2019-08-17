@@ -1,4 +1,0 @@
-[submodule "vim"]
-	path = vim
-	url = https://github.com/ambirdsall/dotvim.git
-	ignore = dirty
