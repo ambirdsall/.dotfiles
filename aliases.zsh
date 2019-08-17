@@ -1,7 +1,11 @@
-# * Shell Variables (important files and directories)
+# * Shell variables (important files and directories)
 export desk=~/Desktop
 export dot=~/.dotfiles
 export nvimrc=~/.config/vim/init.vim
+# * General shell helpers
+error () {
+    echo "$@" > /dev/stderr
+}
 # * Tmux
 # This function is primarily intended as a helper function for naming things
 # after the current session, so a string that I'm confident I wouldn't ever use
@@ -25,7 +29,7 @@ tn () {
 # When the tmux session shrinks some and fills the margin with periods, it
 # thinks there's another instance of the session in a smaller terminal. F that.
 alias tda="tmux detach -a"
-alias tls="tmux list-sessions"
+alias tls="tmux list-sessions 2>/dev/null || error wha\'s like tmux? damn few and they\'re a\'deid"
 
 # When clearing screen:
 #   if `$TMUX` is defined: just clear the screen, in a tmux session already
