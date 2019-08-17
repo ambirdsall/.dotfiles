@@ -62,8 +62,7 @@ values."
                                        react
                                        (restclient :variables
                                                    restclient-use-org t)
-                                       (scala :variables
-                                              scala-enable-eldoc t)
+                                       scala
                                        (shell :variables
                                               shell-default-height 30
                                               shell-default-position 'fullscreen
@@ -91,6 +90,7 @@ values."
                                       angular-mode
                                       angular-snippets
                                       bart-mode
+                                      centaur-tabs
                                       dash-at-point
                                       doom-modeline
                                       doom-themes
@@ -230,7 +230,7 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(doom-one
-                         solarized-light)
+                         doom-nord-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -405,6 +405,7 @@ This function defines the environment variables for your Emacs session. By
 default it calls `spacemacs/load-spacemacs-env' which loads the environment
 variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
 See the header of this file for more information."
+  (setenv "PKG_CONFIG_PATH" (concat (shell-command-to-string "printf %s \"$(brew --prefix libffi)\"") "/lib/pkgconfig/"))
   (spacemacs/load-spacemacs-env))
 
 ;; * user-init
@@ -416,13 +417,6 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-;; ** return of the macOS
-  (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'meta)
-    (setq mac-option-modifier 'super)
-    (setq ns-function-modifier 'hyper)
-    (setq browse-url-browser-function 'browse-url-default-macosx-browser))
-
 ;; ** language environments
 ;; *** typescript
   (setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log"))
@@ -462,6 +456,13 @@ dump."
 
 ;; * user-config
 (defun dotspacemacs/user-config ()
+;; ** return of the macOS
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'super)
+    (setq ns-function-modifier 'hyper)
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser))
+
 ;; ** better defaults
 ;; *** global defaults
   (setq-default major-mode 'org-mode)
@@ -762,11 +763,20 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
      ((s-matches? ".scala$" (buffer-file-name))
       (if (s-matches? "Spec.scala" (buffer-file-name))
           (let ((implementation-file-path (s-replace-all '(("Spec.scala" . ".scala") ("test" . "main")) (buffer-file-name))))
-            (if (f-exists? implementation-file-path) (find-file implementation-file-path)
-              (message (s-concat "could not find that fucker " implementation-file-path))))
-        (let ((spec-file-path (s-replace-all '((".scala" . "Spec.scala") ("main" . "test")) (buffer-file-name))))
-          (if (f-exists? spec-file-path) (find-file spec-file-path)
-            (message (s-concat "could not find that fucker " spec-file-path))))))
+            (if (f-exists? implementation-file-path)
+                (find-file implementation-file-path)
+              (let ((backup-path-for-copilot-backend-smh (s-replace "server/api/" "server/api/route/" implementation-file-path)))
+                (if (f-exists? backup-path-for-copilot-backend-smh)
+                    (find-file backup-path-for-copilot-backend-smh)
+                  (message (s-concat "could not find that fucker at " implementation-file-path " or " backup-path-for-copilot-backend-smh))))))
+        (let ((spec-file-path (s-replace-all '((".scala" . "Spec.scala") ("/main/" . "/test/")) (buffer-file-name))))
+          (if (f-exists? spec-file-path)
+              (find-file spec-file-path)
+            (let ((backup-path-for-copilot-backend-smh (s-replace "route/" "" spec-file-path)))
+              (if (f-exists? backup-path-for-copilot-backend-smh)
+                  (find-file backup-path-for-copilot-backend-smh)
+                (if (y-or-n-p (s-concat "could not find that fucker " spec-file-path ". Create it?"))
+                    (find-file spec-file-path))))))))
      ((t (message "don't know how to find the alternate file for this file type")))))
 
   (defun amb/touch-current-file ()
@@ -841,6 +851,7 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
     (interactive)
     (scroll-down 1))
 ;; ** git
+;; *** general magit UI
   (defadvice magit-status (around magit-fullscreen activate)
     (window-configuration-to-register :magit-fullscreen)
     ad-do-it
@@ -855,11 +866,28 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   (with-eval-after-load 'magit-status
     (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
 
+;; *** github enterprise tho
   ;; Make magit-gh-pulls look at the correct URL for GHE
   ;; This is an incomplete solution; it appears the library hardcodes the github URL
   (setq gh-profile-alist '(("github"
                             :url "https://git.sigfig.com/api/v3"
                             :remote-regexp "^\\(?:git@git\\.sigfig\\.com:\\|\\(?:git\\|https?\\|ssh\\)://.*@?git\\.sigfig\\.com/\\)\\(.*\\)/\\(.*\\)\\(?:\\.git\\)?")))
+
+  (defun amb/visit-pull-request-url ()
+    "Visit the current branch's PR on Github."
+    (interactive)
+    (browse-url
+     (format "https://git.sigfig.com/%s/pull/new/%s"
+             (replace-regexp-in-string
+              "\\`.+git\\.sigfig\\.com:\\(.+\\)\\.git\\'" "\\1"
+              (magit-get "remote"
+                         (magit-get-push-remote)
+                         "url"))
+             (magit-get-current-branch))))
+
+  (with-eval-after-load 'forge
+    (push '("git.sigfig.com" "git.sigfig.com/api"
+                                      "git.sigfig.com" forge-github-repository) forge-alist))
 
   ;; use emacs for command line git stuff
   (global-git-commit-mode)
@@ -986,10 +1014,6 @@ filesystem root, whichever comes first."
          (shell . t)
          (typescript . t))))
 
-  (use-package ox-hugo
-    :ensure t
-    :after ox)
-
   (use-package ox-tufte
     :ensure t
     :after ox)
@@ -1036,10 +1060,10 @@ filesystem root, whichever comes first."
                               :foreground "#383838"
                               :weight 'normal)
         (set-face-attribute 'whitespace-tab nil
-                            :background "#d7b797"
-                            :foreground "#fdffe3"
+                            :background "#DBDFE6" ; (dolist n '(224 228 235) (* 0.98 n))
+                            :foreground "#EAEEF5"
                             :weight 'normal)))
-
+    (advice-add 'spacemacs/theme-transient-state/spacemacs/cycle-spacemacs-theme :after #'amb/set-tab-color)
     (advice-add 'spacemacs/cycle-spacemacs-theme :after #'amb/set-tab-color)
 
 ;; *** modeline
@@ -1058,6 +1082,8 @@ filesystem root, whichever comes first."
 ;; *** treemacs
   (with-eval-after-load 'treemacs
     (treemacs-resize-icons 13))
+;; *** centaur tabs
+  (centaur-tabs-mode t)
 ;; ** programming language environments
 ;; *** elisp
 ;; **** lord help me, I need a better tabs vs spaces system
@@ -1149,16 +1175,25 @@ filesystem root, whichever comes first."
     "gj" 'outline-forward-same-level
     "gk" 'outline-backward-same-level))
 
-;; *** amb/keybindings
-;; **** C-return/C-S-return == vim-style o/O
+;; *** undo in region in visual mode
+(evil-global-set-key 'visual "u" 'undo-tree-undo)
+;; *** C-return/C-S-return == vim-style o/O
 (global-set-key (kbd "<C-return>") 'open-line-below)
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
 
-;; **** arrow keys, amirite?
-(global-set-key (kbd "<down>") 'amb/scroll-down)
-(global-set-key (kbd "<up>") 'amb/scroll-up)
+;; *** arrow keys, amirite?
+(evil-global-set-key 'normal (kbd "<down>") 'amb/scroll-down)
+(evil-global-set-key 'visual (kbd "<down>") 'amb/scroll-down)
+(evil-global-set-key 'motion (kbd "<down>") 'amb/scroll-down)
+(evil-global-set-key 'normal (kbd "<up>") 'amb/scroll-up)
+(evil-global-set-key 'visual (kbd "<up>") 'amb/scroll-up)
+(evil-global-set-key 'motion (kbd "<up>") 'amb/scroll-up)
 
-;; **** global application shortcuts to match OS keybindings
+;; *** vim-style tab navigation
+(evil-global-set-key 'normal (kbd "g t") 'centaur-tabs-forward)
+(evil-global-set-key 'normal (kbd "g T") 'centaur-tabs-backward)
+
+;; *** global application shortcuts to match OS keybindings
 (global-set-key (kbd "M-s-SPC") (lambda () (interactive) (shell-command "open '/Applications/Google Chrome.app'")))
 ;; s-SPC not always getting recognized tho
 (global-set-key (kbd "s-SPC") (lambda () (interactive) (shell-command "open '/Applications/iTerm.app")))
@@ -1166,19 +1201,19 @@ filesystem root, whichever comes first."
 (global-set-key [remap fill-paragraph]
                 #'amb/fill-or-unfill)
 
-;; **** limited global paredit
+;; *** limited global paredit
 (global-set-key (kbd "C-)") 'paredit-forward-slurp-sexp)
 (global-set-key (kbd "C-(") 'paredit-backward-slurp-sexp)
 (global-set-key (kbd "C-}") 'paredit-forward-barf-sexp)
 (global-set-key (kbd "C-}") 'paredit-backward-barf-sexp)
 
-;; **** doc-view mode
+;; *** doc-view mode
 (with-eval-after-load 'doc-view
   ;; fix clobbered keybindings
   (define-key doc-view-mode-map (kbd "n") 'doc-view-next-page)
   (define-key doc-view-mode-map (kbd "l") 'doc-view-next-page))
 
-;; **** leader keybindings
+;; *** leader keybindings
 (spacemacs/declare-prefix "d" "dash")
 (spacemacs/declare-prefix "o" "ᕙ(⇀‸↼‶)ᕗ")
 (spacemacs/declare-prefix "oe" "edit note files")
@@ -1243,7 +1278,9 @@ filesystem root, whichever comes first."
   "fa"   #'amb/find-alternate-file
   "ft"   #'amb/touch-current-file
   "fer"  #'source-dotspacemacs-user-config
+  "gg"   #'magit-dispatch ;; adios, gist prefix :/
   "G"    #'magit-status
+  "gP"   #'amb/visit-pull-request-url
   "L"    #'spacemacs/workspaces-transient-state/body
   "l"    #'spacemacs/layouts-transient-state/body
   "nk"   #'evil-numbers/inc-at-pt
@@ -1480,8 +1517,26 @@ This function is called at the very end of Spacemacs initialization."
    (quote
     ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
  '(hl-paren-colors (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
- '(js-indent-level 2 t)
+ '(hl-todo-keyword-faces
+   (quote
+    (("TODO" . "#dc752f")
+     ("NEXT" . "#dc752f")
+     ("THEM" . "#2d9574")
+     ("PROG" . "#4f97d7")
+     ("OKAY" . "#4f97d7")
+     ("DONT" . "#f2241f")
+     ("FAIL" . "#f2241f")
+     ("DONE" . "#86dc2f")
+     ("NOTE" . "#b1951d")
+     ("KLUDGE" . "#b1951d")
+     ("HACK" . "#b1951d")
+     ("TEMP" . "#b1951d")
+     ("FIXME" . "#dc752f")
+     ("XXX" . "#dc752f")
+     ("XXXX" . "#dc752f"))))
+ '(js-indent-level 2)
  '(magit-diff-use-overlays nil)
+ '(max-specpdl-size 9000)
  '(nrepl-message-colors
    (quote
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
@@ -1495,13 +1550,26 @@ This function is called at the very end of Spacemacs initialization."
  '(pos-tip-foreground-color "#586e75")
  '(safe-local-variable-values
    (quote
-    ((projectile-tags-file-name . "~/workspace/ngts/.git/ETAGS")
+    ((eval progn
+           (require
+            (quote nvm))
+           (nvm-use
+            (with-temp-buffer
+              (insert-file-contents "~/workspace/ngts/.nvmrc")
+              (s-chomp
+               (buffer-string))))
+           (add-to-list
+            (quote auto-mode-alist)
+            (quote
+             ("\\.html" . web-mode))))
+     (flycheck-typescript-tslint-executable . "~/workspace/react-mono/node_modules/.bin/tslint")
+     (projectile-tags-file-name . "~/workspace/ngts/.git/ETAGS")
      (elixir-enable-compilation-checking . t)
      (elixir-enable-compilation-checking))))
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
  '(term-default-bg-color "#fdf6e3")
  '(term-default-fg-color "#657b83")
- '(typescript-indent-level 2 t)
+ '(typescript-indent-level 2)
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
@@ -1537,5 +1605,5 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(ensime-implicit-highlight ((t (:underline nil)))))
 )
