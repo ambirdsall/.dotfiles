@@ -16,9 +16,6 @@ $(rm ~/Desktop/(dd-|Screen\ Shot)*(.N) 2> /dev/null &)
 export HISTFILE='~/.zsh_history'
 export HISTCONTROL=ignorespace
 export HISTSIZE=500
-source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
 # allow mv actions on multiple files, see:
 autoload -U zmv
 setopt auto_cd
