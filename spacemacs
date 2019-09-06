@@ -97,6 +97,7 @@ values."
                                       evil-textobj-anyblock
                                       evil-textobj-line
                                       evil-replace-with-register
+                                      evil-vimish-fold
                                       exec-path-from-shell
                                       exunit
                                       fireplace
@@ -110,7 +111,8 @@ values."
                                       origami
                                       ox-hugo
                                       ox-tufte
-                                      sicp)
+                                      sicp
+                                      vimish-fold)
 ;; ** frozen packages
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -1149,11 +1151,14 @@ filesystem root, whichever comes first."
     (editorconfig-mode 1))
 
 ;; ** load keybindings last, in hopes that they won't be overwritten
-;; *** org/outshine
+;; *** folding systems
+;; **** org/outshine
 (if (display-graphic-p) ;; org-mode heading keybindings
     (with-eval-after-load 'org
       (define-key org-mode-map (kbd "C-RET") #'amb/org-new-heading)
       (define-key org-mode-map (kbd "C-S-RET") #'amb/org-new-subheading)
+      (define-key evil-org-mode-map (kbd "<down>") #'next-line) ;; keymap overridden :(
+      (define-key evil-org-mode-map (kbd "<up>") #'previous-line) ;; keymap overridden :(
       (define-key org-mode-map [remap evil-org-org-insert-todo-heading-respect-content-below] 'amb/org-new-subheading)
       ;; (evil-define-key 'normal org-mode-map
       ;;   (kbd "C-RET") #'amb/org-new-heading
@@ -1196,7 +1201,10 @@ filesystem root, whichever comes first."
     "gh" 'outline-up-heading
     "gj" 'outline-forward-same-level
     "gk" 'outline-backward-same-level))
-
+;; **** vimish-fold
+(require 'vimish-fold)
+(require 'evil-vimish-fold)
+(evil-vimish-fold-mode 1)
 ;; *** undo in region in visual mode
 (evil-global-set-key 'visual "u" 'undo-tree-undo)
 ;; *** C-return/C-S-return == vim-style o/O
