@@ -101,7 +101,7 @@ values."
                                       exec-path-from-shell
                                       exunit
                                       fireplace
-                                      groovy-mode
+                                      general
                                       jasminejs-mode
                                       lsp-scala
                                       nvm
@@ -1151,6 +1151,7 @@ filesystem root, whichever comes first."
     (editorconfig-mode 1))
 
 ;; ** load keybindings last, in hopes that they won't be overwritten
+  (require 'general)
 ;; *** folding systems
 ;; **** org/outshine
 (if (display-graphic-p) ;; org-mode heading keybindings
