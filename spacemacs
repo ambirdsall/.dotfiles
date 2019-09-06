@@ -1003,6 +1003,9 @@ used interactively."
   (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 
+  ;; tagedit!
+  (and (functionp 'tagedit-mode) (add-hook 'web-mode-hook #'tagedit-mode))
+
 
 ;; ** node setup
   (require 'nvm)
@@ -1321,11 +1324,15 @@ filesystem root, whichever comes first."
 (global-set-key [remap fill-paragraph]
                 #'amb/fill-or-unfill)
 
-;; *** limited global paredit
+;; *** paredit
+;; limited global paredit
 (global-set-key (kbd "C-)") 'paredit-forward-slurp-sexp)
 (global-set-key (kbd "C-(") 'paredit-backward-slurp-sexp)
 (global-set-key (kbd "C-}") 'paredit-forward-barf-sexp)
 (global-set-key (kbd "C-}") 'paredit-backward-barf-sexp)
+;; TODO: whyyyyyy is this not working tho
+(define-key web-mode-map (kbd "C-)") 'tagedit-forward-slurp-tag)
+(define-key web-mode-map (kbd "C-}") 'tagedit-forward-barf-tag)
 
 ;; *** doc-view mode
 (with-eval-after-load 'doc-view
