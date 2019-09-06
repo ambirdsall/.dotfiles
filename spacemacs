@@ -98,12 +98,14 @@ values."
                                       evil-textobj-line
                                       evil-replace-with-register
                                       exec-path-from-shell
+                                      exunit
                                       fireplace
                                       groovy-mode
                                       jasminejs-mode
                                       lsp-scala
                                       nvm
                                       outshine
+                                      ob-restclient
                                       ob-typescript
                                       origami
                                       ox-hugo
@@ -994,6 +996,7 @@ filesystem root, whichever comes first."
       (require 'ox-tufte)
       (require 'ob-dot)
       (require 'ob-js)
+      (require 'ob-restclient)
       (require 'ob-ruby)
       (require 'ob-shell)
       (require 'ob-typescript)
@@ -1010,6 +1013,7 @@ filesystem root, whichever comes first."
        'org-babel-load-languages
        '((dot . t)
          (js . t)
+         (restclient . t)
          (ruby . t)
          (shell . t)
          (typescript . t))))
