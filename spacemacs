@@ -698,6 +698,11 @@ Does not emit any compiled js."
     (if-let ((current-keymap (amb/keymap-symbol (current-local-map))))
         (message (symbol-name current-keymap))))
 
+  (defun amb/what-the-face ()
+    "Print the name of the face at point."
+    (interactive)
+    (message "The face at point is: %s" (or (face-at-point t) 'default)))
+
   ;; Avoid polluting the system clipboard
   (defun amb/toggle-clipboard ()
     "Toggles whether the system clipboard is accessable to emacs.
@@ -1428,6 +1433,7 @@ filesystem root, whichever comes first."
   "pO"   #'org-projectile-goto-location-for-project
   "ps"   #'amb/helm-ag-in-projectile-root
   "hf"   #'describe-function
+  "hF"   #'amb/what-the-face
   "hh"   #'describe-key-briefly
   "hm"   #'woman
   "hk"   #'describe-key
