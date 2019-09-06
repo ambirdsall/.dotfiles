@@ -58,7 +58,6 @@ values."
                                             org-hide-emphasis-markers t)
                                        osx
                                        pdf
-                                       phoenix
                                        react
                                        (restclient :variables
                                                    restclient-use-org t)
@@ -115,8 +114,9 @@ values."
    dotspacemacs-frozen-packages '()
 ;; ** excluded packages
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(spaceline
-                                    evil-search-highlight-persist)
+   dotspacemacs-excluded-packages '(alchemist
+                                    evil-search-highlight-persist
+                                    spaceline)
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -1115,6 +1115,24 @@ filesystem root, whichever comes first."
 
   (defvar default-tags-table-function 'find-git-repo-tags-file)
 
+;; *** elixir
+  (use-package lsp-mode
+    :commands lsp
+    :ensure t
+    :diminish lsp-mode
+    :hook
+    (elixir-mode . lsp)
+    :init
+    (add-to-list 'exec-path "/Users/abirdsall/code/elixir/elixir-ls/release"))
+
+  (with-eval-after-load 'elixir-mode
+    (spacemacs/declare-prefix-for-mode 'elixir-mode
+      "mt" "tests" "testing related functionality")
+    (spacemacs/set-leader-keys-for-major-mode 'elixir-mode
+      "tb" 'exunit-verify-all
+      "ta" 'exunit-verify
+      "tk" 'exunit-rerun
+      "tt" 'exunit-verify-single))
 ;; ** web-mode
   (setq web-mode-engines-alist
         '(("angular" . "\\.html")
