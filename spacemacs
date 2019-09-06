@@ -897,6 +897,8 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
   (fset 'amb/pick-a-note-why-dont-ya (helm-edit-file-from-directory "NOTES" "/Users/abirdsall/notes"))
 
   (defmacro on-string-or-region (fn)
+    "Given a string-manipulation function, defines an interactive command which will apply that
+function to either a string argument or to selected text, depending on context."
     `(lambda (string &optional from to)
        (interactive
         (if (use-region?)
@@ -917,12 +919,19 @@ If called with a prefix arg, restricts to open buffers; by default, any file."
              (goto-char from)
              (insert output-str))))))
 
-  (fset 'kebab-case (on-string-or-region #'s-dashed-words))
-  (fset 'pascal-case (on-string-or-region #'s-upper-camel-case))
-  (fset 'camel-case (on-string-or-region #'s-lower-camel-case))
-  (fset 'snake-case (on-string-or-region #'s-snake-case))
-  (fset 'screaming-snake-case (on-string-or-region #'(lambda (str) (s-upcase (s-snake-case str)))))
-  (fset 'lower-words-case (on-string-or-region #'(lambda (str) (s-join " " (-map #'s-downcase (s-split-words str))))))
+  (defmacro def-text-operator (name fn)
+    "Create a new interactive command bound to NAME using some
+string manipulation function FN. It will work given a string
+argument programmatically or by operating on selected text when
+used interactively."
+    `(fset ,name (on-string-or-region ,fn)))
+
+  (def-text-operator 'kebab-case #'s-dashed-words)
+  (def-text-operator 'pascal-case #'s-upper-camel-case)
+  (def-text-operator 'camel-case #'s-lower-camel-case)
+  (def-text-operator 'snake-case #'s-snake-case)
+  (def-text-operator 'screaming-snake-case #'(lambda (str) (s-upcase (s-snake-case str))))
+  (def-text-operator 'lower-words-case #'(lambda (str) (s-join " " (-map #'s-downcase (s-split-words str)))))
 
 ;; *** dead sea scrolling
   (defun amb/scroll-down ()
